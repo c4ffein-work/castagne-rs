@@ -84,9 +84,9 @@ All credit for the engine design and architecture goes to the original Castagne 
 
 ## License
 
-This port is licensed under the MIT License (same as the original Castagne project).
+This port is licensed under the MPL-2.0 (Mozilla Public License 2.0) (same as the original Castagne project).
 
-The original Castagne engine is licensed under MIT. See the `castagne/` submodule for details.
+The original Castagne engine is licensed under MPL-2.0. See the `castagne/` submodule for details.
 
 ---
 
