@@ -13,7 +13,9 @@ use godot::prelude::*;
 use std::collections::HashMap;
 
 /// Base trait for all Castagne modules
-pub trait CastagneModule: Send + Sync {
+///
+/// Note: Not Send + Sync because modules may contain Godot types (Variant) which aren't thread-safe
+pub trait CastagneModule {
     /// Get the module name
     fn module_name(&self) -> &str;
 

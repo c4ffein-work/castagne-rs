@@ -18,6 +18,8 @@ pub struct CastagneStateHandle {
     target_eid: i32,
     pid: i32,
     phase: String,
+    // TODO: Add engine reference for instanced data access
+    // This would allow IDGlobalGet, IDPlayerGet, IDEntityGet methods
 }
 
 impl CastagneStateHandle {

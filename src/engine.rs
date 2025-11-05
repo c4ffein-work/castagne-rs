@@ -87,7 +87,7 @@ impl CastagneEngineCore {
         let mut state_handle = CastagneStateHandle::new(Rc::clone(&self.memory));
 
         for module in self.config.get_modules() {
-            let mut module_write = module.write().unwrap();
+            let mut module_write = module.borrow_mut();
             module_write.copy_variables_global(&mut self.memory.borrow_mut());
             module_write.battle_init(&mut state_handle, &battle_init_data);
         }
@@ -107,14 +107,13 @@ impl CastagneEngineCore {
         // Frame pre-start
         for module in self.config.get_modules() {
             module
-                .write()
-                .unwrap()
+                .borrow_mut()
                 .frame_pre_start(&mut state_handle);
         }
 
         // Frame start
         for module in self.config.get_modules() {
-            module.write().unwrap().frame_start(&mut state_handle);
+            module.borrow_mut().frame_start(&mut state_handle);
         }
 
         // Get active entities (stub - normally loaded from memory)
@@ -130,7 +129,7 @@ impl CastagneEngineCore {
 
         // Frame end
         for module in self.config.get_modules() {
-            module.write().unwrap().frame_end(&mut state_handle);
+            module.borrow_mut().frame_end(&mut state_handle);
         }
 
         Ok(())
@@ -147,7 +146,7 @@ impl CastagneEngineCore {
 
         // Phase Start (global)
         for module in self.config.get_modules() {
-            let mut module_write = module.write().unwrap();
+            let mut module_write = module.borrow_mut();
             match phase {
                 Phase::AI => module_write.ai_phase_start(state_handle),
                 Phase::Input => module_write.input_phase_start(state_handle),
@@ -164,7 +163,7 @@ impl CastagneEngineCore {
         for &eid in eids {
             state_handle.point_to_entity(eid);
             for module in self.config.get_modules() {
-                let mut module_write = module.write().unwrap();
+                let mut module_write = module.borrow_mut();
                 match phase {
                     Phase::AI => module_write.ai_phase_start_entity(state_handle),
                     Phase::Input => module_write.input_phase_start_entity(state_handle),
@@ -185,7 +184,7 @@ impl CastagneEngineCore {
         for &eid in eids {
             state_handle.point_to_entity(eid);
             for module in self.config.get_modules() {
-                let mut module_write = module.write().unwrap();
+                let mut module_write = module.borrow_mut();
                 match phase {
                     Phase::AI => module_write.ai_phase_end_entity(state_handle),
                     Phase::Input => module_write.input_phase_end_entity(state_handle),
@@ -201,7 +200,7 @@ impl CastagneEngineCore {
 
         // Phase End (global)
         for module in self.config.get_modules() {
-            let mut module_write = module.write().unwrap();
+            let mut module_write = module.borrow_mut();
             match phase {
                 Phase::AI => module_write.ai_phase_end(state_handle),
                 Phase::Input => module_write.input_phase_end(state_handle),
