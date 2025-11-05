@@ -180,3 +180,87 @@ impl CastagneMemory {
         false
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_memory_initialization() {
+        let memory = CastagneMemory::new();
+        assert!(!memory.global_has("NonExistent"));
+    }
+
+    #[test]
+    fn test_global_memory_operations() {
+        let mut memory = CastagneMemory::new();
+
+        // Set a global value
+        memory.global_set("TestKey", Variant::from(42), true);
+
+        // Check it exists
+        assert!(memory.global_has("TestKey"));
+
+        // Get the value back
+        let value = memory.global_get("TestKey");
+        assert!(value.is_some());
+        assert_eq!(value.unwrap().try_to::<i32>().unwrap(), 42);
+    }
+
+    #[test]
+    fn test_player_memory() {
+        let mut memory = CastagneMemory::new();
+
+        // Add a player
+        memory.add_player();
+
+        // Set player data
+        memory.player_set(0, "HP", Variant::from(100), true);
+
+        // Check and retrieve
+        assert!(memory.player_has(0, "HP"));
+        let hp = memory.player_get(0, "HP").unwrap();
+        assert_eq!(hp.try_to::<i32>().unwrap(), 100);
+    }
+
+    #[test]
+    fn test_entity_lifecycle() {
+        let mut memory = CastagneMemory::new();
+
+        // Add entity
+        let eid = memory.add_entity();
+        assert!(memory.is_eid_valid(eid as i32));
+
+        // Set entity data
+        memory.entity_set(eid as i32, "Position", Variant::from(10), true);
+        assert!(memory.entity_has(eid as i32, "Position"));
+
+        // Remove entity
+        memory.remove_entity(eid);
+        assert!(!memory.is_eid_valid(eid as i32));
+    }
+
+    #[test]
+    fn test_copy_from() {
+        let mut memory1 = CastagneMemory::new();
+        memory1.global_set("Test", Variant::from(42), true);
+
+        let mut memory2 = CastagneMemory::new();
+        memory2.copy_from(&memory1);
+
+        assert!(memory2.global_has("Test"));
+        assert_eq!(memory2.global_get("Test").unwrap().try_to::<i32>().unwrap(), 42);
+    }
+
+    #[test]
+    fn test_invalid_entity_access() {
+        let memory = CastagneMemory::new();
+
+        // Accessing invalid entity should return None
+        let result = memory.entity_get(-1, "Test");
+        assert!(result.is_none());
+
+        let result = memory.entity_get(999, "Test");
+        assert!(result.is_none());
+    }
+}
