@@ -17,6 +17,7 @@ pub mod memory;
 pub mod module;
 pub mod modules;
 pub mod state_handle;
+pub mod test_runner;
 
 use crate::config::CastagneConfig;
 use crate::engine::CastagneEngineCore;
