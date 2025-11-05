@@ -1,0 +1,3 @@
+[submodule "castagne"]
+	path = castagne
+	url = https://github.com/panthavma/castagne.git
