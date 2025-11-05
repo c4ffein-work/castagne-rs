@@ -7,13 +7,14 @@
 use crate::module::CastagneModule;
 use godot::prelude::*;
 use std::collections::HashMap;
-use std::sync::{Arc, RwLock};
+use std::rc::Rc;
+use std::cell::RefCell;
 
 /// Configuration data for the Castagne engine
 pub struct CastagneConfig {
     config_data: HashMap<String, Variant>,
     default_config_data: HashMap<String, Variant>,
-    modules: Vec<Arc<RwLock<dyn CastagneModule>>>,
+    modules: Vec<Rc<RefCell<dyn CastagneModule>>>,
     module_slots: HashMap<String, usize>, // slot name -> module index
 }
 
@@ -66,11 +67,11 @@ impl CastagneConfig {
     // ============================================================
 
     /// Register a module
-    pub fn register_module(&mut self, module: Arc<RwLock<dyn CastagneModule>>) {
-        let module_read = module.read().unwrap();
-        let module_name = module_read.module_name().to_string();
-        let module_slot = module_read.module_slot().map(|s| s.to_string());
-        drop(module_read);
+    pub fn register_module(&mut self, module: Rc<RefCell<dyn CastagneModule>>) {
+        let module_borrow = module.borrow();
+        let module_name = module_borrow.module_name().to_string();
+        let module_slot = module_borrow.module_slot().map(|s| s.to_string());
+        drop(module_borrow);
 
         godot_print!("Registering module: {}", module_name);
 
@@ -84,12 +85,12 @@ impl CastagneConfig {
     }
 
     /// Get all modules
-    pub fn get_modules(&self) -> &Vec<Arc<RwLock<dyn CastagneModule>>> {
+    pub fn get_modules(&self) -> &Vec<Rc<RefCell<dyn CastagneModule>>> {
         &self.modules
     }
 
     /// Get a module by slot name
-    pub fn get_module_slot(&self, slot: &str) -> Option<Arc<RwLock<dyn CastagneModule>>> {
+    pub fn get_module_slot(&self, slot: &str) -> Option<Rc<RefCell<dyn CastagneModule>>> {
         self.module_slots
             .get(slot)
             .and_then(|&idx| self.modules.get(idx))
@@ -99,9 +100,9 @@ impl CastagneConfig {
     /// Initialize all modules
     pub fn init_modules(&mut self) {
         for module in &self.modules {
-            let mut module_write = module.write().unwrap();
-            module_write.module_setup();
-            module_write.on_module_registration(&self.config_data);
+            let mut module_borrow = module.borrow_mut();
+            module_borrow.module_setup();
+            module_borrow.on_module_registration(&self.config_data);
         }
     }
 

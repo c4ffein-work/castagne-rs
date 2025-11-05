@@ -36,6 +36,10 @@ impl CastagneTestRunner {
         results.set("memory_player", self.test_memory_player());
         results.set("memory_entity", self.test_memory_entity());
 
+        // Test StateHandle operations
+        results.set("state_handle_point_to", self.test_state_handle_point_to());
+        results.set("state_handle_target_entity", self.test_state_handle_target());
+
         // Print summary
         let passed = results.iter_shared()
             .filter(|(_, v)| v.try_to::<bool>().unwrap_or(false))
@@ -302,5 +306,101 @@ impl CastagneTestRunner {
         }
 
         start.elapsed().as_micros() as u64
+    }
+
+    /// Test StateHandle point_to operations
+    fn test_state_handle_point_to(&self) -> bool {
+        godot_print!("Testing StateHandle point_to operations...");
+
+        // Create Rust version
+        use std::rc::Rc;
+        use std::cell::RefCell;
+        use crate::state_handle::CastagneStateHandle;
+
+        let mut memory = CastagneMemory::new();
+        memory.init_memory();
+
+        // Add a player and entity
+        memory.add_player();
+        let eid = memory.add_entity();
+        memory.entity_set(eid as i32, "_Player", Variant::from(0), true);
+        memory.player_set(0, "TestVar", Variant::from(100), true);
+
+        let memory_rc = Rc::new(RefCell::new(memory));
+        let mut state_handle = CastagneStateHandle::new(memory_rc);
+
+        // Test pointing to entity
+        let result = state_handle.point_to_entity(eid as i32);
+        if !result {
+            godot_error!("Failed to point to entity {}", eid);
+            return false;
+        }
+
+        // Test get_entity_id
+        if state_handle.get_entity_id() != eid as i32 {
+            godot_error!("Entity ID mismatch: got {}, expected {}", state_handle.get_entity_id(), eid);
+            return false;
+        }
+
+        // Test player was automatically set
+        if state_handle.get_player() != 0 {
+            godot_error!("Player ID mismatch: got {}, expected 0", state_handle.get_player());
+            return false;
+        }
+
+        godot_print!("  ✅ StateHandle point_to test passed!");
+        true
+    }
+
+    /// Test StateHandle target entity operations
+    fn test_state_handle_target(&self) -> bool {
+        godot_print!("Testing StateHandle target entity operations...");
+
+        use std::rc::Rc;
+        use std::cell::RefCell;
+        use crate::state_handle::CastagneStateHandle;
+
+        let mut memory = CastagneMemory::new();
+        memory.init_memory();
+
+        // Add two entities
+        let eid1 = memory.add_entity();
+        let eid2 = memory.add_entity();
+        memory.entity_set(eid1 as i32, "_TargetEID", Variant::from(eid2 as i32), true);
+        memory.entity_set(eid2 as i32, "HP", Variant::from(100), true);
+
+        let memory_rc = Rc::new(RefCell::new(memory));
+        let mut state_handle = CastagneStateHandle::new(memory_rc);
+
+        // Point to first entity
+        state_handle.point_to_entity(eid1 as i32);
+
+        // Set target to second entity
+        state_handle.set_target_entity(eid2 as i32);
+
+        // Verify target
+        if state_handle.get_target_eid() != eid2 as i32 {
+            godot_error!("Target EID mismatch: got {}, expected {}", state_handle.get_target_eid(), eid2);
+            return false;
+        }
+
+        // Test target entity get
+        if let Some(hp) = state_handle.target_entity_get("HP") {
+            if let Ok(hp_val) = hp.try_to::<i32>() {
+                if hp_val != 100 {
+                    godot_error!("Target entity HP mismatch: got {}, expected 100", hp_val);
+                    return false;
+                }
+            } else {
+                godot_error!("Failed to convert HP to i32");
+                return false;
+            }
+        } else {
+            godot_error!("Failed to get HP from target entity");
+            return false;
+        }
+
+        godot_print!("  ✅ StateHandle target entity test passed!");
+        true
     }
 }
