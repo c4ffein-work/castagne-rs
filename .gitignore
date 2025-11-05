@@ -1,0 +1,13 @@
+# Rust
+/target/
+Cargo.lock
+
+# Godot
+.import/
+*.import
+.godot/
+export_presets.cfg
+
+# OS
+.DS_Store
+Thumbs.db
