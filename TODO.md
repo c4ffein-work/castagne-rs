@@ -75,53 +75,77 @@ This document tracks what has been ported from the original Castagne GDScript en
 
 ---
 
-## ❌ Not Yet Ported
+## 🚧 Partially Implemented
 
 ### Critical Components
 
-#### 1. **CastagneParser** (castagne/engine/CastagneParser.gd) - **HIGHEST PRIORITY**
-**File Size: 75KB** - This is the BIGGEST component!
+#### 1. **CastagneParser** (src/parser.rs) - **v0 STUB IMPLEMENTED**
+**Original File: 2279 lines** - Now has basic structure with TODOs
 
-The parser is responsible for:
-- Loading and parsing .casp character files
-- Function registration and lookup
-- Script compilation
-- State management
+✅ **What's implemented:**
+- Basic struct and data types (ParsedCharacter, ParsedVariable, ParsedState, etc.)
+- File opening and metadata parsing structure
+- Error handling and logging
+- Main parsing flow skeleton
+
+❌ **What's missing (TODOs):**
+- Actual .casp file parsing logic
+- Specblock parsing
 - Variable definition parsing
-- Documentation generation
+- State parsing
+- Function registration
+- Instruction execution (I, F, S, L, V, P, R branches)
+- Code optimization
+- Consider using parser combinator library (nom, pest)
 
-**Why it's hard:**
-- Very large, complex file (2000+ lines)
-- Domain-specific language parser
-- Intricate state machine
-- Many edge cases
+#### 2. **CastagneInput** (src/input.rs) - **MOSTLY IMPLEMENTED**
+✅ **What's implemented:**
+- Input device types and management
+- Device addition/removal
+- Physical input types (Raw, Button, Axis, Stick, Combination, Any)
+- Game input types (Direct, Multiple, Derived)
+- SOCD handling
+- Input schema creation (basic)
+- Raw input to game input conversion
+- Device polling structure
 
-**Suggested approach:**
-- Start with a minimal parser that handles basic states and functions
-- Add function registration incrementally
-- Leave complex features (documentation, editor features) for later
-- Consider using a parser combinator library (nom, pest)
+❌ **What's missing (TODOs):**
+- Actual Godot InputMap integration (needs proper bindings)
+- Full input schema creation (simplified version implemented)
+- Derived input handling (Press/Release events)
+- Complete directional input processing
 
-#### 2. **CastagneInput** (castagne/engine/CastagneInput.gd)
-Input management system:
-- Device polling
-- Input buffering
-- Motion/button detection
-- Input history for rollback
+#### 3. **CastagneGlobal** (src/global.rs) - **CORE IMPLEMENTED**
+✅ **What's implemented:**
+- All enums (HitConfirmed, StateType, VariableType, etc.)
+- Helper functions (has_flag, set_flag, get_int, get_bool, etc.)
+- Data fusion utilities (fuse_data_overwrite, fuse_data_no_overwrite, etc.)
+- String parsing (split_string_to_array)
+- Battle init data helpers
+- Version info structure
+- Logging functions
 
-#### 3. **CastagneGlobal** (castagne/engine/CastagneGlobal.gd)
-Global utilities:
-- Error logging
-- Data fusion utilities
-- String parsing helpers
-- Constants and enums
+❌ **What's missing (TODOs):**
+- Module loading system (skeleton only)
+- Config file parsing
+- Character metadata loading
 
-#### 4. **CastagneNet** (castagne/engine/CastagneNet.gd)
-Rollback netcode:
-- State saving/loading
-- Input delay
-- Rollback logic
-- Network synchronization
+#### 4. **CastagneNet** (src/net.rs) - **STUB IMPLEMENTED**
+**Note:** Original GDScript is marked "not maintained until v0.8 cycle"
+
+✅ **What's implemented:**
+- Network sync status tracking
+- Basic structure and data types
+- Logging system
+- Callback method signatures
+
+❌ **What's missing (TODOs):**
+- Network peer creation (host/join)
+- Actual synchronization logic
+- Rollback implementation (state save/load)
+- Input delay calculation
+- Frame tracking
+- All core netcode features
 
 ### Module System
 
@@ -275,13 +299,14 @@ cargo test --lib
 
 - **Core Infrastructure**: 80% complete
 - **Module System**: 30% complete
-- **Parser**: 0% complete ⚠️
+- **Parser**: 15% complete (v0 stub with TODOs) 📝
 - **Physics**: 0% complete
 - **Graphics**: 0% complete
-- **Input**: 0% complete
-- **Network**: 0% complete
+- **Input**: 65% complete (core logic done, needs Godot bindings) ✅
+- **Network**: 10% complete (stub only) 📝
+- **Global Utilities**: 80% complete ✅
 
-**Overall**: ~25% complete
+**Overall**: ~35% complete
 
 ---
 
@@ -334,6 +359,9 @@ Continue porting modules one by one:
 3. **No function registry**
    - Parser would populate this
    - Functions need manual Rust implementation
+
+4. **Testing Infrastructure**
+   - Can we download godot somehow and run these from the cli or something?
 
 ---
 

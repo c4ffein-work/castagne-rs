@@ -13,9 +13,13 @@ use std::collections::HashMap;
 // Module declarations
 pub mod config;
 pub mod engine;
+pub mod global;
+pub mod input;
 pub mod memory;
 pub mod module;
 pub mod modules;
+pub mod net;
+pub mod parser;
 pub mod state_handle;
 pub mod test_runner;
 
