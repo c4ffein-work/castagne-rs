@@ -1,0 +1,142 @@
+# Complete Test Character with All Parser Features
+# This file demonstrates:
+# - Metadata parsing
+# - Specblock support
+# - Variable definitions with multiple types
+# - State definitions with multiple phases
+# - Complex action parsing
+
+:Character:
+Name: Complete Test Fighter
+Author: Parser Development Team
+Description: A comprehensive character file testing all parser features
+Version: 2.0
+
+:AttackData:
+# Specblock for attack properties
+LightPunchDamage: 5
+LightPunchRange: 50
+HeavyPunchDamage: 15
+HeavyPunchRange: 40
+KickDamage: 10
+KickKnockback: 20
+
+:PhysicsConfig:
+# Specblock for physics configuration
+Gravity: 10
+JumpForce: 25
+MaxSpeed: 100
+Friction: 5
+
+:Variables:
+# Integer variables
+var Health(Int): 150
+var MaxHealth(Int): 150
+var Damage(Int): 0
+
+# String variables
+var PlayerName(Str): Fighter
+var AnimationState(Str): idle
+
+# Boolean variables
+var IsGrounded(Bool): true
+var CanJump(Bool): true
+var IsAttacking(Bool): false
+
+# Vector variables
+var Position(Vec2): 0, 0
+var Velocity(Vec2): 0, 0
+
+# Float/Var type (auto-inferred)
+var Meter(Var): 0.0
+var ComboTimer(Var): 0.0
+
+# Constants
+def MAX_COMBO: 10
+def DAMAGE_MULTIPLIER: 1.5
+
+:Idle:
+---Init:
+Set(AnimationState, "idle")
+Set(Velocity, 0, 0)
+Set(IsAttacking, false)
+---Action:
+# Check for input
+CheckInput()
+# Apply gravity if not grounded
+If(!IsGrounded)
+Add(Velocity, 0, Gravity)
+EndIf
+# Check for state transitions
+IfInput(Attack)
+ChangeState(LightPunch)
+EndIf
+IfInput(Jump)
+ChangeState(Jump)
+EndIf
+
+:Walk:
+---Init:
+Set(AnimationState, "walk")
+Set(Velocity, MaxSpeed, 0)
+---Action:
+# Move the character
+ApplyVelocity()
+# Check for transitions
+IfNotInput(Forward)
+ChangeState(Idle)
+EndIf
+
+:Jump:
+---Init:
+Set(AnimationState, "jump")
+Set(IsGrounded, false)
+Set(CanJump, false)
+Mul(JumpForce, -1)
+Set(Velocity, 0, JumpForce)
+---Action:
+# Apply gravity
+Add(Velocity, 0, Gravity)
+ApplyVelocity()
+# Check for landing
+If(Position.y >= 0)
+Set(IsGrounded, true)
+Set(CanJump, true)
+ChangeState(Idle)
+EndIf
+
+:LightPunch:
+---Init:
+Set(AnimationState, "light_punch")
+Set(IsAttacking, true)
+Set(Damage, LightPunchDamage)
+---Action:
+# Perform attack
+CheckHit(LightPunchRange, Damage)
+# Check for combo
+IfInput(Attack)
+Add(ComboTimer, 1)
+If(ComboTimer < MAX_COMBO)
+ChangeState(HeavyPunch)
+EndIf
+EndIf
+---Reaction:
+# End attack state
+Set(IsAttacking, false)
+ChangeState(Idle)
+
+:HeavyPunch:
+---Init:
+Set(AnimationState, "heavy_punch")
+Set(IsAttacking, true)
+Mul(DAMAGE_MULTIPLIER, HeavyPunchDamage)
+Set(Damage, DAMAGE_MULTIPLIER)
+---Action:
+# Perform heavy attack
+CheckHit(HeavyPunchRange, Damage)
+ApplyKnockback(KickKnockback)
+---Reaction:
+# End combo
+Set(ComboTimer, 0)
+Set(IsAttacking, false)
+ChangeState(Idle)

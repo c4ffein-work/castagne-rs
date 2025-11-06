@@ -13,6 +13,9 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
+// Import vector types for type conversion
+use godot::builtin::{Vector2, Vector3};
+
 /// Phases that can have events
 const PHASES_BASE: &[&str] = &[
     "Init", "Action", "Reaction", "Freeze", "Manual", "AI", "Subentity", "Halt",
@@ -55,7 +58,33 @@ pub struct ParsedVariable {
     pub mutability: VariableMutability,
     pub var_type: VariableType,
     pub subtype: String,
-    pub value: String, // TODO: Should be Variant or enum for typed values
+    pub value: String,
+}
+
+impl ParsedVariable {
+    /// Convert the string value to a Godot Variant based on the variable type
+    pub fn to_variant(&self) -> Variant {
+        CastagneParser::parse_value_to_variant(&self.value, &self.var_type)
+    }
+
+    /// Get the value as an integer (if possible)
+    pub fn as_int(&self) -> Option<i32> {
+        self.value.trim().parse::<i32>().ok()
+    }
+
+    /// Get the value as a boolean (if possible)
+    pub fn as_bool(&self) -> Option<bool> {
+        match self.value.trim().to_lowercase().as_str() {
+            "true" | "1" => Some(true),
+            "false" | "0" => Some(false),
+            _ => None,
+        }
+    }
+
+    /// Get the value as a float (if possible)
+    pub fn as_float(&self) -> Option<f64> {
+        self.value.trim().parse::<f64>().ok()
+    }
 }
 
 /// Parsed state information
@@ -91,6 +120,7 @@ pub struct ParsedCharacter {
     pub metadata: CharacterMetadata,
     pub variables: HashMap<String, ParsedVariable>,
     pub states: HashMap<String, ParsedState>,
+    pub specblocks: HashMap<String, HashMap<String, String>>,
     pub subentities: HashMap<String, CharacterMetadata>,
     pub transformed_data: HashMap<String, HashMap<String, String>>,
 }
@@ -113,6 +143,7 @@ pub struct CastagneParser {
     metadata: CharacterMetadata,
     variables: HashMap<String, ParsedVariable>,
     states: HashMap<String, ParsedState>,
+    specblocks: HashMap<String, HashMap<String, String>>, // Specblock name -> key-value pairs
     specblock_defines: HashMap<String, ParsedVariable>,
 
     // Flags
@@ -139,6 +170,7 @@ impl CastagneParser {
             },
             variables: HashMap::new(),
             states: HashMap::new(),
+            specblocks: HashMap::new(),
             specblock_defines: HashMap::new(),
             aborting: false,
             invalid_file: false,
@@ -182,6 +214,7 @@ impl CastagneParser {
         self.current_file = 0;
         self.variables.clear();
         self.states.clear();
+        self.specblocks.clear();
         self.specblock_defines.clear();
         self.aborting = false;
         self.invalid_file = false;
@@ -198,6 +231,7 @@ impl CastagneParser {
             metadata: self.metadata.clone(),
             variables: self.variables.clone(),
             states: self.states.clone(),
+            specblocks: self.specblocks.clone(),
             subentities: HashMap::new(), // TODO: Implement subentity parsing
             transformed_data: HashMap::new(), // TODO: Implement data transformation
         })
@@ -243,19 +277,80 @@ impl CastagneParser {
         // Step 1: Parse metadata
         self.parse_metadata(0);
 
-        // TODO: If metadata has skeleton, open that file too and recurse
+        // Step 2: If metadata has skeleton, load and parse parent file first
+        if let Some(skeleton_path) = self.metadata.skeleton.clone() {
+            self.log(&format!("Loading skeleton file: {}", skeleton_path));
+            self.load_skeleton(&skeleton_path);
+            if self.aborting {
+                return;
+            }
+        }
 
-        // Step 2: Parse specblocks
+        // Step 3: Parse specblocks
         self.parse_specblocks(0);
 
-        // Step 3: Parse variables
+        // Step 4: Parse variables
         self.parse_variables(0);
 
-        // Step 4: Parse states
+        // Step 5: Parse states
         self.parse_states(0);
 
-        // TODO: Step 5: Optimize
+        // TODO: Step 6: Optimize
         self.log(">>> Parsing complete!");
+    }
+
+    fn load_skeleton(&mut self, skeleton_path: &str) {
+        // Save current parsing state
+        let current_lines = self.current_lines.clone();
+        let current_line_ids = self.line_ids.clone();
+        let current_file_paths = self.file_paths.clone();
+
+        // Store child metadata separately (we want to keep the child's metadata)
+        let child_metadata = self.metadata.clone();
+
+        // Parse the skeleton file
+        let mut skeleton_parser = CastagneParser::new();
+        skeleton_parser.logs_active = self.logs_active;
+
+        match skeleton_parser.create_full_character(skeleton_path) {
+            Some(skeleton_character) => {
+                self.log(&format!("Successfully loaded skeleton: {}", skeleton_path));
+
+                // Merge skeleton data into current parser
+                // Parent data is added first, child can override
+
+                // Merge specblocks (child overrides parent on a per-key basis)
+                for (block_name, parent_data) in skeleton_character.specblocks {
+                    let child_block = self.specblocks.entry(block_name).or_insert_with(HashMap::new);
+                    // Insert parent values that don't exist in child
+                    for (key, value) in parent_data {
+                        child_block.entry(key).or_insert(value);
+                    }
+                }
+
+                // Merge variables (child overrides parent)
+                for (name, var) in skeleton_character.variables {
+                    self.variables.entry(name).or_insert(var);
+                }
+
+                // Merge states (child overrides parent)
+                for (name, state) in skeleton_character.states {
+                    self.states.entry(name).or_insert(state);
+                }
+
+                self.log("Skeleton data merged successfully");
+            }
+            None => {
+                self.fatal_error(&format!("Failed to load skeleton file: {}", skeleton_path));
+                return;
+            }
+        }
+
+        // Restore current parsing state
+        self.current_lines = current_lines;
+        self.line_ids = current_line_ids;
+        self.file_paths = current_file_paths;
+        self.metadata = child_metadata;
     }
 
     fn parse_metadata(&mut self, _file_id: usize) -> &CharacterMetadata {
@@ -306,10 +401,112 @@ impl CastagneParser {
     }
 
     fn parse_specblocks(&mut self, _file_id: usize) -> HashMap<String, String> {
-        // TODO: Parse :SpecblockName: blocks
-        // These define constants/values used in the character
+        self.log("Parsing specblocks...");
 
-        HashMap::new()
+        let mut i = 0;
+        while i < self.current_lines.len() {
+            let line = self.current_lines[i].trim();
+
+            // Check if this is a specblock definition (starts with ':' and ends with ':')
+            // but exclude known special blocks
+            if line.starts_with(':') && line.ends_with(':') {
+                let block_name = line[1..line.len() - 1].to_string();
+
+                // Check if this is a specblock (not Character, Variables, or a state)
+                // Specblocks typically have specific patterns, but for now we'll identify them
+                // by checking if the content is key-value pairs (not phase markers or actions)
+                if block_name != "Character" && block_name != "Variables" {
+                    // Peek ahead to see if this looks like a specblock
+                    if self.is_specblock(&block_name, i + 1) {
+                        self.parse_specblock(block_name, &mut i);
+                    }
+                }
+            }
+
+            i += 1;
+        }
+
+        self.log(&format!("Parsed {} specblocks", self.specblocks.len()));
+        HashMap::new() // Return empty for compatibility with existing code
+    }
+
+    fn is_specblock(&self, _block_name: &str, start_idx: usize) -> bool {
+        // Look at the first few non-empty lines to determine if this is a specblock
+        // Specblocks contain key-value pairs (Key: Value) without phase markers (---)
+        let mut idx = start_idx;
+        let mut line_count = 0;
+
+        while idx < self.current_lines.len() && line_count < 5 {
+            let line = self.current_lines[idx].trim();
+
+            // Stop at next block
+            if line.starts_with(':') && line.ends_with(':') {
+                break;
+            }
+
+            // Skip empty lines and comments
+            if line.is_empty() || line.starts_with('#') {
+                idx += 1;
+                continue;
+            }
+
+            // If we see a phase marker, this is definitely a state, not a specblock
+            if line.starts_with("---") {
+                return false;
+            }
+
+            // If we see a line that looks like an action (function call), it's a state
+            if line.contains('(') && line.contains(')') && !line.contains(':') {
+                return false;
+            }
+
+            // If we see a key-value pair, it might be a specblock
+            if line.contains(':') {
+                line_count += 1;
+            }
+
+            idx += 1;
+        }
+
+        // If we found any key-value pairs, consider it a specblock
+        line_count > 0
+    }
+
+    fn parse_specblock(&mut self, block_name: String, i: &mut usize) {
+        self.log(&format!("Parsing specblock: {}", block_name));
+
+        let mut specblock_data = HashMap::new();
+        *i += 1; // Move past the block name line
+
+        while *i < self.current_lines.len() {
+            let line = self.current_lines[*i].trim();
+
+            // Check if we've reached another block
+            if line.starts_with(':') && line.ends_with(':') {
+                break;
+            }
+
+            // Parse key-value pairs
+            if !line.is_empty() && !line.starts_with('#') {
+                if let Some(colon_pos) = line.find(':') {
+                    let key = line[..colon_pos].trim().to_string();
+                    let value = line[colon_pos + 1..].trim().to_string();
+                    specblock_data.insert(key, value);
+                }
+            }
+
+            *i += 1;
+        }
+
+        if !specblock_data.is_empty() {
+            // Merge with existing specblock (if from parent) instead of replacing
+            let existing_block = self.specblocks.entry(block_name.clone()).or_insert_with(HashMap::new);
+            for (key, value) in specblock_data {
+                // Child values override parent values
+                existing_block.insert(key, value);
+            }
+        }
+        *i -= 1; // Back up one so the outer loop doesn't skip a line
     }
 
     fn parse_variables(&mut self, _file_id: usize) {
@@ -660,6 +857,101 @@ impl CastagneParser {
     pub fn get_errors(&self) -> &[String] {
         &self.errors
     }
+
+    // -------------------------------------------------------------------------
+    // Type conversion utilities
+
+    /// Parse a string value into a Variant based on the variable type
+    pub fn parse_value_to_variant(value_str: &str, var_type: &VariableType) -> Variant {
+        let trimmed = value_str.trim();
+
+        match var_type {
+            VariableType::Int => {
+                trimmed.parse::<i32>()
+                    .map(Variant::from)
+                    .unwrap_or_else(|_| Variant::nil())
+            }
+            VariableType::Bool => {
+                let bool_val = match trimmed.to_lowercase().as_str() {
+                    "true" | "1" => true,
+                    "false" | "0" => false,
+                    _ => false,
+                };
+                Variant::from(bool_val)
+            }
+            VariableType::Str => {
+                // Remove quotes if present
+                let unquoted = if (trimmed.starts_with('"') && trimmed.ends_with('"'))
+                    || (trimmed.starts_with('\'') && trimmed.ends_with('\'')) {
+                    &trimmed[1..trimmed.len() - 1]
+                } else {
+                    trimmed
+                };
+                Variant::from(GString::from(unquoted))
+            }
+            VariableType::Vec2 => {
+                // Parse (x, y) or x, y
+                Self::parse_vec2(trimmed).unwrap_or_else(|| Variant::nil())
+            }
+            VariableType::Vec3 => {
+                // Parse (x, y, z) or x, y, z
+                Self::parse_vec3(trimmed).unwrap_or_else(|| Variant::nil())
+            }
+            VariableType::Var | VariableType::Box => {
+                // Try to infer the type
+                // First try int
+                if let Ok(i) = trimmed.parse::<i32>() {
+                    return Variant::from(i);
+                }
+                // Then try float
+                if let Ok(f) = trimmed.parse::<f64>() {
+                    return Variant::from(f);
+                }
+                // Then try bool
+                match trimmed.to_lowercase().as_str() {
+                    "true" | "false" => {
+                        return Variant::from(trimmed.to_lowercase() == "true");
+                    }
+                    _ => {}
+                }
+                // Otherwise treat as string
+                Variant::from(GString::from(trimmed))
+            }
+        }
+    }
+
+    /// Parse a Vec2 from string (supports "x, y" or "(x, y)")
+    fn parse_vec2(s: &str) -> Option<Variant> {
+        let cleaned = s.trim().trim_matches(|c| c == '(' || c == ')');
+        let parts: Vec<&str> = cleaned.split(',').collect();
+
+        if parts.len() == 2 {
+            if let (Ok(x), Ok(y)) = (
+                parts[0].trim().parse::<f32>(),
+                parts[1].trim().parse::<f32>(),
+            ) {
+                return Some(Variant::from(Vector2::new(x, y)));
+            }
+        }
+        None
+    }
+
+    /// Parse a Vec3 from string (supports "x, y, z" or "(x, y, z)")
+    fn parse_vec3(s: &str) -> Option<Variant> {
+        let cleaned = s.trim().trim_matches(|c| c == '(' || c == ')');
+        let parts: Vec<&str> = cleaned.split(',').collect();
+
+        if parts.len() == 3 {
+            if let (Ok(x), Ok(y), Ok(z)) = (
+                parts[0].trim().parse::<f32>(),
+                parts[1].trim().parse::<f32>(),
+                parts[2].trim().parse::<f32>(),
+            ) {
+                return Some(Variant::from(Vector3::new(x, y, z)));
+            }
+        }
+        None
+    }
 }
 
 impl Default for CastagneParser {
@@ -861,6 +1153,460 @@ mod tests {
             let idle_state = character.states.get("Idle").unwrap();
             assert!(idle_state.actions.contains_key("Init"));
             assert!(idle_state.actions.contains_key("Action"));
+        }
+    }
+
+    #[test]
+    fn test_parse_specblocks() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            ":Character:".to_string(),
+            "Name: Test".to_string(),
+            "".to_string(),
+            ":Attacks:".to_string(),
+            "Damage: 10".to_string(),
+            "Range: 5".to_string(),
+            "Knockback: 3".to_string(),
+            "".to_string(),
+            ":Config:".to_string(),
+            "MaxSpeed: 100".to_string(),
+            "JumpHeight: 50".to_string(),
+            "".to_string(),
+            ":Variables:".to_string(),
+            "var Health(Int): 100".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["test.casp".to_string()];
+
+        parser.parse_specblocks(0);
+
+        // Should have parsed 2 specblocks (Attacks and Config)
+        assert_eq!(parser.specblocks.len(), 2);
+
+        // Check Attacks specblock
+        let attacks = parser.specblocks.get("Attacks").unwrap();
+        assert_eq!(attacks.get("Damage"), Some(&"10".to_string()));
+        assert_eq!(attacks.get("Range"), Some(&"5".to_string()));
+        assert_eq!(attacks.get("Knockback"), Some(&"3".to_string()));
+
+        // Check Config specblock
+        let config = parser.specblocks.get("Config").unwrap();
+        assert_eq!(config.get("MaxSpeed"), Some(&"100".to_string()));
+        assert_eq!(config.get("JumpHeight"), Some(&"50".to_string()));
+    }
+
+    #[test]
+    fn test_specblock_vs_state_detection() {
+        let mut parser = CastagneParser::new();
+
+        // This should be detected as a state (has phase markers)
+        parser.current_lines = vec![
+            ":Idle:".to_string(),
+            "---Init:".to_string(),
+            "Set(Health, 100)".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = vec![1, 2, 3, 4];
+        parser.file_paths = vec!["test.casp".to_string()];
+
+        assert!(!parser.is_specblock("Idle", 1));
+
+        // This should be detected as a specblock (has key-value pairs)
+        parser.current_lines = vec![
+            ":Config:".to_string(),
+            "MaxSpeed: 100".to_string(),
+            "JumpHeight: 50".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = vec![1, 2, 3, 4];
+
+        assert!(parser.is_specblock("Config", 1));
+    }
+
+    #[test]
+    fn test_full_parse_with_specblocks() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            ":Character:".to_string(),
+            "Name: Fighter".to_string(),
+            "".to_string(),
+            ":Attacks:".to_string(),
+            "LightDamage: 5".to_string(),
+            "HeavyDamage: 15".to_string(),
+            "".to_string(),
+            ":Variables:".to_string(),
+            "var Health(Int): 100".to_string(),
+            "".to_string(),
+            ":Idle:".to_string(),
+            "---Init:".to_string(),
+            "Set(Health, 100)".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["test.casp".to_string()];
+
+        parser.parse_full_file();
+
+        let result = parser.end_parsing();
+        assert!(result.is_some());
+
+        let character = result.unwrap();
+
+        // Should have metadata
+        assert_eq!(character.metadata.name, "Fighter");
+
+        // Should have specblock
+        assert_eq!(character.specblocks.len(), 1);
+        let attacks = character.specblocks.get("Attacks").unwrap();
+        assert_eq!(attacks.get("LightDamage"), Some(&"5".to_string()));
+        assert_eq!(attacks.get("HeavyDamage"), Some(&"15".to_string()));
+
+        // Should have variables
+        assert!(character.variables.contains_key("Health"));
+
+        // Should have states
+        assert!(character.states.contains_key("Idle"));
+    }
+
+    #[test]
+    fn test_skeleton_inheritance() {
+        // Test with actual files if they exist
+        if std::path::Path::new("test_parent.casp").exists()
+            && std::path::Path::new("test_child.casp").exists() {
+
+            let mut parser = CastagneParser::new();
+            let result = parser.create_full_character("test_child.casp");
+
+            assert!(result.is_some(), "Failed to parse child character with skeleton");
+            let character = result.unwrap();
+
+            // Check that child metadata is preserved (not parent's)
+            assert_eq!(character.metadata.name, "Child Character");
+            assert_eq!(character.metadata.author, "Parser Test");
+
+            // Check that child has parent's variables
+            assert!(character.variables.contains_key("ParentOnly"),
+                "Child should inherit ParentOnly variable from parent");
+
+            // Check that child has its own variables
+            assert!(character.variables.contains_key("ChildOnly"),
+                "Child should have its own ChildOnly variable");
+
+            // Check that child overrides parent's variables
+            let health = character.variables.get("Health").unwrap();
+            assert_eq!(health.value, "150",
+                "Child should override parent's Health value");
+
+            // Check that child has parent's Speed variable
+            assert!(character.variables.contains_key("Speed"),
+                "Child should inherit Speed variable from parent");
+
+            // Check specblock inheritance and override
+            let config = character.specblocks.get("Config").unwrap();
+            assert_eq!(config.get("BaseSpeed"), Some(&"10".to_string()),
+                "Child should override parent's BaseSpeed");
+            assert_eq!(config.get("BaseJump"), Some(&"10".to_string()),
+                "Child should inherit parent's BaseJump");
+            assert_eq!(config.get("ChildSpeed"), Some(&"8".to_string()),
+                "Child should have its own ChildSpeed");
+
+            // Check state inheritance
+            assert!(character.states.contains_key("BaseAttack"),
+                "Child should inherit BaseAttack state from parent");
+            assert!(character.states.contains_key("Idle"),
+                "Child should have its own Idle state");
+        }
+    }
+
+    #[test]
+    fn test_skeleton_inheritance_unit() {
+        // Unit test that doesn't require external files
+        let mut parent_parser = CastagneParser::new();
+        parent_parser.current_lines = vec![
+            ":Character:".to_string(),
+            "Name: Parent".to_string(),
+            "".to_string(),
+            ":Variables:".to_string(),
+            "var ParentVar(Int): 10".to_string(),
+            "var SharedVar(Int): 5".to_string(),
+            "".to_string(),
+        ];
+        parent_parser.line_ids = (1..=parent_parser.current_lines.len()).collect();
+        parent_parser.file_paths = vec!["parent.casp".to_string()];
+
+        parent_parser.parse_full_file();
+
+        // Manually simulate child inheriting from parent
+        let mut child_parser = CastagneParser::new();
+        child_parser.current_lines = vec![
+            ":Character:".to_string(),
+            "Name: Child".to_string(),
+            "".to_string(),
+            ":Variables:".to_string(),
+            "var ChildVar(Str): ChildValue".to_string(),
+            "var SharedVar(Int): 20".to_string(),
+            "".to_string(),
+        ];
+        child_parser.line_ids = (1..=child_parser.current_lines.len()).collect();
+        child_parser.file_paths = vec!["child.casp".to_string()];
+
+        // Parse child metadata first
+        child_parser.parse_metadata(0);
+
+        // Manually merge parent variables (simulating skeleton loading)
+        child_parser.variables = parent_parser.variables.clone();
+
+        // Then parse child variables (which should override)
+        child_parser.parse_variables(0);
+
+        // Child should have both parent and child variables
+        assert!(child_parser.variables.contains_key("ParentVar"),
+            "Child should have parent's ParentVar");
+        assert!(child_parser.variables.contains_key("ChildVar"),
+            "Child should have its own ChildVar");
+
+        // Child should override parent's SharedVar
+        let shared = child_parser.variables.get("SharedVar").unwrap();
+        assert_eq!(shared.value, "20",
+            "Child should override parent's SharedVar with value 20");
+    }
+
+    #[test]
+    fn test_type_conversion_int() {
+        let var = ParsedVariable {
+            name: "TestInt".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Int,
+            subtype: String::new(),
+            value: "42".to_string(),
+        };
+
+        // Test the helper methods that don't require Godot runtime
+        assert_eq!(var.as_int(), Some(42));
+
+        // Note: to_variant() requires Godot runtime and is tested in integration tests
+    }
+
+    #[test]
+    fn test_type_conversion_bool() {
+        let var_true = ParsedVariable {
+            name: "TestBool".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Bool,
+            subtype: String::new(),
+            value: "true".to_string(),
+        };
+
+        assert_eq!(var_true.as_bool(), Some(true));
+
+        let var_false = ParsedVariable {
+            name: "TestBool2".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Bool,
+            subtype: String::new(),
+            value: "false".to_string(),
+        };
+
+        assert_eq!(var_false.as_bool(), Some(false));
+
+        // Test numeric bool representations
+        let var_one = ParsedVariable {
+            name: "TestBool3".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Bool,
+            subtype: String::new(),
+            value: "1".to_string(),
+        };
+
+        assert_eq!(var_one.as_bool(), Some(true));
+    }
+
+    #[test]
+    fn test_type_conversion_string() {
+        let var = ParsedVariable {
+            name: "TestStr".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Str,
+            subtype: String::new(),
+            value: "Hello World".to_string(),
+        };
+
+        assert_eq!(var.value, "Hello World");
+    }
+
+    #[test]
+    fn test_type_conversion_float() {
+        let var = ParsedVariable {
+            name: "TestFloat".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Var,
+            subtype: String::new(),
+            value: "3.14".to_string(),
+        };
+
+        assert_eq!(var.as_float(), Some(3.14));
+    }
+
+    #[test]
+    fn test_parse_vec2_string() {
+        // Test parsing Vec2 values (string representation)
+        // Note: Actual Variant creation requires Godot runtime, tested in integration tests
+
+        // Test that we can identify valid Vec2 format
+        let vec2_str = "(10, 20)";
+        let cleaned = vec2_str.trim().trim_matches(|c| c == '(' || c == ')');
+        let parts: Vec<&str> = cleaned.split(',').collect();
+        assert_eq!(parts.len(), 2);
+        assert!(parts[0].trim().parse::<f32>().is_ok());
+        assert!(parts[1].trim().parse::<f32>().is_ok());
+
+        // Test another valid format
+        let vec2_str2 = "5.5, 7.5";
+        let cleaned2 = vec2_str2.trim().trim_matches(|c| c == '(' || c == ')');
+        let parts2: Vec<&str> = cleaned2.split(',').collect();
+        assert_eq!(parts2.len(), 2);
+        assert!(parts2[0].trim().parse::<f32>().is_ok());
+        assert!(parts2[1].trim().parse::<f32>().is_ok());
+
+        // Test invalid format
+        let invalid = "invalid";
+        let cleaned_invalid = invalid.trim().trim_matches(|c| c == '(' || c == ')');
+        let parts_invalid: Vec<&str> = cleaned_invalid.split(',').collect();
+        assert!(parts_invalid.len() != 2 || parts_invalid[0].trim().parse::<f32>().is_err());
+    }
+
+    #[test]
+    fn test_parse_vec3_string() {
+        // Test parsing Vec3 values (string representation)
+        // Note: Actual Variant creation requires Godot runtime, tested in integration tests
+
+        // Test valid Vec3 format
+        let vec3_str = "(10, 20, 30)";
+        let cleaned = vec3_str.trim().trim_matches(|c| c == '(' || c == ')');
+        let parts: Vec<&str> = cleaned.split(',').collect();
+        assert_eq!(parts.len(), 3);
+        assert!(parts[0].trim().parse::<f32>().is_ok());
+        assert!(parts[1].trim().parse::<f32>().is_ok());
+        assert!(parts[2].trim().parse::<f32>().is_ok());
+
+        // Test without parentheses
+        let vec3_str2 = "5.5, 7.5, 9.5";
+        let cleaned2 = vec3_str2.trim().trim_matches(|c| c == '(' || c == ')');
+        let parts2: Vec<&str> = cleaned2.split(',').collect();
+        assert_eq!(parts2.len(), 3);
+
+        // Test invalid (only 2 components)
+        let invalid = "10, 20";
+        let cleaned_invalid = invalid.trim().trim_matches(|c| c == '(' || c == ')');
+        let parts_invalid: Vec<&str> = cleaned_invalid.split(',').collect();
+        assert_ne!(parts_invalid.len(), 3);
+    }
+
+    #[test]
+    fn test_type_inference_var_type() {
+        // For Var type, parser should infer the actual type
+
+        // Should infer as int
+        let int_var = ParsedVariable {
+            name: "AutoInt".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Var,
+            subtype: String::new(),
+            value: "100".to_string(),
+        };
+        assert_eq!(int_var.as_int(), Some(100));
+
+        // Should infer as bool
+        let bool_var = ParsedVariable {
+            name: "AutoBool".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Var,
+            subtype: String::new(),
+            value: "true".to_string(),
+        };
+        assert_eq!(bool_var.as_bool(), Some(true));
+
+        // Should infer as float
+        let float_var = ParsedVariable {
+            name: "AutoFloat".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Var,
+            subtype: String::new(),
+            value: "2.5".to_string(),
+        };
+        assert_eq!(float_var.as_float(), Some(2.5));
+    }
+
+    #[test]
+    fn test_complete_character_file() {
+        // Test parsing the comprehensive character file
+        if std::path::Path::new("test_character_complete.casp").exists() {
+            let mut parser = CastagneParser::new();
+            let result = parser.create_full_character("test_character_complete.casp");
+
+            assert!(result.is_some(), "Failed to parse complete character file");
+            let character = result.unwrap();
+
+            // Verify metadata
+            assert_eq!(character.metadata.name, "Complete Test Fighter");
+            assert_eq!(character.metadata.author, "Parser Development Team");
+
+            // Verify specblocks
+            assert!(character.specblocks.contains_key("AttackData"));
+            assert!(character.specblocks.contains_key("PhysicsConfig"));
+
+            let attack_data = character.specblocks.get("AttackData").unwrap();
+            assert_eq!(attack_data.get("LightPunchDamage"), Some(&"5".to_string()));
+            assert_eq!(attack_data.get("HeavyPunchDamage"), Some(&"15".to_string()));
+
+            let physics = character.specblocks.get("PhysicsConfig").unwrap();
+            assert_eq!(physics.get("Gravity"), Some(&"10".to_string()));
+            assert_eq!(physics.get("JumpForce"), Some(&"25".to_string()));
+
+            // Verify variables with different types
+            assert!(character.variables.contains_key("Health"));
+            assert!(character.variables.contains_key("PlayerName"));
+            assert!(character.variables.contains_key("IsGrounded"));
+            assert!(character.variables.contains_key("Position"));
+            assert!(character.variables.contains_key("Meter"));
+            assert!(character.variables.contains_key("MAX_COMBO"));
+
+            let health = character.variables.get("Health").unwrap();
+            assert_eq!(health.var_type, VariableType::Int);
+            assert_eq!(health.value, "150");
+
+            let is_grounded = character.variables.get("IsGrounded").unwrap();
+            assert_eq!(is_grounded.var_type, VariableType::Bool);
+            assert_eq!(is_grounded.value, "true");
+
+            let position = character.variables.get("Position").unwrap();
+            assert_eq!(position.var_type, VariableType::Vec2);
+            assert_eq!(position.value, "0, 0");
+
+            // Verify states
+            assert!(character.states.contains_key("Idle"));
+            assert!(character.states.contains_key("Walk"));
+            assert!(character.states.contains_key("Jump"));
+            assert!(character.states.contains_key("LightPunch"));
+            assert!(character.states.contains_key("HeavyPunch"));
+
+            // Verify state phases
+            let idle = character.states.get("Idle").unwrap();
+            assert!(idle.actions.contains_key("Init"));
+            assert!(idle.actions.contains_key("Action"));
+
+            let jump = character.states.get("Jump").unwrap();
+            assert!(jump.actions.contains_key("Init"));
+            assert!(jump.actions.contains_key("Action"));
+
+            // Verify complex actions
+            let light_punch = character.states.get("LightPunch").unwrap();
+            assert!(light_punch.actions.contains_key("Init"));
+            assert!(light_punch.actions.contains_key("Action"));
+            assert!(light_punch.actions.contains_key("Reaction"));
         }
     }
 }

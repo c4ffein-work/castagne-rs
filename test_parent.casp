@@ -1,0 +1,29 @@
+# Parent Character for Inheritance Testing
+
+:Character:
+Name: Parent Character
+Author: Parser Test
+Description: Base character for inheritance
+
+:Config:
+BaseSpeed: 5
+BaseJump: 10
+
+:Variables:
+var Health(Int): 100
+var Speed(Int): 5
+var ParentOnly(Str): ParentValue
+
+:BaseIdle:
+---Init:
+Set(Health, 100)
+Set(Speed, 5)
+---Action:
+# Parent idle action
+CheckInput()
+
+:BaseAttack:
+---Init:
+Set(Damage, 10)
+---Action:
+DoDamage()
