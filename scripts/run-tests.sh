@@ -33,11 +33,19 @@ fi
 echo "✓ Found Godot at: ${GODOT_BIN}"
 echo ""
 
-# Build the Rust library
+# Build the Rust library (debug build for --script mode)
 echo "Building castagne-rs Rust library..."
-cargo build --release
+cargo build
 echo "✓ Build complete"
 echo ""
+
+# Import project to ensure extension loads
+if [ ! -d ".godot" ]; then
+    echo "Importing project..."
+    ${GODOT_BIN} --headless --editor --quit --path . > /dev/null 2>&1 || true
+    echo "✓ Project imported"
+    echo ""
+fi
 
 # Check if test script exists
 if [ ! -f "${TEST_SCRIPT}" ]; then
