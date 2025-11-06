@@ -4,7 +4,7 @@
 set -e
 
 # Configuration
-GODOT_VERSION="${GODOT_VERSION:-4.2.2}"
+GODOT_VERSION="${GODOT_VERSION:-4.5.1}"
 GODOT_DIR=".godot-bin"
 GODOT_BIN="${GODOT_DIR}/godot"
 

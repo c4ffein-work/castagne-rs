@@ -12,7 +12,7 @@ This guide explains how to run comparison tests between Castagne (GDScript) and 
 
 This will download and install Godot headless in `.godot-bin/`. The script will:
 - Detect your OS and architecture
-- Download the appropriate Godot version (default: 4.2.2)
+- Download the appropriate Godot version (default: 4.5.1)
 - Extract and configure it for CLI usage
 - Check for existing system-wide Godot installations
 
@@ -109,7 +109,7 @@ To use a different Godot version:
 GODOT_VERSION=4.3.0 ./scripts/setup-godot.sh
 ```
 
-Supported versions: Godot 4.2+
+Supported versions: Godot 4.2+ (default: 4.5.1)
 
 ## Troubleshooting
 
@@ -122,8 +122,8 @@ If the download fails due to network restrictions:
    # Download from https://godotengine.org/download/linux/
    # Extract to .godot-bin/godot
    mkdir -p .godot-bin
-   unzip Godot_v4.2.2-stable_linux.x86_64.zip -d .godot-bin
-   mv .godot-bin/Godot_v4.2.2-stable_linux.x86_64 .godot-bin/godot
+   unzip Godot_v4.5.1-stable_linux.x86_64.zip -d .godot-bin
+   mv .godot-bin/Godot_v4.5.1-stable_linux.x86_64 .godot-bin/godot
    chmod +x .godot-bin/godot
    ```
 
