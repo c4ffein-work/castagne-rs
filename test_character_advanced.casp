@@ -1,0 +1,51 @@
+# Advanced Test Character with more complex features
+
+:Character:
+Name: Advanced Test Character
+Author: Parser Test Suite
+Description: A more complex test character
+Version: 1.0
+
+:Variables:
+var Health(Int): 100
+var MaxHealth(Int): 150
+var MoveSpeed(Int): 5
+var Position(Vec2): 0, 0
+var Facing(Int): 1
+var IsGrounded(Bool): true
+def GRAVITY: 10
+def JUMP_FORCE: 15
+
+:Idle:
+---Init:
+Set(Health, MaxHealth)
+Set(Facing, 1)
+Set(Position, 0, 0)
+---Action:
+# Check for movement input
+CheckInput()
+# Apply gravity if not grounded
+If(!IsGrounded)
+Add(Position, 0, GRAVITY)
+EndIf
+
+:Walk:
+---Init:
+Set(Animation, "walk")
+---Action:
+# Move in facing direction
+Mul(MoveSpeed, Facing)
+Add(Position, MoveSpeed, 0)
+
+:Jump:
+---Init:
+Set(Animation, "jump")
+Set(IsGrounded, false)
+---Action:
+# Apply jump force
+Add(Position, 0, -JUMP_FORCE)
+# Check for landing
+If(Position.y >= 0)
+Set(IsGrounded, true)
+ChangeState(Idle)
+EndIf

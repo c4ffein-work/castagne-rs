@@ -507,15 +507,8 @@ impl CastagneParser {
                 let instruction = line[..open_paren].trim().to_string();
                 let args_str = &line[open_paren + 1..close_paren];
 
-                // Parse arguments (simple split by comma for now)
-                let args: Vec<String> = if args_str.trim().is_empty() {
-                    Vec::new()
-                } else {
-                    args_str
-                        .split(',')
-                        .map(|s| s.trim().to_string())
-                        .collect()
-                };
+                // Parse arguments with better handling of nested calls and strings
+                let args = self.parse_arguments(args_str);
 
                 return Some(ParsedAction {
                     instruction,
@@ -533,6 +526,59 @@ impl CastagneParser {
         }
 
         None
+    }
+
+    fn parse_arguments(&self, args_str: &str) -> Vec<String> {
+        // Split arguments by comma, but respect nested parentheses and quotes
+        let mut args = Vec::new();
+        let mut current_arg = String::new();
+        let mut paren_depth = 0;
+        let mut in_string = false;
+        let mut escape_next = false;
+
+        for ch in args_str.chars() {
+            if escape_next {
+                current_arg.push(ch);
+                escape_next = false;
+                continue;
+            }
+
+            match ch {
+                '\\' => {
+                    escape_next = true;
+                    current_arg.push(ch);
+                }
+                '"' => {
+                    in_string = !in_string;
+                    current_arg.push(ch);
+                }
+                '(' if !in_string => {
+                    paren_depth += 1;
+                    current_arg.push(ch);
+                }
+                ')' if !in_string => {
+                    paren_depth -= 1;
+                    current_arg.push(ch);
+                }
+                ',' if !in_string && paren_depth == 0 => {
+                    // Found a separator at the top level
+                    if !current_arg.trim().is_empty() {
+                        args.push(current_arg.trim().to_string());
+                    }
+                    current_arg.clear();
+                }
+                _ => {
+                    current_arg.push(ch);
+                }
+            }
+        }
+
+        // Add the last argument
+        if !current_arg.trim().is_empty() {
+            args.push(current_arg.trim().to_string());
+        }
+
+        args
     }
 
     // -------------------------------------------------------------------------
@@ -736,6 +782,57 @@ mod tests {
         let action3 = parser.parse_action_line("SimpleInstruction", 1).unwrap();
         assert_eq!(action3.instruction, "SimpleInstruction");
         assert_eq!(action3.args.len(), 0);
+    }
+
+    #[test]
+    fn test_parse_arguments() {
+        let parser = CastagneParser::new();
+
+        // Simple arguments
+        let args = parser.parse_arguments("a, b, c");
+        assert_eq!(args.len(), 3);
+        assert_eq!(args[0], "a");
+        assert_eq!(args[1], "b");
+        assert_eq!(args[2], "c");
+
+        // Nested function calls
+        let args2 = parser.parse_arguments("Health, Add(10, 5), Position");
+        assert_eq!(args2.len(), 3);
+        assert_eq!(args2[0], "Health");
+        assert_eq!(args2[1], "Add(10, 5)");
+        assert_eq!(args2[2], "Position");
+
+        // String arguments with commas
+        let args3 = parser.parse_arguments(r#""Hello, World", Test"#);
+        assert_eq!(args3.len(), 2);
+        assert_eq!(args3[0], r#""Hello, World""#);
+        assert_eq!(args3[1], "Test");
+
+        // Complex nested calls - note this is just the arguments part, not the full call
+        let args4 = parser.parse_arguments("Greater(Health, 50), Set(Color, Red), Set(Color, Blue)");
+        assert_eq!(args4.len(), 3);
+        assert_eq!(args4[0], "Greater(Health, 50)");
+        assert_eq!(args4[1], "Set(Color, Red)");
+        assert_eq!(args4[2], "Set(Color, Blue)");
+    }
+
+    #[test]
+    fn test_parse_complex_actions() {
+        let parser = CastagneParser::new();
+
+        // Nested function call as argument
+        let action = parser.parse_action_line("Set(Health, Add(100, 50))", 1).unwrap();
+        assert_eq!(action.instruction, "Set");
+        assert_eq!(action.args.len(), 2);
+        assert_eq!(action.args[0], "Health");
+        assert_eq!(action.args[1], "Add(100, 50)");
+
+        // String with special characters
+        let action2 = parser.parse_action_line(r#"Log("Player health: ", Health)"#, 1).unwrap();
+        assert_eq!(action2.instruction, "Log");
+        assert_eq!(action2.args.len(), 2);
+        assert_eq!(action2.args[0], r#""Player health: ""#);
+        assert_eq!(action2.args[1], "Health");
     }
 
     #[test]
