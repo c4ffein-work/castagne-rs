@@ -1,0 +1,13 @@
+[configuration]
+
+entry_symbol = "gdext_rust_init"
+compatibility_minimum = 4.2
+
+[libraries]
+
+linux.debug.x86_64 = "res://target/debug/libcastagne_rs.so"
+linux.release.x86_64 = "res://target/release/libcastagne_rs.so"
+macos.debug = "res://target/debug/libcastagne_rs.dylib"
+macos.release = "res://target/release/libcastagne_rs.dylib"
+windows.debug.x86_64 = "res://target/debug/castagne_rs.dll"
+windows.release.x86_64 = "res://target/release/castagne_rs.dll"
