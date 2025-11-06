@@ -1,0 +1,22 @@
+# Child Character that Inherits from Parent
+
+:Character:
+Name: Child Character
+Author: Parser Test
+Description: Child character that extends parent
+Skeleton: test_parent.casp
+
+:Config:
+ChildSpeed: 8
+BaseSpeed: 10
+
+:Variables:
+var Health(Int): 150
+var ChildOnly(Str): ChildValue
+
+:Idle:
+---Init:
+Set(Health, 150)
+---Action:
+# Child overrides parent
+DoChildAction()
