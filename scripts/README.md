@@ -14,7 +14,7 @@ Downloads and installs Godot headless for CLI testing.
 ```
 
 **Options:**
-- `GODOT_VERSION=4.3.0 ./scripts/setup-godot.sh` - Use a specific version
+- `GODOT_VERSION=4.3.0 ./scripts/setup-godot.sh` - Use a specific version (default: 4.5.1)
 
 **Features:**
 - Auto-detects OS and architecture

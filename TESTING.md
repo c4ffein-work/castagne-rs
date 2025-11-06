@@ -317,14 +317,14 @@ jobs:
 
       - name: Download Godot
         run: |
-          wget https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
-          unzip Godot_v4.3-stable_linux.x86_64.zip
-          chmod +x Godot_v4.3-stable_linux.x86_64
+          wget https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip
+          unzip Godot_v4.5.1-stable_linux.x86_64.zip
+          chmod +x Godot_v4.5.1-stable_linux.x86_64
 
       - name: Run GDScript tests
         run: |
           cd castagne
-          ../Godot_v4.3-stable_linux.x86_64 --headless -s addons/gut/gut_cmdln.gd -gtest=tests/ -gexit
+          ../Godot_v4.5.1-stable_linux.x86_64 --headless -s addons/gut/gut_cmdln.gd -gtest=tests/ -gexit
 ```
 
 ---
