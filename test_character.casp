@@ -1,0 +1,17 @@
+# Test Character File for Parser Testing
+
+:Character:
+Name: Test Character
+Author: Parser Test
+Description: A simple test character for parser development
+
+:Variables:
+var Health(Int): 100
+var MoveSpeed(Int): 5
+def MAX_HEALTH: 100
+
+:Idle:
+---Init:
+Set(Health, MAX_HEALTH)
+---Action:
+# Do nothing in idle state
