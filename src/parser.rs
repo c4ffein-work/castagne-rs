@@ -177,6 +177,42 @@ impl CastagneParser {
         }
     }
 
+    /// Strip inline comments from a line (everything after # that's not in a string)
+    fn strip_inline_comment(&self, line: &str) -> String {
+        let mut result = String::new();
+        let mut in_string = false;
+        let mut escape_next = false;
+        let mut chars = line.chars().peekable();
+
+        while let Some(ch) = chars.next() {
+            if escape_next {
+                result.push(ch);
+                escape_next = false;
+                continue;
+            }
+
+            match ch {
+                '\\' if in_string => {
+                    escape_next = true;
+                    result.push(ch);
+                }
+                '"' => {
+                    in_string = !in_string;
+                    result.push(ch);
+                }
+                '#' if !in_string => {
+                    // Found comment marker outside string, stop here
+                    break;
+                }
+                _ => {
+                    result.push(ch);
+                }
+            }
+        }
+
+        result
+    }
+
     /// Get only character metadata (lightweight parse)
     pub fn get_character_metadata(&mut self, file_path: &str) -> Option<CharacterMetadata> {
         self.start_parsing(file_path);
@@ -376,18 +412,23 @@ impl CastagneParser {
             }
 
             if in_character_block && !line.is_empty() && !line.starts_with('#') {
-                // Parse metadata fields
-                if let Some(colon_pos) = line.find(':') {
-                    let key = line[..colon_pos].trim();
-                    let value = line[colon_pos + 1..].trim().to_string();
+                // Strip inline comments and parse metadata fields
+                let cleaned_line = self.strip_inline_comment(line);
+                let cleaned = cleaned_line.trim();
 
-                    match key {
-                        "Name" => self.metadata.name = value,
-                        "Author" => self.metadata.author = value,
-                        "Description" => self.metadata.description = value,
-                        "Skeleton" => self.metadata.skeleton = Some(value),
-                        _ => {
-                            self.metadata.other_fields.insert(key.to_string(), value);
+                if !cleaned.is_empty() {
+                    if let Some(colon_pos) = cleaned.find(':') {
+                        let key = cleaned[..colon_pos].trim();
+                        let value = cleaned[colon_pos + 1..].trim().to_string();
+
+                        match key {
+                            "Name" => self.metadata.name = value,
+                            "Author" => self.metadata.author = value,
+                            "Description" => self.metadata.description = value,
+                            "Skeleton" => self.metadata.skeleton = Some(value),
+                            _ => {
+                                self.metadata.other_fields.insert(key.to_string(), value);
+                            }
                         }
                     }
                 }
@@ -410,15 +451,23 @@ impl CastagneParser {
             // Check if this is a specblock definition (starts with ':' and ends with ':')
             // but exclude known special blocks
             if line.starts_with(':') && line.ends_with(':') {
-                let block_name = line[1..line.len() - 1].to_string();
+                // Extract block name (including any parentheses for states)
+                let full_block_name = line[1..line.len() - 1].to_string();
+
+                // Extract just the name part (before any parentheses) for comparison
+                let block_name = if let Some(paren_pos) = full_block_name.find('(') {
+                    full_block_name[..paren_pos].trim()
+                } else {
+                    full_block_name.as_str()
+                };
 
                 // Check if this is a specblock (not Character, Variables, or a state)
                 // Specblocks typically have specific patterns, but for now we'll identify them
                 // by checking if the content is key-value pairs (not phase markers or actions)
                 if block_name != "Character" && block_name != "Variables" {
                     // Peek ahead to see if this looks like a specblock
-                    if self.is_specblock(&block_name, i + 1) {
-                        self.parse_specblock(block_name, &mut i);
+                    if self.is_specblock(block_name, i + 1) {
+                        self.parse_specblock(block_name.to_string(), &mut i);
                     }
                 }
             }
@@ -486,12 +535,17 @@ impl CastagneParser {
                 break;
             }
 
-            // Parse key-value pairs
+            // Parse key-value pairs (strip inline comments first)
             if !line.is_empty() && !line.starts_with('#') {
-                if let Some(colon_pos) = line.find(':') {
-                    let key = line[..colon_pos].trim().to_string();
-                    let value = line[colon_pos + 1..].trim().to_string();
-                    specblock_data.insert(key, value);
+                let cleaned_line = self.strip_inline_comment(line);
+                let cleaned = cleaned_line.trim();
+
+                if !cleaned.is_empty() {
+                    if let Some(colon_pos) = cleaned.find(':') {
+                        let key = cleaned[..colon_pos].trim().to_string();
+                        let value = cleaned[colon_pos + 1..].trim().to_string();
+                        specblock_data.insert(key, value);
+                    }
                 }
             }
 
@@ -532,7 +586,12 @@ impl CastagneParser {
             }
 
             if in_variables_block && !line.is_empty() && !line.starts_with('#') {
-                self.parse_variable_line(&line);
+                let cleaned_line = self.strip_inline_comment(&line);
+                let cleaned = cleaned_line.trim();
+
+                if !cleaned.is_empty() {
+                    self.parse_variable_line(cleaned);
+                }
             }
 
             i += 1;
@@ -633,11 +692,18 @@ impl CastagneParser {
 
             // Check if this is a state definition (starts and ends with ':' but not a known special block)
             if line.starts_with(':') && line.ends_with(':') {
-                let state_name = line[1..line.len() - 1].to_string();
+                let full_state_name = line[1..line.len() - 1].to_string();
 
-                // Skip special blocks we've already handled
-                if state_name != "Character" && state_name != "Variables" {
-                    self.parse_state(state_name, &mut i);
+                // Extract just the name part (before any parentheses) for comparison
+                let state_name = if let Some(paren_pos) = full_state_name.find('(') {
+                    full_state_name[..paren_pos].trim()
+                } else {
+                    full_state_name.as_str()
+                };
+
+                // Skip special blocks we've already handled, and skip specblocks
+                if state_name != "Character" && state_name != "Variables" && !self.specblocks.contains_key(state_name) {
+                    self.parse_state(full_state_name, &mut i);
                 }
             }
 
@@ -647,13 +713,65 @@ impl CastagneParser {
         self.log(&format!("Parsed {} states", self.states.len()));
     }
 
+    fn parse_state_header(&self, state_header: &str) -> (String, StateType, Option<String>) {
+        // Parse state header to extract name, type, and parent
+        // Formats:
+        // - StateName -> (StateName, Normal, None)
+        // - StateName(Helper) -> (StateName, Helper, None)
+        // - StateName(Idle) -> (StateName, Normal, Some(Idle))
+        // - StateName(Helper, Idle) -> (StateName, Helper, Some(Idle))
+
+        if let Some(paren_start) = state_header.find('(') {
+            if let Some(paren_end) = state_header.rfind(')') {
+                let name = state_header[..paren_start].trim().to_string();
+                let params = state_header[paren_start + 1..paren_end].trim();
+
+                // Check if params contains a comma (type and parent)
+                if let Some(comma_pos) = params.find(',') {
+                    let type_str = params[..comma_pos].trim();
+                    let parent_str = params[comma_pos + 1..].trim().to_string();
+                    let state_type = self.parse_state_type(type_str);
+                    return (name, state_type, Some(parent_str));
+                } else {
+                    // Single parameter - could be type or parent
+                    // Types are: Helper, BaseState, Special, Specblock
+                    let state_type = self.parse_state_type(params);
+                    if state_type != StateType::Normal {
+                        // It's a type
+                        return (name, state_type, None);
+                    } else {
+                        // It's a parent state
+                        return (name, StateType::Normal, Some(params.to_string()));
+                    }
+                }
+            }
+        }
+
+        // No parentheses, just a simple state name
+        (state_header.to_string(), StateType::Normal, None)
+    }
+
+    fn parse_state_type(&self, type_str: &str) -> StateType {
+        match type_str {
+            "Helper" => StateType::Helper,
+            "BaseState" => StateType::BaseState,
+            "Special" => StateType::Special,
+            "Specblock" => StateType::Specblock,
+            _ => StateType::Normal,
+        }
+    }
+
     fn parse_state(&mut self, state_name: String, i: &mut usize) {
         self.log(&format!("Parsing state: {}", state_name));
 
+        // Parse state name with optional type and parent
+        // Format: :StateName: or :StateName(Type): or :StateName(Parent): or :StateName(Type, Parent):
+        let (actual_name, state_type, parent) = self.parse_state_header(&state_name);
+
         let mut state = ParsedState {
-            name: state_name.clone(),
-            state_type: StateType::Normal,
-            parent: None,
+            name: actual_name.clone(),
+            state_type,
+            parent,
             actions: HashMap::new(),
         };
 
@@ -676,14 +794,19 @@ impl CastagneParser {
                     state.actions.entry(phase_name).or_insert_with(Vec::new);
                 }
             }
-            // Parse action line
+            // Parse action line (strip inline comments first)
             else if !line.is_empty() && !line.starts_with('#') {
-                if let Some(ref phase) = current_phase {
-                    if let Some(action) = self.parse_action_line(line, *i) {
-                        state.actions
-                            .entry(phase.clone())
-                            .or_insert_with(Vec::new)
-                            .push(action);
+                let cleaned_line = self.strip_inline_comment(line);
+                let cleaned = cleaned_line.trim();
+
+                if !cleaned.is_empty() {
+                    if let Some(ref phase) = current_phase {
+                        if let Some(action) = self.parse_action_line(cleaned, *i) {
+                            state.actions
+                                .entry(phase.clone())
+                                .or_insert_with(Vec::new)
+                                .push(action);
+                        }
                     }
                 }
             }
@@ -691,7 +814,7 @@ impl CastagneParser {
             *i += 1;
         }
 
-        self.states.insert(state_name, state);
+        self.states.insert(actual_name, state);
         *i -= 1; // Back up one so the outer loop doesn't skip a line
     }
 
@@ -1608,5 +1731,370 @@ mod tests {
             assert!(light_punch.actions.contains_key("Action"));
             assert!(light_punch.actions.contains_key("Reaction"));
         }
+    }
+
+    #[test]
+    fn test_parse_state_header_simple() {
+        let parser = CastagneParser::new();
+
+        // Simple state name
+        let (name, state_type, parent) = parser.parse_state_header("Idle");
+        assert_eq!(name, "Idle");
+        assert_eq!(state_type, StateType::Normal);
+        assert_eq!(parent, None);
+    }
+
+    #[test]
+    fn test_parse_state_directly_simple() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            ":Idle:".to_string(),
+            "---Init:".to_string(),
+            "Set(x, 1)".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = vec![1, 2, 3, 4];
+        parser.file_paths = vec!["test.casp".to_string()];
+
+        parser.parse_states(0);
+
+        // This should work since we tested it before
+        assert_eq!(parser.states.len(), 1);
+        assert!(parser.states.contains_key("Idle"));
+    }
+
+    #[test]
+    fn test_parse_state_header_with_type() {
+        let parser = CastagneParser::new();
+
+        // State with Helper type
+        let (name, state_type, parent) = parser.parse_state_header("GroundBounce(Helper)");
+        assert_eq!(name, "GroundBounce");
+        assert_eq!(state_type, StateType::Helper);
+        assert_eq!(parent, None);
+
+        // State with BaseState type
+        let (name2, state_type2, parent2) = parser.parse_state_header("CommonActions(BaseState)");
+        assert_eq!(name2, "CommonActions");
+        assert_eq!(state_type2, StateType::BaseState);
+        assert_eq!(parent2, None);
+
+        // State with Special type
+        let (name3, state_type3, parent3) = parser.parse_state_header("SuperMove(Special)");
+        assert_eq!(name3, "SuperMove");
+        assert_eq!(state_type3, StateType::Special);
+        assert_eq!(parent3, None);
+
+        // State with Specblock type
+        let (name4, state_type4, parent4) = parser.parse_state_header("ConfigBlock(Specblock)");
+        assert_eq!(name4, "ConfigBlock");
+        assert_eq!(state_type4, StateType::Specblock);
+        assert_eq!(parent4, None);
+    }
+
+    #[test]
+    fn test_parse_state_header_with_parent() {
+        let parser = CastagneParser::new();
+
+        // State with parent (no type specified)
+        let (name, state_type, parent) = parser.parse_state_header("Walk(Idle)");
+        assert_eq!(name, "Walk");
+        assert_eq!(state_type, StateType::Normal);
+        assert_eq!(parent, Some("Idle".to_string()));
+
+        // State with different parent
+        let (name2, state_type2, parent2) = parser.parse_state_header("Run(Walk)");
+        assert_eq!(name2, "Run");
+        assert_eq!(state_type2, StateType::Normal);
+        assert_eq!(parent2, Some("Walk".to_string()));
+    }
+
+    #[test]
+    fn test_parse_state_header_with_type_and_parent() {
+        let parser = CastagneParser::new();
+
+        // State with both type and parent
+        let (name, state_type, parent) = parser.parse_state_header("Projectile(Helper, Idle)");
+        assert_eq!(name, "Projectile");
+        assert_eq!(state_type, StateType::Helper);
+        assert_eq!(parent, Some("Idle".to_string()));
+
+        // Another combination
+        let (name2, state_type2, parent2) = parser.parse_state_header("CustomMove(Special, BaseAttack)");
+        assert_eq!(name2, "CustomMove");
+        assert_eq!(state_type2, StateType::Special);
+        assert_eq!(parent2, Some("BaseAttack".to_string()));
+    }
+
+    #[test]
+    fn test_parse_state_with_attributes() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            ":GroundBounce(Helper):".to_string(),
+            "---Init:".to_string(),
+            "Set(Velocity, 0, 10)".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = vec![1, 2, 3, 4];
+        parser.file_paths = vec!["test.casp".to_string()];
+
+        // Don't parse specblocks first - just parse states directly
+        parser.parse_states(0);
+
+        assert_eq!(parser.states.len(), 1, "Expected 1 state, found {}: {:?}", parser.states.len(), parser.states.keys().collect::<Vec<_>>());
+        let state = parser.states.get("GroundBounce").unwrap();
+        assert_eq!(state.name, "GroundBounce");
+        assert_eq!(state.state_type, StateType::Helper);
+        assert_eq!(state.parent, None);
+    }
+
+    #[test]
+    fn test_parse_state_with_parent_state() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            ":Walk(Idle):".to_string(),
+            "---Init:".to_string(),
+            "Set(Speed, 5)".to_string(),
+            "---Action:".to_string(),
+            "Move()".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = vec![1, 2, 3, 4, 5, 6];
+        parser.file_paths = vec!["test.casp".to_string()];
+
+        parser.parse_states(0);
+
+        assert_eq!(parser.states.len(), 1);
+        let state = parser.states.get("Walk").unwrap();
+        assert_eq!(state.name, "Walk");
+        assert_eq!(state.state_type, StateType::Normal);
+        assert_eq!(state.parent, Some("Idle".to_string()));
+        assert!(state.actions.contains_key("Init"));
+        assert!(state.actions.contains_key("Action"));
+    }
+
+    #[test]
+    fn test_parse_state_with_type_and_parent_combined() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            ":Fireball(Helper, Idle):".to_string(),
+            "---Init:".to_string(),
+            "Set(Damage, 10)".to_string(),
+            "Set(Speed, 20)".to_string(),
+            "---Action:".to_string(),
+            "MoveForward()".to_string(),
+            "CheckCollision()".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["test.casp".to_string()];
+
+        parser.parse_states(0);
+
+        assert_eq!(parser.states.len(), 1);
+        let state = parser.states.get("Fireball").unwrap();
+        assert_eq!(state.name, "Fireball");
+        assert_eq!(state.state_type, StateType::Helper);
+        assert_eq!(state.parent, Some("Idle".to_string()));
+
+        // Verify actions were parsed correctly
+        let init_actions = state.actions.get("Init").unwrap();
+        assert_eq!(init_actions.len(), 2);
+        assert_eq!(init_actions[0].instruction, "Set");
+        assert_eq!(init_actions[0].args[0], "Damage");
+        assert_eq!(init_actions[0].args[1], "10");
+
+        let action_actions = state.actions.get("Action").unwrap();
+        assert_eq!(action_actions.len(), 2);
+        assert_eq!(action_actions[0].instruction, "MoveForward");
+        assert_eq!(action_actions[1].instruction, "CheckCollision");
+    }
+
+    #[test]
+    fn test_multiple_states_with_different_types() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            ":Idle:".to_string(),
+            "---Init:".to_string(),
+            "Set(State, 0)".to_string(),
+            "".to_string(),
+            ":Walk(Idle):".to_string(),
+            "---Init:".to_string(),
+            "Set(State, 1)".to_string(),
+            "".to_string(),
+            ":Attack(Helper):".to_string(),
+            "---Init:".to_string(),
+            "Set(State, 2)".to_string(),
+            "".to_string(),
+            ":SuperMove(Special, Attack):".to_string(),
+            "---Init:".to_string(),
+            "Set(State, 3)".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["test.casp".to_string()];
+
+        parser.parse_states(0);
+
+        assert_eq!(parser.states.len(), 4);
+
+        // Check Idle (simple state)
+        let idle = parser.states.get("Idle").unwrap();
+        assert_eq!(idle.state_type, StateType::Normal);
+        assert_eq!(idle.parent, None);
+
+        // Check Walk (has parent)
+        let walk = parser.states.get("Walk").unwrap();
+        assert_eq!(walk.state_type, StateType::Normal);
+        assert_eq!(walk.parent, Some("Idle".to_string()));
+
+        // Check Attack (has type)
+        let attack = parser.states.get("Attack").unwrap();
+        assert_eq!(attack.state_type, StateType::Helper);
+        assert_eq!(attack.parent, None);
+
+        // Check SuperMove (has both type and parent)
+        let super_move = parser.states.get("SuperMove").unwrap();
+        assert_eq!(super_move.state_type, StateType::Special);
+        assert_eq!(super_move.parent, Some("Attack".to_string()));
+    }
+
+    #[test]
+    fn test_strip_inline_comment() {
+        let parser = CastagneParser::new();
+
+        // Simple comment
+        assert_eq!(parser.strip_inline_comment("Set(x, 5) # This sets x"), "Set(x, 5) ");
+
+        // Comment with no space
+        assert_eq!(parser.strip_inline_comment("Set(x, 5)# comment"), "Set(x, 5)");
+
+        // Comment in string should be preserved
+        assert_eq!(parser.strip_inline_comment(r#"Set(msg, "Hello # World")"#), r#"Set(msg, "Hello # World")"#);
+
+        // Empty line with just comment
+        assert_eq!(parser.strip_inline_comment("# Just a comment"), "");
+
+        // No comment
+        assert_eq!(parser.strip_inline_comment("Set(x, 5)"), "Set(x, 5)");
+
+        // Multiple # in string
+        assert_eq!(parser.strip_inline_comment("Log(\"Test#123\") # comment"), "Log(\"Test#123\") ");
+
+        // Escaped quote in string
+        assert_eq!(parser.strip_inline_comment(r#"Set(x, "He said \"Hi\"") # comment"#), r#"Set(x, "He said \"Hi\"") "#);
+    }
+
+    #[test]
+    fn test_parse_with_inline_comments() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            ":Character:".to_string(),
+            "Name: Test Fighter # Main character".to_string(),
+            "Author: Test # Test author".to_string(),
+            "".to_string(),
+            ":Variables:".to_string(),
+            "var Health(Int): 100 # Player health".to_string(),
+            "def MAX_HP: 150 # Maximum health".to_string(),
+            "".to_string(),
+            ":Idle:".to_string(),
+            "---Init: # Initialization phase".to_string(),
+            "Set(Health, 100) # Set initial health".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["test.casp".to_string()];
+
+        parser.parse_full_file();
+        let result = parser.end_parsing();
+
+        assert!(result.is_some());
+        let character = result.unwrap();
+
+        // Verify metadata was parsed correctly (without comments)
+        assert_eq!(character.metadata.name, "Test Fighter");
+        assert_eq!(character.metadata.author, "Test");
+
+        // Verify variables were parsed correctly (without comments)
+        assert!(character.variables.contains_key("Health"));
+        let health = character.variables.get("Health").unwrap();
+        assert_eq!(health.value, "100");
+
+        assert!(character.variables.contains_key("MAX_HP"));
+        let max_hp = character.variables.get("MAX_HP").unwrap();
+        assert_eq!(max_hp.value, "150");
+
+        // Verify states were parsed correctly (without comments)
+        assert!(character.states.contains_key("Idle"));
+        let idle = character.states.get("Idle").unwrap();
+        let init_actions = idle.actions.get("Init").unwrap();
+        assert_eq!(init_actions.len(), 1);
+        assert_eq!(init_actions[0].instruction, "Set");
+        assert_eq!(init_actions[0].args[0], "Health");
+        assert_eq!(init_actions[0].args[1], "100");
+    }
+
+    #[test]
+    fn test_inline_comment_with_strings() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            ":Idle:".to_string(),
+            "---Init:".to_string(),
+            r#"Log("Test # not a comment") # This is a comment"#.to_string(),
+            r#"Set(Message, "Hello, World!") # Set greeting"#.to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["test.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let idle = parser.states.get("Idle").unwrap();
+        let init_actions = idle.actions.get("Init").unwrap();
+
+        assert_eq!(init_actions.len(), 2);
+
+        // First action: Log with # in string
+        assert_eq!(init_actions[0].instruction, "Log");
+        assert_eq!(init_actions[0].args.len(), 1);
+        assert_eq!(init_actions[0].args[0], r#""Test # not a comment""#);
+
+        // Second action: Set with comment after
+        assert_eq!(init_actions[1].instruction, "Set");
+        assert_eq!(init_actions[1].args.len(), 2);
+        assert_eq!(init_actions[1].args[0], "Message");
+        assert_eq!(init_actions[1].args[1], r#""Hello, World!""#);
+    }
+
+    #[test]
+    fn test_specblock_with_inline_comments() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            ":Config:".to_string(),
+            "MaxSpeed: 100 # Maximum movement speed".to_string(),
+            "JumpHeight: 50 # Jump force".to_string(),
+            "Gravity: 10 # Gravity value".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["test.casp".to_string()];
+
+        parser.parse_specblocks(0);
+
+        assert!(parser.specblocks.contains_key("Config"));
+        let config = parser.specblocks.get("Config").unwrap();
+
+        // Values should be parsed without comments
+        assert_eq!(config.get("MaxSpeed"), Some(&"100".to_string()));
+        assert_eq!(config.get("JumpHeight"), Some(&"50".to_string()));
+        assert_eq!(config.get("Gravity"), Some(&"10".to_string()));
     }
 }
