@@ -1,0 +1,19 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Castagne-RS Test Runner"
+config/description="Test runner for castagne-rs comparison tests"
+config/features=PackedStringArray("4.2")
+
+[editor]
+
+export/convert_text_resources_to_binary=false

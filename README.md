@@ -58,6 +58,24 @@ cargo build
 cargo build --release
 ```
 
+## Testing
+
+Run comparison tests to verify parity between Rust and GDScript implementations:
+
+```bash
+# One-time setup (downloads Godot)
+./scripts/setup-godot.sh
+
+# Run comparison tests
+./scripts/run-tests.sh
+```
+
+Tests compare behavior between:
+- Original Castagne (GDScript)
+- castagne-rs (Rust port)
+
+See [TESTING_CLI.md](TESTING_CLI.md) for detailed testing guide.
+
 ## Development
 
 The Rust port aims to maintain similar architecture to the original while leveraging Rust's safety and performance characteristics. Key differences:

@@ -6,6 +6,7 @@ Cargo.lock
 .import/
 *.import
 .godot/
+.godot-bin/
 export_presets.cfg
 
 # OS
