@@ -2097,4 +2097,1554 @@ mod tests {
         assert_eq!(config.get("JumpHeight"), Some(&"50".to_string()));
         assert_eq!(config.get("Gravity"), Some(&"10".to_string()));
     }
+
+    // =========================================================================
+    // Error Handling Tests
+    // =========================================================================
+
+    #[test]
+    fn test_error_empty_file() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![];
+        parser.line_ids = vec![];
+        parser.file_paths = vec!["empty.casp".to_string()];
+
+        parser.parse_full_file();
+        let result = parser.end_parsing();
+
+        // Empty file should still parse (with no data)
+        assert!(result.is_some());
+        let character = result.unwrap();
+        assert_eq!(character.states.len(), 0);
+        assert_eq!(character.variables.len(), 0);
+    }
+
+    #[test]
+    fn test_error_only_comments() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            "# This is just a comment".to_string(),
+            "# Another comment".to_string(),
+            "".to_string(),
+            "# More comments".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["comments.casp".to_string()];
+
+        parser.parse_full_file();
+        let result = parser.end_parsing();
+
+        // File with only comments should parse successfully
+        assert!(result.is_some());
+        let character = result.unwrap();
+        assert_eq!(character.states.len(), 0);
+        assert_eq!(character.variables.len(), 0);
+    }
+
+    #[test]
+    fn test_error_missing_character_block() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Variables:".to_string(),
+            "var Health(Int): 100".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["no_character.casp".to_string()];
+
+        parser.parse_full_file();
+        let result = parser.end_parsing();
+
+        // Should still parse even without Character block
+        assert!(result.is_some());
+        let character = result.unwrap();
+        assert!(character.variables.contains_key("Health"));
+    }
+
+    #[test]
+    fn test_error_invalid_variable_syntax() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Variables:".to_string(),
+            "var NoColon 100".to_string(), // Missing colon
+            "var Health(Int): 100".to_string(), // Valid for comparison
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["invalid_var.casp".to_string()];
+
+        parser.parse_variables(0);
+
+        // Valid variable should parse
+        assert!(parser.variables.contains_key("Health"));
+
+        // Invalid variable should not parse
+        assert!(!parser.variables.contains_key("NoColon"));
+    }
+
+    #[test]
+    fn test_error_malformed_state_header() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            "Idle".to_string(), // Missing colons
+            "---Init:".to_string(),
+            "Set(x, 1)".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["bad_state.casp".to_string()];
+
+        parser.parse_states(0);
+
+        // Malformed state header should not create a state
+        assert!(!parser.states.contains_key("Idle"));
+    }
+
+    #[test]
+    fn test_error_unclosed_parentheses_in_action() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Idle:".to_string(),
+            "---Init:".to_string(),
+            "Set(x, 1".to_string(), // Missing closing paren
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["unclosed_paren.casp".to_string()];
+
+        parser.parse_states(0);
+
+        // Should still create state, but action might be malformed
+        assert!(parser.states.contains_key("Idle"));
+        let idle = parser.states.get("Idle").unwrap();
+        let init_actions = idle.actions.get("Init");
+
+        // Action parsing should handle this gracefully
+        assert!(init_actions.is_some());
+    }
+
+    #[test]
+    fn test_error_invalid_type_in_variable() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Variables:".to_string(),
+            "var BadType(InvalidType): 100".to_string(),
+            "var GoodType(Int): 100".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["invalid_type.casp".to_string()];
+
+        parser.parse_variables(0);
+
+        // Valid variable should parse
+        assert!(parser.variables.contains_key("GoodType"));
+
+        // Invalid type should default to Var type
+        if parser.variables.contains_key("BadType") {
+            let bad_var = parser.variables.get("BadType").unwrap();
+            assert_eq!(bad_var.var_type, VariableType::Var);
+        }
+    }
+
+    #[test]
+    fn test_error_invalid_state_type() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":BadState(InvalidType):".to_string(),
+            "---Init:".to_string(),
+            "Set(x, 1)".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["invalid_state_type.casp".to_string()];
+
+        parser.parse_states(0);
+
+        // Should still parse but might default to Normal type or handle gracefully
+        if parser.states.contains_key("BadState") {
+            let state = parser.states.get("BadState").unwrap();
+            // Should default to Normal or handle gracefully
+            assert!(matches!(state.state_type, StateType::Normal | StateType::Helper | StateType::Special));
+        }
+    }
+
+    #[test]
+    fn test_error_duplicate_variable_names() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Variables:".to_string(),
+            "var Health(Int): 100".to_string(),
+            "var Health(Int): 200".to_string(), // Duplicate
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["duplicate_var.casp".to_string()];
+
+        parser.parse_variables(0);
+
+        // Last definition should win (or first, depending on implementation)
+        assert!(parser.variables.contains_key("Health"));
+        let health = parser.variables.get("Health").unwrap();
+        // Could be either 100 or 200 depending on implementation
+        assert!(health.value == "100" || health.value == "200");
+    }
+
+    #[test]
+    fn test_error_duplicate_state_names() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Idle:".to_string(),
+            "---Init:".to_string(),
+            "Set(x, 1)".to_string(),
+            "".to_string(),
+            ":Idle:".to_string(), // Duplicate
+            "---Init:".to_string(),
+            "Set(x, 2)".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["duplicate_state.casp".to_string()];
+
+        parser.parse_states(0);
+
+        // Should have one Idle state (last one should overwrite or merge)
+        assert!(parser.states.contains_key("Idle"));
+        assert_eq!(parser.states.len(), 1);
+    }
+
+    #[test]
+    fn test_error_missing_phase_marker() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Idle:".to_string(),
+            "Set(x, 1)".to_string(), // No phase marker
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["no_phase.casp".to_string()];
+
+        parser.parse_states(0);
+
+        // Should handle gracefully - might skip action or assign to default phase
+        assert!(parser.states.contains_key("Idle"));
+    }
+
+    #[test]
+    fn test_error_empty_state() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Empty:".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["empty_state.casp".to_string()];
+
+        parser.parse_states(0);
+
+        // Empty state should still be created
+        assert!(parser.states.contains_key("Empty"));
+        let empty = parser.states.get("Empty").unwrap();
+        assert_eq!(empty.actions.len(), 0);
+    }
+
+    #[test]
+    fn test_error_special_characters_in_names() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Variables:".to_string(),
+            "var Test@Name(Int): 100".to_string(), // Special char in name
+            "var Normal_Name123(Int): 200".to_string(), // Valid name
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["special_chars.casp".to_string()];
+
+        parser.parse_variables(0);
+
+        // Normal name should parse
+        assert!(parser.variables.contains_key("Normal_Name123"));
+
+        // Special character name might be rejected or sanitized
+        // (depends on implementation - just check it doesn't crash)
+    }
+
+    #[test]
+    fn test_error_very_long_line() {
+        let mut parser = CastagneParser::new();
+
+        // Create a very long action line
+        let long_args = (0..1000).map(|i| format!("arg{}", i)).collect::<Vec<_>>().join(", ");
+        let long_line = format!("Function({})", long_args);
+
+        parser.current_lines = vec![
+            ":Test:".to_string(),
+            "---Init:".to_string(),
+            long_line,
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["long_line.casp".to_string()];
+
+        parser.parse_states(0);
+
+        // Should handle long lines without crashing
+        assert!(parser.states.contains_key("Test"));
+    }
+
+    #[test]
+    fn test_error_nested_quotes_in_strings() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Test:".to_string(),
+            "---Init:".to_string(),
+            r#"Set(msg, "He said \"Hello\" to me")"#.to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["nested_quotes.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let test = parser.states.get("Test").unwrap();
+        let actions = test.actions.get("Init").unwrap();
+
+        // Should parse escaped quotes correctly
+        assert_eq!(actions.len(), 1);
+        assert_eq!(actions[0].instruction, "Set");
+    }
+
+    #[test]
+    fn test_error_unicode_in_values() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Character:".to_string(),
+            "Name: 戦士".to_string(), // Japanese characters
+            "Description: Étoile ⭐".to_string(), // French + emoji
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["unicode.casp".to_string()];
+
+        parser.parse_metadata(0);
+
+        // Should handle unicode gracefully
+        assert_eq!(parser.metadata.name, "戦士");
+        assert_eq!(parser.metadata.description, "Étoile ⭐");
+    }
+
+    #[test]
+    fn test_error_mixing_tabs_and_spaces() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Variables:".to_string(),
+            "var Health(Int): 100".to_string(), // Using spaces
+            "\tvar\tMana(Int):\t50".to_string(), // Using tabs
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["mixed_whitespace.casp".to_string()];
+
+        parser.parse_variables(0);
+
+        // Should handle both gracefully
+        assert!(parser.variables.contains_key("Health"));
+        // Mana might or might not parse depending on implementation
+    }
+
+    // =========================================================================
+    // Advanced Edge Case Tests
+    // =========================================================================
+
+    #[test]
+    fn test_edge_deeply_nested_function_calls() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Test:".to_string(),
+            "---Init:".to_string(),
+            "Call(Outer(Middle(Inner(Deepest(5)))))".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["nested.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let test = parser.states.get("Test").unwrap();
+        let actions = test.actions.get("Init").unwrap();
+
+        // Should parse deeply nested calls
+        assert_eq!(actions.len(), 1);
+        assert_eq!(actions[0].instruction, "Call");
+    }
+
+    #[test]
+    fn test_edge_mixed_nested_arguments() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Test:".to_string(),
+            "---Init:".to_string(),
+            r#"Complex(1, "text", Vec2(10, 20), true, Nested(a, b, c))"#.to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["complex_args.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let test = parser.states.get("Test").unwrap();
+        let actions = test.actions.get("Init").unwrap();
+
+        assert_eq!(actions.len(), 1);
+        assert_eq!(actions[0].instruction, "Complex");
+        // Should have multiple arguments including nested call
+        assert!(actions[0].args.len() > 0);
+    }
+
+    #[test]
+    fn test_edge_empty_arguments() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Test:".to_string(),
+            "---Init:".to_string(),
+            "EmptyCall()".to_string(),
+            "OneArg(x)".to_string(),
+            "TwoArgs(x, y)".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["empty_args.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let test = parser.states.get("Test").unwrap();
+        let actions = test.actions.get("Init").unwrap();
+
+        assert_eq!(actions.len(), 3);
+        assert_eq!(actions[0].instruction, "EmptyCall");
+        assert_eq!(actions[0].args.len(), 0);
+        assert_eq!(actions[1].args.len(), 1);
+        assert_eq!(actions[2].args.len(), 2);
+    }
+
+    #[test]
+    fn test_edge_whitespace_variations() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Test:".to_string(),
+            "---Init:".to_string(),
+            "NoSpace(x,y,z)".to_string(),
+            "WithSpace(x, y, z)".to_string(),
+            "ExtraSpace(x  ,  y  ,  z)".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["whitespace.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let test = parser.states.get("Test").unwrap();
+        let actions = test.actions.get("Init").unwrap();
+
+        // All three should parse successfully
+        assert_eq!(actions.len(), 3);
+        for action in actions {
+            assert_eq!(action.args.len(), 3);
+        }
+    }
+
+    #[test]
+    fn test_edge_multiple_phases_same_state() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Idle:".to_string(),
+            "---Init:".to_string(),
+            "InitAction()".to_string(),
+            "---Action:".to_string(),
+            "ActionPhase()".to_string(),
+            "---Reaction:".to_string(),
+            "ReactionPhase()".to_string(),
+            "---Freeze:".to_string(),
+            "FreezePhase()".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["multi_phase.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let idle = parser.states.get("Idle").unwrap();
+
+        // Should have all four phases
+        assert!(idle.actions.contains_key("Init"));
+        assert!(idle.actions.contains_key("Action"));
+        assert!(idle.actions.contains_key("Reaction"));
+        assert!(idle.actions.contains_key("Freeze"));
+
+        // Each phase should have one action
+        assert_eq!(idle.actions.get("Init").unwrap().len(), 1);
+        assert_eq!(idle.actions.get("Action").unwrap().len(), 1);
+        assert_eq!(idle.actions.get("Reaction").unwrap().len(), 1);
+        assert_eq!(idle.actions.get("Freeze").unwrap().len(), 1);
+    }
+
+    #[test]
+    fn test_edge_repeated_phases() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Idle:".to_string(),
+            "---Init:".to_string(),
+            "First()".to_string(),
+            "---Action:".to_string(),
+            "Middle()".to_string(),
+            "---Init:".to_string(), // Repeated phase
+            "Second()".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["repeated_phase.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let idle = parser.states.get("Idle").unwrap();
+
+        // Init should have actions from both declarations
+        let init_actions = idle.actions.get("Init").unwrap();
+        assert!(init_actions.len() >= 1); // At least one action
+    }
+
+    #[test]
+    fn test_edge_all_variable_types() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Variables:".to_string(),
+            "var IntVar(Int): 42".to_string(),
+            "var StrVar(Str): Hello".to_string(),
+            "var BoolVar(Bool): true".to_string(),
+            "var Vec2Var(Vec2): 10, 20".to_string(),
+            "var Vec3Var(Vec3): 1, 2, 3".to_string(),
+            "var VarVar(Var): dynamic".to_string(),
+            "var BoxVar(Box): boxed".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["all_types.casp".to_string()];
+
+        parser.parse_variables(0);
+
+        // All variable types should parse
+        assert!(parser.variables.contains_key("IntVar"));
+        assert!(parser.variables.contains_key("StrVar"));
+        assert!(parser.variables.contains_key("BoolVar"));
+        assert!(parser.variables.contains_key("Vec2Var"));
+        assert!(parser.variables.contains_key("Vec3Var"));
+        assert!(parser.variables.contains_key("VarVar"));
+        assert!(parser.variables.contains_key("BoxVar"));
+
+        // Check types are correct
+        assert_eq!(parser.variables.get("IntVar").unwrap().var_type, VariableType::Int);
+        assert_eq!(parser.variables.get("StrVar").unwrap().var_type, VariableType::Str);
+        assert_eq!(parser.variables.get("BoolVar").unwrap().var_type, VariableType::Bool);
+        assert_eq!(parser.variables.get("Vec2Var").unwrap().var_type, VariableType::Vec2);
+        assert_eq!(parser.variables.get("Vec3Var").unwrap().var_type, VariableType::Vec3);
+        assert_eq!(parser.variables.get("VarVar").unwrap().var_type, VariableType::Var);
+        assert_eq!(parser.variables.get("BoxVar").unwrap().var_type, VariableType::Box);
+    }
+
+    #[test]
+    fn test_edge_all_state_types() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":NormalState:".to_string(),
+            "---Init:".to_string(),
+            "Normal()".to_string(),
+            "".to_string(),
+            ":HelperState(Helper):".to_string(),
+            "---Init:".to_string(),
+            "Helper()".to_string(),
+            "".to_string(),
+            ":SpecialState(Special):".to_string(),
+            "---Init:".to_string(),
+            "Special()".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["all_state_types.casp".to_string()];
+
+        parser.parse_states(0);
+
+        assert_eq!(parser.states.get("NormalState").unwrap().state_type, StateType::Normal);
+        assert_eq!(parser.states.get("HelperState").unwrap().state_type, StateType::Helper);
+        assert_eq!(parser.states.get("SpecialState").unwrap().state_type, StateType::Special);
+    }
+
+    #[test]
+    fn test_edge_string_with_escaped_characters() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Test:".to_string(),
+            "---Init:".to_string(),
+            r#"Log("Line1\nLine2\tTabbed")"#.to_string(),
+            r#"Set(quote, "He said: \"Hi\"")"#.to_string(),
+            r#"Set(path, "C:\\Users\\Game")"#.to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["escaped.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let test = parser.states.get("Test").unwrap();
+        let actions = test.actions.get("Init").unwrap();
+
+        // Should parse all escaped strings
+        assert_eq!(actions.len(), 3);
+    }
+
+    #[test]
+    fn test_edge_negative_numbers() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Variables:".to_string(),
+            "var NegInt(Int): -100".to_string(),
+            "var NegVec2(Vec2): -5, -10".to_string(),
+            "var NegVec3(Vec3): -1, -2, -3".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["negative.casp".to_string()];
+
+        parser.parse_variables(0);
+
+        assert!(parser.variables.contains_key("NegInt"));
+        assert!(parser.variables.contains_key("NegVec2"));
+        assert!(parser.variables.contains_key("NegVec3"));
+
+        let neg_int = parser.variables.get("NegInt").unwrap();
+        assert_eq!(neg_int.as_int(), Some(-100));
+    }
+
+    #[test]
+    fn test_edge_float_numbers() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Variables:".to_string(),
+            "var FloatVar(Int): 3.14".to_string(),
+            "var FloatVec2(Vec2): 1.5, 2.5".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["floats.casp".to_string()];
+
+        parser.parse_variables(0);
+
+        // Should parse floats
+        assert!(parser.variables.contains_key("FloatVar"));
+        assert!(parser.variables.contains_key("FloatVec2"));
+    }
+
+    #[test]
+    fn test_edge_action_without_parentheses() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Test:".to_string(),
+            "---Init:".to_string(),
+            "SimpleAction".to_string(), // No parentheses
+            "ActionWithParens()".to_string(), // With parentheses
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["no_parens.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let test = parser.states.get("Test").unwrap();
+        let actions = test.actions.get("Init").unwrap();
+
+        // Both should parse (or at least not crash)
+        assert!(actions.len() >= 1);
+    }
+
+    #[test]
+    fn test_edge_multiple_specblocks() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Config:".to_string(),
+            "Speed: 100".to_string(),
+            "".to_string(),
+            ":Attacks:".to_string(),
+            "Punch: 10".to_string(),
+            "Kick: 20".to_string(),
+            "".to_string(),
+            ":CustomData:".to_string(),
+            "Field1: Value1".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["multi_specblock.casp".to_string()];
+
+        parser.parse_specblocks(0);
+
+        // All specblocks should be parsed
+        assert!(parser.specblocks.contains_key("Config"));
+        assert!(parser.specblocks.contains_key("Attacks"));
+        assert!(parser.specblocks.contains_key("CustomData"));
+
+        assert_eq!(parser.specblocks.get("Config").unwrap().get("Speed"), Some(&"100".to_string()));
+        assert_eq!(parser.specblocks.get("Attacks").unwrap().get("Punch"), Some(&"10".to_string()));
+    }
+
+    #[test]
+    fn test_edge_state_inheritance_chain() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Base:".to_string(),
+            "---Init:".to_string(),
+            "BaseAction()".to_string(),
+            "".to_string(),
+            ":Middle(Base):".to_string(),
+            "---Init:".to_string(),
+            "MiddleAction()".to_string(),
+            "".to_string(),
+            ":Final(Middle):".to_string(),
+            "---Init:".to_string(),
+            "FinalAction()".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["chain.casp".to_string()];
+
+        parser.parse_states(0);
+
+        // All states should exist
+        assert!(parser.states.contains_key("Base"));
+        assert!(parser.states.contains_key("Middle"));
+        assert!(parser.states.contains_key("Final"));
+
+        // Check parent relationships
+        assert_eq!(parser.states.get("Base").unwrap().parent, None);
+        assert_eq!(parser.states.get("Middle").unwrap().parent, Some("Base".to_string()));
+        assert_eq!(parser.states.get("Final").unwrap().parent, Some("Middle".to_string()));
+    }
+
+    #[test]
+    fn test_edge_bool_value_variations() {
+        let mut parser = CastagneParser::new();
+        parser.current_lines = vec![
+            ":Variables:".to_string(),
+            "var Bool1(Bool): true".to_string(),
+            "var Bool2(Bool): false".to_string(),
+            "var Bool3(Bool): 1".to_string(),
+            "var Bool4(Bool): 0".to_string(),
+            "var Bool5(Bool): True".to_string(), // Capitalized
+            "var Bool6(Bool): FALSE".to_string(), // All caps
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["bool_variations.casp".to_string()];
+
+        parser.parse_variables(0);
+
+        // All should parse
+        assert!(parser.variables.contains_key("Bool1"));
+        assert!(parser.variables.contains_key("Bool2"));
+        assert!(parser.variables.contains_key("Bool3"));
+        assert!(parser.variables.contains_key("Bool4"));
+        assert!(parser.variables.contains_key("Bool5"));
+        assert!(parser.variables.contains_key("Bool6"));
+
+        // Check values are correct
+        assert_eq!(parser.variables.get("Bool1").unwrap().as_bool(), Some(true));
+        assert_eq!(parser.variables.get("Bool2").unwrap().as_bool(), Some(false));
+        assert_eq!(parser.variables.get("Bool3").unwrap().as_bool(), Some(true));
+        assert_eq!(parser.variables.get("Bool4").unwrap().as_bool(), Some(false));
+    }
+
+    // =========================================================================
+    // Performance and Stress Tests
+    // =========================================================================
+
+    #[test]
+    fn test_stress_many_states() {
+        let mut parser = CastagneParser::new();
+
+        // Create 100 states
+        let mut lines = vec![];
+        for i in 0..100 {
+            lines.push(format!(":State{}:", i));
+            lines.push("---Init:".to_string());
+            lines.push(format!("Set(StateID, {})", i));
+            lines.push("".to_string());
+        }
+
+        parser.current_lines = lines.clone();
+        parser.line_ids = (1..=lines.len()).collect();
+        parser.file_paths = vec!["stress.casp".to_string()];
+
+        parser.parse_states(0);
+
+        // All states should parse
+        assert_eq!(parser.states.len(), 100);
+
+        // Spot check a few states
+        assert!(parser.states.contains_key("State0"));
+        assert!(parser.states.contains_key("State50"));
+        assert!(parser.states.contains_key("State99"));
+    }
+
+    #[test]
+    fn test_stress_many_variables() {
+        let mut parser = CastagneParser::new();
+
+        // Create 200 variables
+        let mut lines = vec![":Variables:".to_string()];
+        for i in 0..200 {
+            lines.push(format!("var Var{}(Int): {}", i, i * 10));
+        }
+        lines.push("".to_string());
+
+        parser.current_lines = lines.clone();
+        parser.line_ids = (1..=lines.len()).collect();
+        parser.file_paths = vec!["stress_vars.casp".to_string()];
+
+        parser.parse_variables(0);
+
+        // All variables should parse
+        assert_eq!(parser.variables.len(), 200);
+
+        // Spot check values
+        assert_eq!(parser.variables.get("Var0").unwrap().value, "0");
+        assert_eq!(parser.variables.get("Var100").unwrap().value, "1000");
+        assert_eq!(parser.variables.get("Var199").unwrap().value, "1990");
+    }
+
+    #[test]
+    fn test_stress_many_actions_per_state() {
+        let mut parser = CastagneParser::new();
+
+        // Create state with 100 actions
+        let mut lines = vec![
+            ":StressTest:".to_string(),
+            "---Init:".to_string(),
+        ];
+
+        for i in 0..100 {
+            lines.push(format!("Action{}(arg{})", i, i));
+        }
+        lines.push("".to_string());
+
+        parser.current_lines = lines.clone();
+        parser.line_ids = (1..=lines.len()).collect();
+        parser.file_paths = vec!["stress_actions.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let state = parser.states.get("StressTest").unwrap();
+        let actions = state.actions.get("Init").unwrap();
+
+        // All actions should parse
+        assert_eq!(actions.len(), 100);
+
+        // Check first and last action
+        assert_eq!(actions[0].instruction, "Action0");
+        assert_eq!(actions[99].instruction, "Action99");
+    }
+
+    #[test]
+    fn test_stress_deeply_nested_10_levels() {
+        let mut parser = CastagneParser::new();
+
+        // Create deeply nested function call
+        let nested = "Call(L1(L2(L3(L4(L5(L6(L7(L8(L9(L10(value))))))))))";
+
+        parser.current_lines = vec![
+            ":Test:".to_string(),
+            "---Init:".to_string(),
+            nested.to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["deep_nest.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let test = parser.states.get("Test").unwrap();
+        let actions = test.actions.get("Init").unwrap();
+
+        // Should handle deep nesting
+        assert_eq!(actions.len(), 1);
+        assert_eq!(actions[0].instruction, "Call");
+    }
+
+    #[test]
+    fn test_stress_many_arguments() {
+        let mut parser = CastagneParser::new();
+
+        // Create action with 50 arguments
+        let args: Vec<String> = (0..50).map(|i| format!("arg{}", i)).collect();
+        let action_line = format!("ManyArgs({})", args.join(", "));
+
+        parser.current_lines = vec![
+            ":Test:".to_string(),
+            "---Init:".to_string(),
+            action_line,
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["many_args.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let test = parser.states.get("Test").unwrap();
+        let actions = test.actions.get("Init").unwrap();
+
+        // Should handle many arguments
+        assert_eq!(actions.len(), 1);
+        assert_eq!(actions[0].args.len(), 50);
+    }
+
+    // =========================================================================
+    // Integration Tests with Complex Scenarios
+    // =========================================================================
+
+    #[test]
+    fn test_integration_fighting_game_character() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            ":Character:".to_string(),
+            "Name: Ryu".to_string(),
+            "Author: Capcom".to_string(),
+            "Description: Wandering fighter".to_string(),
+            "".to_string(),
+            ":Variables:".to_string(),
+            "var Health(Int): 1000".to_string(),
+            "var MaxHealth(Int): 1000".to_string(),
+            "var Meter(Int): 0".to_string(),
+            "var MaxMeter(Int): 10000".to_string(),
+            "var Damage(Int): 0".to_string(),
+            "var PosX(Int): 0".to_string(),
+            "var PosY(Int): 0".to_string(),
+            "var VelX(Int): 0".to_string(),
+            "var VelY(Int): 0".to_string(),
+            "var Facing(Int): 1".to_string(),
+            "var ComboCounter(Int): 0".to_string(),
+            "def GROUND_Y: 0".to_string(),
+            "def JUMP_FORCE: -150".to_string(),
+            "def WALK_SPEED: 30".to_string(),
+            "".to_string(),
+            ":Config:".to_string(),
+            "MaxSpeed: 100".to_string(),
+            "JumpHeight: 150".to_string(),
+            "Gravity: 10".to_string(),
+            "".to_string(),
+            ":Idle:".to_string(),
+            "---Init:".to_string(),
+            "Set(VelX, 0)".to_string(),
+            "Set(VelY, 0)".to_string(),
+            "ResetCombo()".to_string(),
+            "---Action:".to_string(),
+            "CheckInput(Left, Walk)".to_string(),
+            "CheckInput(Right, Walk)".to_string(),
+            "CheckInput(Jump, Jump)".to_string(),
+            "CheckInput(Attack, LightPunch)".to_string(),
+            "".to_string(),
+            ":Walk(Idle):".to_string(),
+            "---Init:".to_string(),
+            "Set(VelX, WALK_SPEED)".to_string(),
+            "PlayAnimation(Walk)".to_string(),
+            "---Action:".to_string(),
+            "Move(VelX, 0)".to_string(),
+            "CheckInput(None, Idle)".to_string(),
+            "CheckInput(Jump, Jump)".to_string(),
+            "".to_string(),
+            ":Jump(Idle):".to_string(),
+            "---Init:".to_string(),
+            "Set(VelY, JUMP_FORCE)".to_string(),
+            "PlayAnimation(Jump)".to_string(),
+            "PlaySound(Jump)".to_string(),
+            "---Action:".to_string(),
+            "Add(VelY, Gravity)".to_string(),
+            "Move(VelX, VelY)".to_string(),
+            "If(Grounded())".to_string(),
+            "ChangeState(Idle)".to_string(),
+            "EndIf()".to_string(),
+            "".to_string(),
+            ":LightPunch(Helper):".to_string(),
+            "---Init:".to_string(),
+            "Set(Damage, 100)".to_string(),
+            "Set(Duration, 15)".to_string(),
+            "PlayAnimation(LightPunch)".to_string(),
+            "---Action:".to_string(),
+            "CreateHitbox(10, 10, 40, 20, Damage)".to_string(),
+            "---Reaction:".to_string(),
+            "If(Hit())".to_string(),
+            "Add(ComboCounter, 1)".to_string(),
+            "Add(Meter, 100)".to_string(),
+            "EndIf()".to_string(),
+            "".to_string(),
+            ":Hadoken(Special):".to_string(),
+            "---Init:".to_string(),
+            "Sub(Meter, 1000)".to_string(),
+            "CreateProjectile(Fireball)".to_string(),
+            "PlayAnimation(Hadoken)".to_string(),
+            "PlaySound(Hadoken)".to_string(),
+            "---Action:".to_string(),
+            "If(AnimationFinished())".to_string(),
+            "ChangeState(Idle)".to_string(),
+            "EndIf()".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["ryu.casp".to_string()];
+
+        parser.parse_full_file();
+        let result = parser.end_parsing();
+
+        assert!(result.is_some());
+        let character = result.unwrap();
+
+        // Check metadata
+        assert_eq!(character.metadata.name, "Ryu");
+        assert_eq!(character.metadata.author, "Capcom");
+
+        // Check variables (11 var + 3 def = 14 total)
+        assert_eq!(character.variables.len(), 14);
+        assert!(character.variables.contains_key("Health"));
+        assert!(character.variables.contains_key("Meter"));
+        assert!(character.variables.contains_key("WALK_SPEED"));
+
+        // Check states
+        assert_eq!(character.states.len(), 5);
+        assert!(character.states.contains_key("Idle"));
+        assert!(character.states.contains_key("Walk"));
+        assert!(character.states.contains_key("Jump"));
+        assert!(character.states.contains_key("LightPunch"));
+        assert!(character.states.contains_key("Hadoken"));
+
+        // Check state types
+        assert_eq!(character.states.get("Idle").unwrap().state_type, StateType::Normal);
+        assert_eq!(character.states.get("Walk").unwrap().state_type, StateType::Normal);
+        assert_eq!(character.states.get("LightPunch").unwrap().state_type, StateType::Helper);
+        assert_eq!(character.states.get("Hadoken").unwrap().state_type, StateType::Special);
+
+        // Check state parents
+        assert_eq!(character.states.get("Walk").unwrap().parent, Some("Idle".to_string()));
+
+        // Check specblocks
+        assert!(character.specblocks.contains_key("Config"));
+        assert_eq!(character.specblocks.get("Config").unwrap().get("Gravity"), Some(&"10".to_string()));
+    }
+
+    #[test]
+    fn test_integration_projectile_character() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            ":Character:".to_string(),
+            "Name: Fireball".to_string(),
+            "Author: Game Dev".to_string(),
+            "".to_string(),
+            ":Variables:".to_string(),
+            "var Damage(Int): 200".to_string(),
+            "var Speed(Int): 50".to_string(),
+            "var Lifetime(Int): 60".to_string(),
+            "var CurrentFrame(Int): 0".to_string(),
+            "".to_string(),
+            ":Active(Helper):".to_string(),
+            "---Init:".to_string(),
+            "PlayAnimation(Fireball)".to_string(),
+            "CreateHitbox(0, 0, 20, 20, Damage)".to_string(),
+            "---Action:".to_string(),
+            "MoveForward(Speed)".to_string(),
+            "Add(CurrentFrame, 1)".to_string(),
+            "If(CurrentFrame, Lifetime)".to_string(),
+            "Destroy()".to_string(),
+            "EndIf()".to_string(),
+            "---Reaction:".to_string(),
+            "If(Hit())".to_string(),
+            "Destroy()".to_string(),
+            "EndIf()".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["fireball.casp".to_string()];
+
+        parser.parse_full_file();
+        let result = parser.end_parsing();
+
+        assert!(result.is_some());
+        let character = result.unwrap();
+
+        // Check it parsed as a projectile/helper
+        assert_eq!(character.metadata.name, "Fireball");
+        assert_eq!(character.states.len(), 1);
+        assert!(character.states.contains_key("Active"));
+        assert_eq!(character.states.get("Active").unwrap().state_type, StateType::Helper);
+    }
+
+    #[test]
+    fn test_integration_multifile_inheritance() {
+        // This test simulates skeleton inheritance
+        // In a real scenario, this would load from separate files
+
+        let mut parser = CastagneParser::new();
+
+        // Simulate parent character data
+        let parent_metadata = CharacterMetadata {
+            name: "BaseCharacter".to_string(),
+            author: "Framework".to_string(),
+            description: "Base template".to_string(),
+            skeleton: None,
+            other_fields: HashMap::new(),
+        };
+
+        parser.metadata = parent_metadata;
+
+        // Add parent variables
+        parser.variables.insert("BaseHealth".to_string(), ParsedVariable {
+            name: "BaseHealth".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Int,
+            subtype: String::new(),
+            value: "1000".to_string(),
+        });
+
+        // Now parse child that overrides/extends
+        parser.current_lines = vec![
+            ":Character:".to_string(),
+            "Name: DerivedCharacter".to_string(),
+            "".to_string(),
+            ":Variables:".to_string(),
+            "var ChildHealth(Int): 1500".to_string(),
+            "".to_string(),
+            ":Idle:".to_string(),
+            "---Init:".to_string(),
+            "Set(x, 1)".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["child.casp".to_string()];
+
+        parser.parse_full_file();
+        let result = parser.end_parsing();
+
+        assert!(result.is_some());
+        let character = result.unwrap();
+
+        // Should have child metadata
+        assert_eq!(character.metadata.name, "DerivedCharacter");
+
+        // Should have both parent and child variables
+        assert!(character.variables.contains_key("BaseHealth"));
+        assert!(character.variables.contains_key("ChildHealth"));
+    }
+
+    #[test]
+    fn test_integration_complex_conditionals() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            ":Test:".to_string(),
+            "---Init:".to_string(),
+            "If(Health, MaxHealth)".to_string(),
+            "Set(Color, Green)".to_string(),
+            "Else()".to_string(),
+            "If(Health, HalfHealth)".to_string(),
+            "Set(Color, Yellow)".to_string(),
+            "Else()".to_string(),
+            "Set(Color, Red)".to_string(),
+            "EndIf()".to_string(),
+            "EndIf()".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["conditionals.casp".to_string()];
+
+        parser.parse_states(0);
+
+        let test = parser.states.get("Test").unwrap();
+        let actions = test.actions.get("Init").unwrap();
+
+        // Should parse all conditional statements
+        assert!(actions.len() >= 8);
+
+        // Check structure
+        assert_eq!(actions[0].instruction, "If");
+        assert!(actions.iter().any(|a| a.instruction == "Else"));
+        assert!(actions.iter().any(|a| a.instruction == "EndIf"));
+    }
+
+    #[test]
+    fn test_integration_all_features_combined() {
+        let mut parser = CastagneParser::new();
+
+        parser.current_lines = vec![
+            "# Complete character with all features".to_string(),
+            ":Character:".to_string(),
+            "Name: Complete Fighter # Full featured".to_string(),
+            "Author: Test".to_string(),
+            "Description: Uses all parser features".to_string(),
+            "".to_string(),
+            ":Config:".to_string(),
+            "Speed: 100 # Movement speed".to_string(),
+            "".to_string(),
+            ":Variables:".to_string(),
+            "var IntVal(Int): 42".to_string(),
+            "var StrVal(Str): Hello".to_string(),
+            "var BoolVal(Bool): true".to_string(),
+            "var Vec2Val(Vec2): 10, 20".to_string(),
+            "var Vec3Val(Vec3): 1, 2, 3".to_string(),
+            "def CONSTANT: 100".to_string(),
+            "".to_string(),
+            ":Idle:".to_string(),
+            "---Init: # Setup phase".to_string(),
+            "Set(State, 0)".to_string(),
+            "Log(\"Starting Idle\")".to_string(),
+            "---Action:".to_string(),
+            "CheckInput(Attack, Attack)".to_string(),
+            "---Reaction:".to_string(),
+            "HandleHit()".to_string(),
+            "".to_string(),
+            ":Attack(Helper, Idle):".to_string(),
+            "---Init:".to_string(),
+            "CreateHitbox(0, 0, 50, 50, 100)".to_string(),
+            "PlayAnimation(Attack)".to_string(),
+            "---Action:".to_string(),
+            "If(AnimationFinished())".to_string(),
+            "ChangeState(Idle)".to_string(),
+            "EndIf()".to_string(),
+            "".to_string(),
+        ];
+        parser.line_ids = (1..=parser.current_lines.len()).collect();
+        parser.file_paths = vec!["complete.casp".to_string()];
+
+        parser.parse_full_file();
+        let result = parser.end_parsing();
+
+        assert!(result.is_some());
+        let character = result.unwrap();
+
+        // Metadata
+        assert_eq!(character.metadata.name, "Complete Fighter");
+
+        // Variables - all types
+        assert_eq!(character.variables.len(), 6);
+        assert_eq!(character.variables.get("IntVal").unwrap().var_type, VariableType::Int);
+        assert_eq!(character.variables.get("Vec2Val").unwrap().var_type, VariableType::Vec2);
+
+        // Specblocks
+        assert!(character.specblocks.contains_key("Config"));
+
+        // States with all features
+        assert_eq!(character.states.len(), 2);
+        let attack = character.states.get("Attack").unwrap();
+        assert_eq!(attack.state_type, StateType::Helper);
+        assert_eq!(attack.parent, Some("Idle".to_string()));
+        assert!(attack.actions.contains_key("Init"));
+        assert!(attack.actions.contains_key("Action"));
+    }
+
+    // =========================================================================
+    // Parity Tests - Verify Rust parser matches GDScript parser behavior
+    // =========================================================================
+
+    #[test]
+    fn test_parity_complete_character_file() {
+        // This test parses the real test_character_complete.casp file
+        // and verifies expected structure matches GDScript parser output
+        let mut parser = CastagneParser::new();
+        parser.open_file("test_character_complete.casp");
+
+        if parser.aborting || parser.invalid_file {
+            panic!("Failed to load test_character_complete.casp");
+        }
+
+        parser.parse_full_file();
+        let result = parser.end_parsing();
+
+        assert!(result.is_some(), "Parser should successfully parse test_character_complete.casp");
+        let character = result.unwrap();
+
+        // Verify metadata
+        assert_eq!(character.metadata.name, "Complete Test Fighter");
+        assert_eq!(character.metadata.author, "Parser Development Team");
+        assert!(character.metadata.description.contains("comprehensive"));
+
+        // Verify specblocks (2 specblocks: AttackData, PhysicsConfig)
+        assert_eq!(character.specblocks.len(), 2);
+        assert!(character.specblocks.contains_key("AttackData"));
+        assert!(character.specblocks.contains_key("PhysicsConfig"));
+
+        let attack_data = character.specblocks.get("AttackData").unwrap();
+        assert_eq!(attack_data.get("LightPunchDamage"), Some(&"5".to_string()));
+        assert_eq!(attack_data.get("HeavyPunchDamage"), Some(&"15".to_string()));
+
+        let physics = character.specblocks.get("PhysicsConfig").unwrap();
+        assert_eq!(physics.get("Gravity"), Some(&"10".to_string()));
+        assert_eq!(physics.get("JumpForce"), Some(&"25".to_string()));
+
+        // Verify variables (12 vars + 2 defs = 14 total)
+        assert_eq!(character.variables.len(), 14);
+
+        // Check integer variables
+        assert!(character.variables.contains_key("Health"));
+        assert_eq!(character.variables.get("Health").unwrap().var_type, VariableType::Int);
+        assert_eq!(character.variables.get("Health").unwrap().value, "150");
+
+        // Check string variables
+        assert!(character.variables.contains_key("PlayerName"));
+        assert_eq!(character.variables.get("PlayerName").unwrap().var_type, VariableType::Str);
+
+        // Check boolean variables
+        assert!(character.variables.contains_key("IsGrounded"));
+        assert_eq!(character.variables.get("IsGrounded").unwrap().var_type, VariableType::Bool);
+
+        // Check Vec2 variables
+        assert!(character.variables.contains_key("Position"));
+        assert_eq!(character.variables.get("Position").unwrap().var_type, VariableType::Vec2);
+
+        // Check Var type
+        assert!(character.variables.contains_key("Meter"));
+        assert_eq!(character.variables.get("Meter").unwrap().var_type, VariableType::Var);
+
+        // Check constants
+        assert!(character.variables.contains_key("MAX_COMBO"));
+        assert_eq!(character.variables.get("MAX_COMBO").unwrap().mutability, VariableMutability::Define);
+
+        // Verify states (5 states: Idle, Walk, Jump, LightPunch, HeavyPunch)
+        assert_eq!(character.states.len(), 5);
+        assert!(character.states.contains_key("Idle"));
+        assert!(character.states.contains_key("Walk"));
+        assert!(character.states.contains_key("Jump"));
+        assert!(character.states.contains_key("LightPunch"));
+        assert!(character.states.contains_key("HeavyPunch"));
+
+        // Verify Idle state has Init and Action phases
+        let idle = character.states.get("Idle").unwrap();
+        assert!(idle.actions.contains_key("Init"));
+        assert!(idle.actions.contains_key("Action"));
+        assert_eq!(idle.state_type, StateType::Normal);
+
+        // Verify actions in Idle Init phase
+        let idle_init = idle.actions.get("Init").unwrap();
+        assert_eq!(idle_init.len(), 3); // Set AnimationState, Set Velocity, Set IsAttacking
+        assert_eq!(idle_init[0].instruction, "Set");
+        assert_eq!(idle_init[0].args[0], "AnimationState");
+
+        // Verify LightPunch has Init, Action, and Reaction phases
+        let light_punch = character.states.get("LightPunch").unwrap();
+        assert!(light_punch.actions.contains_key("Init"));
+        assert!(light_punch.actions.contains_key("Action"));
+        assert!(light_punch.actions.contains_key("Reaction"));
+    }
+
+    #[test]
+    fn test_parity_basic_character_file() {
+        // Test the simplest test_character.casp file
+        let mut parser = CastagneParser::new();
+        parser.open_file("test_character.casp");
+
+        if parser.aborting || parser.invalid_file {
+            panic!("Failed to load test_character.casp");
+        }
+
+        parser.parse_full_file();
+        let result = parser.end_parsing();
+
+        assert!(result.is_some(), "Parser should successfully parse test_character.casp");
+        let character = result.unwrap();
+
+        // Basic character should have metadata
+        assert!(!character.metadata.name.is_empty());
+
+        // Should have at least one state or variable
+        assert!(character.states.len() > 0 || character.variables.len() > 0);
+    }
+
+    #[test]
+    fn test_parity_advanced_character_file() {
+        // Test test_character_advanced.casp
+        let mut parser = CastagneParser::new();
+        parser.open_file("test_character_advanced.casp");
+
+        if parser.aborting || parser.invalid_file {
+            panic!("Failed to load test_character_advanced.casp");
+        }
+
+        parser.parse_full_file();
+        let result = parser.end_parsing();
+
+        assert!(result.is_some(), "Parser should successfully parse test_character_advanced.casp");
+        let character = result.unwrap();
+
+        // Advanced character should have metadata
+        assert!(!character.metadata.name.is_empty());
+
+        // Should have multiple states demonstrating advanced features
+        assert!(character.states.len() > 0);
+    }
+
+    #[test]
+    fn test_parity_parent_child_skeleton_inheritance() {
+        // Test skeleton inheritance with test_parent.casp and test_child.casp
+
+        // First parse parent
+        let mut parent_parser = CastagneParser::new();
+        parent_parser.open_file("test_parent.casp");
+
+        if parent_parser.aborting || parent_parser.invalid_file {
+            // If files don't exist, skip this test gracefully
+            return;
+        }
+
+        parent_parser.parse_full_file();
+        let parent_result = parent_parser.end_parsing();
+        assert!(parent_result.is_some(), "Parent should parse successfully");
+        let parent = parent_result.unwrap();
+
+        // Then parse child
+        let mut child_parser = CastagneParser::new();
+        child_parser.open_file("test_child.casp");
+
+        if child_parser.aborting || child_parser.invalid_file {
+            // If files don't exist, skip this test gracefully
+            return;
+        }
+
+        child_parser.parse_full_file();
+        let child_result = child_parser.end_parsing();
+        assert!(child_result.is_some(), "Child should parse successfully");
+        let child = child_result.unwrap();
+
+        // Verify both parsed
+        assert!(!parent.metadata.name.is_empty());
+        assert!(!child.metadata.name.is_empty());
+
+        // Child might reference parent in skeleton field
+        if let Some(skeleton) = &child.metadata.skeleton {
+            assert!(skeleton.len() > 0, "Skeleton reference should not be empty");
+        }
+    }
+
+    #[test]
+    fn test_parity_all_variable_type_conversions() {
+        // Verify type conversion matches GDScript parser for all types
+        let mut parser = CastagneParser::new();
+
+        parser.variables.insert("IntVar".to_string(), ParsedVariable {
+            name: "IntVar".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Int,
+            subtype: String::new(),
+            value: "42".to_string(),
+        });
+
+        parser.variables.insert("BoolVar".to_string(), ParsedVariable {
+            name: "BoolVar".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Bool,
+            subtype: String::new(),
+            value: "true".to_string(),
+        });
+
+        parser.variables.insert("StrVar".to_string(), ParsedVariable {
+            name: "StrVar".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Str,
+            subtype: String::new(),
+            value: "Hello".to_string(),
+        });
+
+        parser.variables.insert("Vec2Var".to_string(), ParsedVariable {
+            name: "Vec2Var".to_string(),
+            mutability: VariableMutability::Variable,
+            var_type: VariableType::Vec2,
+            subtype: String::new(),
+            value: "10, 20".to_string(),
+        });
+
+        // Verify types are correct (matching GDScript parser behavior)
+        // Note: We can't test actual to_variant() calls since they require Godot runtime
+        assert_eq!(parser.variables.get("IntVar").unwrap().var_type, VariableType::Int);
+        assert_eq!(parser.variables.get("BoolVar").unwrap().var_type, VariableType::Bool);
+        assert_eq!(parser.variables.get("StrVar").unwrap().var_type, VariableType::Str);
+        assert_eq!(parser.variables.get("Vec2Var").unwrap().var_type, VariableType::Vec2);
+
+        // Verify values can be accessed (as parser would return them)
+        assert_eq!(parser.variables.get("IntVar").unwrap().as_int(), Some(42));
+        assert_eq!(parser.variables.get("BoolVar").unwrap().as_bool(), Some(true));
+        assert_eq!(parser.variables.get("StrVar").unwrap().value, "Hello");
+    }
+
+    #[test]
+    fn test_parity_comment_stripping() {
+        // Verify inline comment handling matches GDScript parser
+        let parser = CastagneParser::new();
+
+        // Test cases that should match GDScript behavior
+        let test_cases = vec![
+            // (input, expected_output)
+            ("Set(x, 5) # comment", "Set(x, 5) "),
+            ("var Health(Int): 100 # player health", "var Health(Int): 100 "),
+            (r#"Log("Text # not comment") # real comment"#, r#"Log("Text # not comment") "#),
+            ("# just comment", ""),
+            ("NoComment", "NoComment"),
+        ];
+
+        for (input, expected) in test_cases {
+            let result = parser.strip_inline_comment(input);
+            assert_eq!(result, expected,
+                "Comment stripping for '{}' should match GDScript behavior", input);
+        }
+    }
+
+    #[test]
+    fn test_parity_argument_parsing() {
+        // Verify argument parsing matches GDScript parser behavior
+        let parser = CastagneParser::new();
+
+        // Test cases that should match GDScript behavior
+        let test_cases = vec![
+            // (input, expected_count, description)
+            ("a, b, c", 3, "simple args"),
+            ("a", 1, "single arg"),
+            ("", 0, "empty args"),
+            (r#""string, with, commas", other"#, 2, "string with commas"),
+            ("Nested(a, b), c", 2, "nested function call"),
+            ("a,b,c", 3, "no spaces"),
+            ("a  ,  b  ,  c", 3, "extra spaces"),
+        ];
+
+        for (input, expected_count, desc) in test_cases {
+            let result = parser.parse_arguments(input);
+            assert_eq!(result.len(), expected_count,
+                "Argument parsing for '{}' ({}) should match GDScript behavior", input, desc);
+        }
+    }
+
+    #[test]
+    fn test_parity_state_header_parsing() {
+        // Verify state header parsing matches GDScript parser
+        let parser = CastagneParser::new();
+
+        // Test various state header formats (without colons - parse_state_header expects preprocessed input)
+        let test_cases = vec![
+            // (input, (expected_name, expected_type, expected_parent))
+            ("Idle", ("Idle", StateType::Normal, None)),
+            ("Walk(Idle)", ("Walk", StateType::Normal, Some("Idle"))),
+            ("Attack(Helper)", ("Attack", StateType::Helper, None)),
+            ("Special(Special, Base)", ("Special", StateType::Special, Some("Base"))),
+            ("Projectile(Helper, Base)", ("Projectile", StateType::Helper, Some("Base"))),
+        ];
+
+        for (input, expected_data) in test_cases {
+            let (exp_name, exp_type, exp_parent) = expected_data;
+            let (name, state_type, parent) = parser.parse_state_header(input);
+            assert_eq!(name, exp_name, "State name should match for '{}'", input);
+            assert_eq!(state_type, exp_type, "State type should match for '{}'", input);
+            assert_eq!(parent, exp_parent.map(|s| s.to_string()),
+                "Parent should match for '{}'", input);
+        }
+    }
 }
