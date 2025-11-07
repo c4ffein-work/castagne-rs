@@ -16,7 +16,7 @@ config/features=PackedStringArray("4.2")
 
 [autoload]
 
-Castagne="*res://castagne/engine/CastagneGlobal.gd"
+Castagne="*res://castagne_godot4/engine/CastagneGlobal.gd"
 
 [editor]
 
