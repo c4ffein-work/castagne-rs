@@ -14,6 +14,10 @@ config/name="Castagne-RS Test Runner"
 config/description="Test runner for castagne-rs comparison tests"
 config/features=PackedStringArray("4.2")
 
+[autoload]
+
+Castagne="*res://castagne/engine/CastagneGlobal.gd"
+
 [editor]
 
 export/convert_text_resources_to_binary=false
