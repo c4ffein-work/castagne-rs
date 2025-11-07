@@ -1,0 +1,13 @@
+; Engine configuration file for Godot 3
+; Minimal configuration to run golden master generation
+
+config_version=4
+
+[application]
+
+config/name="Castagne Golden Master Generator"
+config/description="Generate golden master files for parser testing"
+
+[autoload]
+
+Castagne="*res://castagne/engine/CastagneGlobal.gd"
