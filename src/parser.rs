@@ -147,8 +147,8 @@ pub struct CastagneParser {
     specblock_defines: HashMap<String, ParsedVariable>,
 
     // Flags
-    aborting: bool,
-    invalid_file: bool,
+    pub aborting: bool,
+    pub invalid_file: bool,
 }
 
 impl CastagneParser {
@@ -258,7 +258,7 @@ impl CastagneParser {
         self.open_file(file_path);
     }
 
-    fn end_parsing(&mut self) -> Option<ParsedCharacter> {
+    pub fn end_parsing(&mut self) -> Option<ParsedCharacter> {
         if self.aborting || self.invalid_file {
             return None;
         }
@@ -273,7 +273,7 @@ impl CastagneParser {
         })
     }
 
-    fn open_file(&mut self, file_path: &str) {
+    pub fn open_file(&mut self, file_path: &str) {
         self.log(&format!("Opening file {}", file_path));
 
         let file_id = self.file_paths.len();
@@ -303,7 +303,7 @@ impl CastagneParser {
         }
     }
 
-    fn parse_full_file(&mut self) {
+    pub fn parse_full_file(&mut self) {
         if self.aborting {
             return;
         }
@@ -3346,13 +3346,13 @@ mod tests {
     }
 
     // =========================================================================
-    // Parity Tests - Verify Rust parser matches GDScript parser behavior
+    // Basic Template Tests - Verify Rust parser can parse test files
     // =========================================================================
 
     #[test]
-    fn test_parity_complete_character_file() {
+    fn test_basic_template_complete_character_file() {
         // This test parses the real test_character_complete.casp file
-        // and verifies expected structure matches GDScript parser output
+        // and verifies expected structure
         let mut parser = CastagneParser::new();
         parser.open_file("test_character_complete.casp");
 
@@ -3440,7 +3440,7 @@ mod tests {
     }
 
     #[test]
-    fn test_parity_basic_character_file() {
+    fn test_basic_template_basic_character_file() {
         // Test the simplest test_character.casp file
         let mut parser = CastagneParser::new();
         parser.open_file("test_character.casp");
@@ -3463,7 +3463,7 @@ mod tests {
     }
 
     #[test]
-    fn test_parity_advanced_character_file() {
+    fn test_basic_template_advanced_character_file() {
         // Test test_character_advanced.casp
         let mut parser = CastagneParser::new();
         parser.open_file("test_character_advanced.casp");
@@ -3486,7 +3486,7 @@ mod tests {
     }
 
     #[test]
-    fn test_parity_parent_child_skeleton_inheritance() {
+    fn test_basic_template_parent_child_skeleton_inheritance() {
         // Test skeleton inheritance with test_parent.casp and test_child.casp
 
         // First parse parent
@@ -3528,8 +3528,8 @@ mod tests {
     }
 
     #[test]
-    fn test_parity_all_variable_type_conversions() {
-        // Verify type conversion matches GDScript parser for all types
+    fn test_basic_template_all_variable_type_conversions() {
+        // Verify type conversion works for all types
         let mut parser = CastagneParser::new();
 
         parser.variables.insert("IntVar".to_string(), ParsedVariable {
@@ -3578,8 +3578,8 @@ mod tests {
     }
 
     #[test]
-    fn test_parity_comment_stripping() {
-        // Verify inline comment handling matches GDScript parser
+    fn test_basic_template_comment_stripping() {
+        // Verify inline comment handling
         let parser = CastagneParser::new();
 
         // Test cases that should match GDScript behavior
@@ -3600,8 +3600,8 @@ mod tests {
     }
 
     #[test]
-    fn test_parity_argument_parsing() {
-        // Verify argument parsing matches GDScript parser behavior
+    fn test_basic_template_argument_parsing() {
+        // Verify argument parsing works correctly
         let parser = CastagneParser::new();
 
         // Test cases that should match GDScript behavior
@@ -3624,8 +3624,8 @@ mod tests {
     }
 
     #[test]
-    fn test_parity_state_header_parsing() {
-        // Verify state header parsing matches GDScript parser
+    fn test_basic_template_state_header_parsing() {
+        // Verify state header parsing works correctly
         let parser = CastagneParser::new();
 
         // Test various state header formats (without colons - parse_state_header expects preprocessed input)
