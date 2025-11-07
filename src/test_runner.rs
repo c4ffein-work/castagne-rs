@@ -32,16 +32,16 @@ impl CastagneTestRunner {
         godot_print!("=== Running Castagne Comparison Tests ===");
         let mut results = Dictionary::new();
 
-        // Test memory operations - Temporarily disabled (need Godot 4 port)
-        //results.set("memory_global", self.test_memory_global());
-        //results.set("memory_player", self.test_memory_player());
-        //results.set("memory_entity", self.test_memory_entity());
+        // Test memory operations - will FAIL until GDScript files are ported to Godot 4
+        results.set("memory_global", self.test_memory_global());
+        results.set("memory_player", self.test_memory_player());
+        results.set("memory_entity", self.test_memory_entity());
 
-        // Test StateHandle operations - Temporarily disabled (need Godot 4 port)
-        //results.set("state_handle_point_to", self.test_state_handle_point_to());
-        //results.set("state_handle_target_entity", self.test_state_handle_target());
+        // Test StateHandle operations - Rust-only tests (no GDScript dependency)
+        results.set("state_handle_point_to", self.test_state_handle_point_to());
+        results.set("state_handle_target_entity", self.test_state_handle_target());
 
-        // Test parser operations
+        // Test parser operations - will FAIL until golden master pipeline is complete
         results.set("parser_basic_character", self.test_parser_basic_character());
         results.set("parser_complete_character", self.test_parser_complete_character());
         results.set("parser_advanced_character", self.test_parser_advanced_character());
@@ -61,12 +61,14 @@ impl CastagneTestRunner {
     fn test_memory_global(&self) -> bool {
         godot_print!("Testing global memory operations...");
 
+        // TODO: Need Godot 4 port of CastagneMemory.gd or golden master approach
         // Create GDScript version
         let mut gd_script = match try_load::<GDScript>("res://castagne/engine/CastagneMemory.gd") {
             Ok(script) => script,
             Err(_) => {
-                godot_print!("  ⊘ SKIPPED: GDScript CastagneMemory.gd not found (comparison test requires original Castagne)");
-                return true; // Pass when GDScript not available
+                godot_error!("❌ GDScript CastagneMemory.gd not found!");
+                godot_error!("   TODO: Port CastagneMemory.gd to Godot 4 or use golden master approach");
+                return false; // FAIL - don't hide the problem
             }
         };
 
@@ -128,12 +130,14 @@ impl CastagneTestRunner {
     fn test_memory_player(&self) -> bool {
         godot_print!("Testing player memory operations...");
 
+        // TODO: Need Godot 4 port of CastagneMemory.gd or golden master approach
         // Create GDScript version
         let mut gd_script = match try_load::<GDScript>("res://castagne/engine/CastagneMemory.gd") {
             Ok(script) => script,
             Err(_) => {
-                godot_print!("  ⊘ SKIPPED: GDScript CastagneMemory.gd not found (comparison test requires original Castagne)");
-                return true; // Pass when GDScript not available
+                godot_error!("❌ GDScript CastagneMemory.gd not found!");
+                godot_error!("   TODO: Port CastagneMemory.gd to Godot 4 or use golden master approach");
+                return false; // FAIL - don't hide the problem
             }
         };
 
@@ -191,12 +195,14 @@ impl CastagneTestRunner {
     fn test_memory_entity(&self) -> bool {
         godot_print!("Testing entity memory operations...");
 
+        // TODO: Need Godot 4 port of CastagneMemory.gd or golden master approach
         // Create GDScript version
         let mut gd_script = match try_load::<GDScript>("res://castagne/engine/CastagneMemory.gd") {
             Ok(script) => script,
             Err(_) => {
-                godot_print!("  ⊘ SKIPPED: GDScript CastagneMemory.gd not found (comparison test requires original Castagne)");
-                return true; // Pass when GDScript not available
+                godot_error!("❌ GDScript CastagneMemory.gd not found!");
+                godot_error!("   TODO: Port CastagneMemory.gd to Godot 4 or use golden master approach");
+                return false; // FAIL - don't hide the problem
             }
         };
 
@@ -430,88 +436,20 @@ impl CastagneTestRunner {
 
     /// Helper method to test parser on a specific file
     fn test_parser_file(&self, filename: &str) -> bool {
-        // Try to load GDScript parser
-        let mut gd_parser_script = match try_load::<GDScript>("res://castagne_godot4/engine/CastagneParser.gd") {
-            Ok(script) => script,
-            Err(_) => {
-                godot_print!("  ⊘ SKIPPED: GDScript CastagneParser.gd not found (comparison test requires original Castagne)");
-                return true; // Pass when GDScript not available
-            }
-        };
+        // TODO(URGENT): This test is NOT IMPLEMENTED - need golden master pipeline
+        // TODO: Create full pipeline to generate golden master files from Godot 3 + GDScript Castagne
+        // TODO: Should compare Rust parser output against golden master JSON files, not live GDScript
+        // TODO: Use real .casp files from castagne/examples (e.g., Baston-Model.casp), not our test files
+        // TODO: Our test files use different syntax than actual Castagne format - parser isn't compatible
 
-        // Create GDScript parser instance
-        let gd_parser_variant = gd_parser_script.instantiate(&[]);
-        let mut gd_parser = gd_parser_variant.to::<Gd<Object>>();
+        godot_error!("❌ PARSER COMPARISON TEST NOT IMPLEMENTED FOR: {}", filename);
+        godot_error!("   TODO: Generate golden master JSON files using Godot 3 + GDScript parser");
+        godot_error!("   TODO: Update test to load golden master and compare Rust output");
+        godot_error!("   TODO: Use real Castagne .casp files, not our simplified test files");
+        godot_error!("   See scripts/generate_golden_masters.gd for WIP golden master generation");
 
-        // Parse with GDScript parser
-        gd_parser.call("OpenFile", &[Variant::from(filename)]);
-
-        // Check if file loaded successfully
-        let gd_invalid = gd_parser.get("invalidFile")
-            .try_to::<bool>().unwrap_or(true);
-        let gd_aborting = gd_parser.get("aborting")
-            .try_to::<bool>().unwrap_or(true);
-
-        if gd_invalid || gd_aborting {
-            godot_print!("  ⊘ SKIPPED: File '{}' not found or failed to load in GDScript parser", filename);
-            return true; // Skip if file doesn't exist
-        }
-
-        gd_parser.call("ParseFullFile", &[]);
-        let gd_result = gd_parser.call("EndParsing", &[]);
-
-        // Parse with Rust parser
-        let mut rust_parser = CastagneParser::new();
-        rust_parser.open_file(filename);
-
-        if rust_parser.invalid_file || rust_parser.aborting {
-            godot_print!("  ⊘ SKIPPED: File '{}' not found or failed to load in Rust parser", filename);
-            return true; // Skip if file doesn't exist
-        }
-
-        rust_parser.parse_full_file();
-        let rust_result = rust_parser.end_parsing();
-
-        // Check both parsers succeeded
-        if gd_result.is_nil() {
-            godot_error!("GDScript parser returned nil for {}", filename);
-            return false;
-        }
-
-        if rust_result.is_none() {
-            godot_error!("Rust parser returned None for {}", filename);
-            return false;
-        }
-
-        let rust_character = rust_result.unwrap();
-        let gd_character = gd_result.to::<Gd<Object>>();
-
-        // Compare metadata
-        if !self.compare_metadata(&rust_character, &gd_character) {
-            godot_error!("Metadata mismatch for {}", filename);
-            return false;
-        }
-
-        // Compare variables
-        if !self.compare_variables(&rust_character, &gd_character) {
-            godot_error!("Variables mismatch for {}", filename);
-            return false;
-        }
-
-        // Compare states
-        if !self.compare_states(&rust_character, &gd_character) {
-            godot_error!("States mismatch for {}", filename);
-            return false;
-        }
-
-        // Compare specblocks
-        if !self.compare_specblocks(&rust_character, &gd_character) {
-            godot_error!("Specblocks mismatch for {}", filename);
-            return false;
-        }
-
-        godot_print!("  ✅ Parser comparison test passed for {}!", filename);
-        true
+        // FAIL HARD - don't hide the problem by returning true
+        false
     }
 
     /// Compare metadata between Rust and GDScript parsers
