@@ -5,15 +5,3746 @@
     "filepath": "castagne/examples/fighters/baston/Baston-Model.casp"
   },
   "subentities": {
+    "Base": {
+      "skeleton": "none"
+    },
+    "Projectile": {
 
+    }
   },
   "variables": {
-
+    "Null": {
+      "Name": null,
+      "Value": "",
+      "Type": "",
+      "Subtype": "",
+      "Mutability": ""
+    },
+    "Base": {
+      "Name": "Base",
+      "Value": "",
+      "Type": "",
+      "Subtype": "",
+      "Mutability": ""
+    },
+    "Projectile": {
+      "Name": "Projectile",
+      "Value": "",
+      "Type": "",
+      "Subtype": "",
+      "Mutability": ""
+    }
   },
   "states": {
+    "Common": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
 
+      ],
+      "Phases": {
+
+      }
+    },
+    "ResetHandling": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "CommonAfter": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Custom-Common": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Custom-CommonAfter": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Custom-NeutralStateCommon": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Custom-OnReturnToNeutral": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Init": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "NeutralState": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "NeutralStateCommon": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "OnReturnToNeutral": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "OnRoundStart": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "OnRoundStart-Core": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StandardState": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---Action": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---Action-Base": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---Action-Base-Attack": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---Action-Base-Colbox": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---Action-Base-Graphics": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---Action-Base-Hitbox": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---Action-Base-Hurtbox": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---Action-Base-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---Init": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---Init-Graphics": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---Init-Graphics-Model": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---Init-Graphics-Sprites": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---SECommon": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---SECommon-After": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---Action": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirThrowB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirThrowF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirThrowHeld": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirThrowHolding": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirThrowTeched": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirThrowTeching": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimBlockstun": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimBlockstunAirborne": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimBlockstunCrouching": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimBlockstunStanding": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimDead": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimHitstun": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimHitstunAirborne": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimHitstunCrouching": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimHitstunStanding": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Attack-BlockingLogic": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Attack-CanBlock": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Attack-JumpCancel": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Attack-ThrowTechingManagement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackCancels-All": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackCancels-Normals-All": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackCancels-Normals-Heavies": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackCancels-Normals-Lights": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackCancels-Normals-Mediums": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackCancels-Specials-All": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackCancels-Specials-EX": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackCancels-Specials-Specials": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackCancels-Specials-Supers": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackCancels-Throws": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackPrefixSetup": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Attacker": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Attacker-Stuns": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Defender": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Defender-Damage": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Defender-FirstHit": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Defender-Misc": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Defender-Proration": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Defender-Stun": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Defender-Transition": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Overrides": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackState": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackState-After": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackState-DefaultParams": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackTransitionToNeutralState": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-AirEX": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-AirHeavy": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-AirLight": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-AirMedium": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-AirSpecial": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-AirSuper": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-AirThrow": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-AirThrowFollowup": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-EX": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-Heavy": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-Light": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-Medium": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-Special": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-Super": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-Throw": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackType-ThrowFollowup": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackTypeHelper-CancelRules-Common": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackTypeHelper-CancelRules-EX": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackTypeHelper-CancelRules-Heavy": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackTypeHelper-CancelRules-Light": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackTypeHelper-CancelRules-Medium": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackTypeHelper-CancelRules-Special": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackTypeHelper-CancelRules-Super": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackTypeHelper-CancelRules-Throw": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Blockstun": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Dead": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Hitstun": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "HitstunEnd": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "HitstunLanding": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "OnRoundStart-Attacks": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "SimpleAttack-Standard": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StateTemplate-Attack-Normal": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StateTemplate-Attack-Projectile": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StateTemplate-Attack-Sequential": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StateTemplate-Attack-Simple": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "ThrowB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "ThrowF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "ThrowHeld": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "ThrowHeld-Common": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "ThrowHolding": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "ThrowHolding-Common": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "ThrowTeched": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "ThrowTeching": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---SEAttackReactEvents": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---SEAttackReactEvents-Attacker": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---SEAttackReactEvents-Defender": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---SEAttackReactEvents-Overrides": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Defender-Audio": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirTech-Backward": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirTech-Down": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirTech-Forward": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirTech-Neutral": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirTech-Up": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Airborne": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirborneNeutralState": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirborneState": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Airborne_AirjumpHelper": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Airborne_StartAirjumpHelper": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Airborne_StartDashHelper": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirdashB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirdashB-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirdashF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirdashF-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirjumpB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirjumpB-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirjumpF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirjumpF-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirjumpN": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AirjumpN-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirTechBackward": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirTechDown": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirTechForward": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirTechNeutral": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirTechUp": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirThrowHeld": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirThrowHolding": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirThrowTeched": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirThrowTeching": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirborne": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirdashB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirdashF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirjumpB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirjumpF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimAirjumpN": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimBackdash": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimCrawlB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimCrawlF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimCrouchToStand": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimCrouching": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimGroundTechBackward": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimGroundTechForward": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimGroundTechNeutral": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimGroundTechUp": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimGroundThrowHeld": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimGroundThrowHolding": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimGroundThrowTeched": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimGroundThrowTeching": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimHighjumpB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimHighjumpF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimHighjumpN": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimJumpB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimJumpF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimJumpN": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimJumpsquat": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimKnockdown": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimKnockdownTechBackward": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimKnockdownTechForward": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimKnockdownTechNeutral": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimKnockdownTechUp": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimLanding": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimRun": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimRunStart": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimRunStop": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimStand": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimStandToCrouch": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimStepDash": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimTurnaround": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimTurnaroundAirborne": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimTurnaroundCrouch": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimWalkB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AnimWalkF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "ApplyPhysics-Blockstun": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "ApplyPhysics-Hitstun": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "ApplyPhysics-Regular": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "ApplyPhysics-Tech": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Attacker-Physics": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Defender-Physics": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Backdash": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Backdash-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "CommonAfterPhysics": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "CrawlB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "CrawlB-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "CrawlF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "CrawlF-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "CrouchToStand": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Crouching": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "CrouchingNeutralState": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "CrouchingState": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Crouching_CrawlBHelper": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Crouching_CrawlFHelper": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Crouching_ToStandHelper": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Crouching_TurnaroundHelper": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Custom-OnLanding": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "DashInputHelper": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "GroundTech-Backward": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "GroundTech-Forward": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "GroundTech-Neutral": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "GroundTech-Up": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Groundbounce": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Grounded_StartDashHelper": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Grounded_StartJumpHelper": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "HighJumpsquat": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "HighjumpB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "HighjumpB-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "HighjumpF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "HighjumpF-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "HighjumpN": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "HighjumpN-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "JumpB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "JumpB-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "JumpF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "JumpF-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "JumpN": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "JumpN-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Jumpsquat": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Knockdown": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Knockdown-Hurtbox": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "KnockdownTech-Backward": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "KnockdownTech-Forward": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "KnockdownTech-Neutral": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "KnockdownTech-Up": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Landing": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "NeutralStateCommon-Physics": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "OnLanding": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "OnRoundStart-Physics": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "PhysicsAfter-CollidersManagement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "PhysicsAfter-FacingManagement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "PhysicsAfter-FrictionManagement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "PhysicsAfter-GravityManagement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Run": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Run-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "RunStart": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "RunStart-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "RunStop": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "RunStop-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Stand": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StandToCrouch": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Stand_ToCrouchHelper": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Stand_TurnaroundHelper": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StandardColbox": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StandardHurtbox": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StandingNeutralState": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StandingState": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StartAirTech": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StartGroundTech": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StartKnockdownTech": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StepDash": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "StepDash-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "TechCommon": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "TransitionToNeutralState": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Turnaround": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "TurnaroundAirborne": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "TurnaroundCrouch": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "UseAirAction": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "UseAirActionAtStart": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "WalkB": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "WalkB-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "WalkF": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "WalkF-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Base---SEAttackDefaults": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Attacker-Graphics": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AttackReactEvents-Defender-Graphics": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Common-Graphics": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Init-Graphics": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Init-Graphics-Model": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Init-Graphics-Palette": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Init-Graphics-Sprites": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Init-Graphics-Spritesheets": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Init-LightGraphicsInit": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "VFXBlock": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "VFXHit": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AI-Init": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AI-Multiplexer-Neutral": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "AI-Neutral-WalkAround": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Init-Training": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Training-Common": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Training-CommonAfter": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Training-NeutralStateCommon": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Training-OnReturnToNeutral": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Training-ResetTrigger": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Training-StandardState": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---Action-Base": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---Action-Base-Attack": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---Action-Base-Colbox": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---Action-Base-Graphics": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---Action-Base-Hitbox": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---Action-Base-Hurtbox": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---Action-Base-Movement": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---Init": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---Init-Graphics": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---Init-Graphics-Model": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---Init-Graphics-Sprites": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---SECommon": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---SECommon-After": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---SEAttackReactEvents": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---SEAttackReactEvents-Attacker": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---SEAttackReactEvents-Defender": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---SEAttackReactEvents-Overrides": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    },
+    "Projectile---SEAttackDefaults": {
+      "Parent": null,
+      "Type": null,
+      "TransitionFlags": [
+
+      ],
+      "Phases": {
+
+      }
+    }
   },
   "transformed_data": {
+    "AttacksTypes": {
+      "Defines": {
+        "ATTACK_MinDamage": 20,
+        "ATTACK_Light_ProrationDamageStarter": 900,
+        "ATTACK_Light_ProrationDamage": 900,
+        "ATTACK_Light_ProrationHitstunStarter": 900,
+        "ATTACK_Light_ProrationHitstun": 980,
+        "ATTACK_Light_CanCancelIntoLights": 1,
+        "ATTACK_Light_CanCancelIntoMediums": 1,
+        "ATTACK_Light_CanCancelIntoHeavies": 1,
+        "ATTACK_Light_CanCancelIntoSpecials": 1,
+        "ATTACK_Light_CanJumpCancelOnHit": 1,
+        "ATTACK_Light_CanJumpCancelOnBlock": 0,
+        "ATTACK_Medium_ProrationDamageStarter": 1000,
+        "ATTACK_Medium_ProrationDamage": 900,
+        "ATTACK_Medium_ProrationHitstunStarter": 1000,
+        "ATTACK_Medium_ProrationHitstun": 980,
+        "ATTACK_Medium_CanCancelIntoLights": 0,
+        "ATTACK_Medium_CanCancelIntoMediums": 1,
+        "ATTACK_Medium_CanCancelIntoHeavies": 1,
+        "ATTACK_Medium_CanCancelIntoSpecials": 1,
+        "ATTACK_Medium_CanJumpCancelOnHit": 1,
+        "ATTACK_Medium_CanJumpCancelOnBlock": 0,
+        "ATTACK_Heavy_ProrationDamageStarter": 1000,
+        "ATTACK_Heavy_ProrationDamage": 900,
+        "ATTACK_Heavy_ProrationHitstunStarter": 1000,
+        "ATTACK_Heavy_ProrationHitstun": 980,
+        "ATTACK_Heavy_CanCancelIntoLights": 0,
+        "ATTACK_Heavy_CanCancelIntoMediums": 0,
+        "ATTACK_Heavy_CanCancelIntoHeavies": 1,
+        "ATTACK_Heavy_CanCancelIntoSpecials": 1,
+        "ATTACK_Heavy_CanJumpCancelOnHit": 1,
+        "ATTACK_Heavy_CanJumpCancelOnBlock": 0,
+        "ATTACK_Special_ProrationDamageStarter": 1000,
+        "ATTACK_Special_ProrationDamage": 900,
+        "ATTACK_Special_ProrationHitstunStarter": 1000,
+        "ATTACK_Special_ProrationHitstun": 980,
+        "ATTACK_Special_CanCancelIntoEX": 1,
+        "ATTACK_Special_CanCancelIntoSuper": 1,
+        "ATTACK_Special_CanJumpCancelOnHit": 0,
+        "ATTACK_Special_CanJumpCancelOnBlock": 0,
+        "ATTACK_EX_MeterCost": 25,
+        "ATTACK_EX_ProrationDamageStarter": 1000,
+        "ATTACK_EX_ProrationDamage": 900,
+        "ATTACK_EX_ProrationHitstunStarter": 1000,
+        "ATTACK_EX_ProrationHitstun": 980,
+        "ATTACK_EX_CanCancelIntoEX": 0,
+        "ATTACK_EX_CanCancelIntoSuper": 1,
+        "ATTACK_EX_CanJumpCancelOnHit": 0,
+        "ATTACK_EX_CanJumpCancelOnBlock": 0,
+        "ATTACK_Super_MeterCost": 50,
+        "ATTACK_Super_ProrationDamageStarter": 500,
+        "ATTACK_Super_ProrationDamage": 500,
+        "ATTACK_Super_ProrationHitstunStarter": 1000,
+        "ATTACK_Super_ProrationHitstun": 980,
+        "ATTACK_Throw_ProrationDamageStarter": 750,
+        "ATTACK_Throw_ProrationDamage": 750,
+        "ATTACK_Throw_ProrationHitstunStarter": 800,
+        "ATTACK_Throw_ProrationHitstun": 800,
+        "ATTACK_Throw_CanCancelIntoSpecials": 0,
+        "ATTACK_Throw_CanCancelIntoEX": 0,
+        "ATTACK_Throw_CanCancelIntoSuper": 0,
+        "ATTACK_Throw_CanJumpCancelOnHit": 0,
+        "ATTACK_Throw_CanJumpCancelOnBlock": 0
+      }
+    },
+    "AttacksThrows": {
+      "Defines": {
+        "ATTACK_Throw_CanGroundThrow": 1,
+        "ATTACK_Throw_Ground_ThrowFState": "ThrowF",
+        "ATTACK_Throw_Ground_ThrowBState": "ThrowB",
+        "ATTACK_Throw_Ground_ThrowBAutoFlip": 1,
+        "ATTACK_Throw_Ground_HoldPointX": 10000,
+        "ATTACK_Throw_Ground_HoldPointY": 0,
+        "ATTACK_Throw_Ground_TimeHold": 30,
+        "ATTACK_Throw_CanAirThrow": 1,
+        "ATTACK_Throw_Air_ThrowFState": "AirThrowF",
+        "ATTACK_Throw_Air_ThrowBState": "AirThrowB",
+        "ATTACK_Throw_Air_ThrowBAutoFlip": 1,
+        "ATTACK_Throw_Air_HoldPointX": 10000,
+        "ATTACK_Throw_Air_HoldPointY": 0,
+        "ATTACK_Throw_Air_TimeHold": 30,
+        "ATTACK_Throw_Tech_LockoutTime": 60,
+        "ATTACK_Throw_Tech_ActiveTime": 20,
+        "ATTACK_Throw_Ground_HoldingState": "ThrowHolding",
+        "ATTACK_Throw_Ground_HeldState": "ThrowHeld",
+        "ATTACK_Throw_Air_HoldingState": "AirThrowHolding",
+        "ATTACK_Throw_Air_HeldState": "AirThrowHeld",
+        "ATTACK_Throw_Ground_TechingState": "ThrowTeching",
+        "ATTACK_Throw_Ground_TechedState": "ThrowTeched",
+        "ATTACK_Throw_Air_TechingState": "AirThrowTeching",
+        "ATTACK_Throw_Air_TechedState": "AirThrowTeched"
+      }
+    },
+    "AttacksMechanics": {
+      "Defines": {
+        "ATTACK_HoldBackToBlock": 1,
+        "ATTACK_UseBlockButtonToBlock": 0,
+        "ATTACK_CanBlockInAir": 1,
+        "ATTACK_ContinueBlockingAfterFirstHit": 1
+      }
+    },
+    "AudioSFX": {
+      "Defines": {
 
+      },
+      "SFX": {
+
+      }
+    },
+    "MenuData": {
+      "Defines": {
+        "MENU_Name": "Missing Name",
+        "MENU_Hidden": 0,
+        "MENU_CSSIconPath": "res://castagne/assets/icons/DefaultIcon.png",
+        "MENU_CSSGridX": 0,
+        "MENU_CSSGridY": 0,
+        "MENU_CSSGridZ": 0
+      }
+    },
+    "PhysicsMovement": {
+      "Defines": {
+        "MOVE_Gravity": -200,
+        "MOVE_Friction_Ground": 100,
+        "MOVE_Friction_Air": 2,
+        "MOVE_AirActionsMax": 0,
+        "MOVE_TurnaroundStand_Time": 6,
+        "MOVE_TurnaroundCrouch_Time": 6,
+        "MOVE_TurnaroundAirTime": 6,
+        "MOVE_StandToCrouch_Time": 6,
+        "MOVE_CrouchToStand_Time": 6,
+        "MOVE_CanCancelStandToCrouch": 1,
+        "MOVE_CanCancelCrouchToStand": 1,
+        "MOVE_Walk_SpeedF": 1000,
+        "MOVE_Walk_SpeedB": -800,
+        "MOVE_Crawl_SpeedF": 0,
+        "MOVE_Crawl_SpeedB": 0,
+        "MOVE_Dashes_CanDashFromCrouch": 0,
+        "MOVE_Jump_JumpsquatTime": 3,
+        "MOVE_Jump_JumpN_InitialMomentumX": 0,
+        "MOVE_Jump_JumpN_InitialMomentumY": 3000,
+        "MOVE_Jump_JumpF_InitialMomentumX": 1200,
+        "MOVE_Jump_JumpF_InitialMomentumY": 3000,
+        "MOVE_Jump_JumpB_InitialMomentumX": -1200,
+        "MOVE_Jump_JumpB_InitialMomentumY": 3000,
+        "MOVE_Jump_CanJumpForward": 1,
+        "MOVE_Jump_CanJumpBackward": 1,
+        "MOVE_Landing_TimeEmpty": 6,
+        "MOVE_Landing_TimeAttack": 6,
+        "MOVE_Landing_RecoverCrouching": 1,
+        "MOVE_Dashes_CanRun": 0,
+        "MOVE_Run_StartTime": 15,
+        "MOVE_Run_StopTime": 15,
+        "MOVE_Run_SpeedStart": 1900,
+        "MOVE_Run_Speed": 1500,
+        "MOVE_Run_SpeedStop": 500,
+        "MOVE_Dashes_CanStepDash": 0,
+        "MOVE_StepDash_Time": 20,
+        "MOVE_StepDash_Speed": 2000,
+        "MOVE_Dashes_CanBackdash": 0,
+        "MOVE_Backdash_Time": 18,
+        "MOVE_Backdash_Speed": -1600,
+        "MOVE_Dashes_CanHighjump": 0,
+        "MOVE_Highjump_JumpsquatTime": 3,
+        "MOVE_Highjump_HighjumpN_InitialMomentumX": 0,
+        "MOVE_Highjump_HighjumpN_InitialMomentumY": 5000,
+        "MOVE_Highjump_HighjumpF_InitialMomentumX": 1200,
+        "MOVE_Highjump_HighjumpF_InitialMomentumY": 5000,
+        "MOVE_Highjump_HighjumpB_InitialMomentumX": -1200,
+        "MOVE_Highjump_HighjumpB_InitialMomentumY": 5000,
+        "MOVE_Dashes_CanAirjump": 0,
+        "MOVE_Airjump_AirjumpN_InitialMomentumX": 0,
+        "MOVE_Airjump_AirjumpN_InitialMomentumY": 2000,
+        "MOVE_Airjump_AirjumpF_InitialMomentumX": 1200,
+        "MOVE_Airjump_AirjumpF_InitialMomentumY": 2000,
+        "MOVE_Airjump_AirjumpB_InitialMomentumX": -1200,
+        "MOVE_Airjump_AirjumpB_InitialMomentumY": 2000,
+        "MOVE_Dashes_CanAirdashF": 0,
+        "MOVE_Airdash_AirdashF_SpeedX": 2500,
+        "MOVE_Airdash_AirdashF_SpeedY": 0,
+        "MOVE_Airdash_AirdashF_Time": 30,
+        "MOVE_Dashes_CanAirdashB": 0,
+        "MOVE_Airdash_AirdashB_SpeedX": -2500,
+        "MOVE_Airdash_AirdashB_SpeedY": 0,
+        "MOVE_Airdash_AirdashB_Time": 30
+      }
+    },
+    "PhysicsTeching": {
+      "Defines": {
+        "MOVE_Tech_Friction_Ground": 20,
+        "MOVE_Tech_Friction_Air": 20,
+        "MOVE_Tech_Gravity": -50,
+        "ATTACK_Tech_Grounded_Neutral_Time": 10,
+        "ATTACK_Tech_Grounded_Neutral_MomentumX": -300,
+        "ATTACK_Tech_Grounded_Neutral_MomentumY": 1000,
+        "ATTACK_Tech_Grounded_CanTechForward": 1,
+        "ATTACK_Tech_Grounded_Forward_Time": 10,
+        "ATTACK_Tech_Grounded_Forward_MomentumX": 600,
+        "ATTACK_Tech_Grounded_Forward_MomentumY": 800,
+        "ATTACK_Tech_Grounded_CanTechBackward": 1,
+        "ATTACK_Tech_Grounded_Backward_Time": 10,
+        "ATTACK_Tech_Grounded_Backward_MomentumX": -800,
+        "ATTACK_Tech_Grounded_Backward_MomentumY": 800,
+        "ATTACK_Tech_Grounded_CanTechUp": 1,
+        "ATTACK_Tech_Grounded_Up_Time": 10,
+        "ATTACK_Tech_Grounded_Up_MomentumX": -400,
+        "ATTACK_Tech_Grounded_Up_MomentumY": 1800,
+        "ATTACK_Hitstun_CanRecoverInAir": 1,
+        "ATTACK_Tech_Airborne_Neutral_Time": 10,
+        "ATTACK_Tech_Airborne_Neutral_MomentumX": -200,
+        "ATTACK_Tech_Airborne_Neutral_MomentumY": 800,
+        "ATTACK_Tech_Airborne_CanTechForward": 1,
+        "ATTACK_Tech_Airborne_Forward_Time": 10,
+        "ATTACK_Tech_Airborne_Forward_MomentumX": 800,
+        "ATTACK_Tech_Airborne_Forward_MomentumY": 500,
+        "ATTACK_Tech_Airborne_CanTechBackward": 1,
+        "ATTACK_Tech_Airborne_Backward_Time": 10,
+        "ATTACK_Tech_Airborne_Backward_MomentumX": -800,
+        "ATTACK_Tech_Airborne_Backward_MomentumY": 500,
+        "ATTACK_Tech_Airborne_CanTechUp": 1,
+        "ATTACK_Tech_Airborne_Up_Time": 10,
+        "ATTACK_Tech_Airborne_Up_MomentumX": 0,
+        "ATTACK_Tech_Airborne_Up_MomentumY": 1000,
+        "ATTACK_Tech_Airborne_CanTechDown": 1,
+        "ATTACK_Tech_Airborne_Down_Time": 10,
+        "ATTACK_Tech_Airborne_Down_MomentumX": 0,
+        "ATTACK_Tech_Airborne_Down_MomentumY": -500,
+        "ATTACK_Tech_Knockdown_Neutral_Time": 30,
+        "ATTACK_Tech_Knockdown_Neutral_MomentumX": 0,
+        "ATTACK_Tech_Knockdown_Neutral_MomentumY": 0,
+        "ATTACK_Tech_Knockdown_Neutral_RecoverCrouching": 1,
+        "ATTACK_Tech_Knockdown_CanTechForward": 1,
+        "ATTACK_Tech_Knockdown_Forward_Time": 30,
+        "ATTACK_Tech_Knockdown_Forward_MomentumX": 2000,
+        "ATTACK_Tech_Knockdown_Forward_MomentumY": 0,
+        "ATTACK_Tech_Knockdown_Forward_RecoverCrouching": 1,
+        "ATTACK_Tech_Knockdown_CanTechBackward": 1,
+        "ATTACK_Tech_Knockdown_Backward_Time": 30,
+        "ATTACK_Tech_Knockdown_Backward_MomentumX": -2000,
+        "ATTACK_Tech_Knockdown_Backward_MomentumY": 0,
+        "ATTACK_Tech_Knockdown_Backward_RecoverCrouching": 1,
+        "ATTACK_Tech_Knockdown_CanTechUp": 1,
+        "ATTACK_Tech_Knockdown_Up_Time": 15,
+        "ATTACK_Tech_Knockdown_Up_MomentumX": 0,
+        "ATTACK_Tech_Knockdown_Up_MomentumY": 2000,
+        "ATTACK_Tech_Knockdown_Up_RecoverCrouching": 0
+      }
+    },
+    "PhysicsSystem": {
+      "Defines": {
+        "PHYSICS_StandardHurtbox_Use": 1,
+        "PHYSICS_StandardColbox_Use": 1,
+        "PHYSICS_StandardHurtbox_Width": 5000,
+        "PHYSICS_StandardHurtbox_Bottom": 0,
+        "PHYSICS_StandardHurtbox_Top": 20000,
+        "PHYSICS_StandardHurtbox_Crouching_Width": 5000,
+        "PHYSICS_StandardHurtbox_Crouching_Bottom": 0,
+        "PHYSICS_StandardHurtbox_Crouching_Top": 14000,
+        "PHYSICS_StandardHurtbox_Knockdown_Width": 9000,
+        "PHYSICS_StandardHurtbox_Knockdown_Bottom": 0,
+        "PHYSICS_StandardHurtbox_Knockdown_Top": 5000,
+        "PHYSICS_StandardColbox_Width": 4000,
+        "PHYSICS_StandardColbox_Bottom": 0,
+        "PHYSICS_StandardColbox_Top": 12000,
+        "MOVE_Hitstun_Friction_Ground": 100,
+        "MOVE_Hitstun_Friction_Air": 2,
+        "MOVE_Hitstun_Gravity": -200,
+        "MOVE_Blockstun_Friction_Ground": 100,
+        "MOVE_Blockstun_Friction_Air": 2,
+        "MOVE_Blockstun_Gravity": -200,
+        "MOVE_Teching_Ground_MomentumX": -2000,
+        "MOVE_Teching_Ground_MomentumY": 0,
+        "MOVE_Teching_Ground_Time": 20,
+        "MOVE_Teched_Ground_MomentumX": -2000,
+        "MOVE_Teched_Ground_MomentumY": 0,
+        "MOVE_Teched_Ground_Time": 20,
+        "MOVE_Teching_Air_MomentumX": -1000,
+        "MOVE_Teching_Air_MomentumY": 1000,
+        "MOVE_Teching_Air_Time": 20,
+        "MOVE_Teched_Air_MomentumX": -1000,
+        "MOVE_Teched_Air_MomentumY": 1000,
+        "MOVE_Teched_Air_Time": 20,
+        "PHYSICS_FaceTargetAutomatically": 1,
+        "PHYSICS_FaceTargetAutomaticallyInAir": 0,
+        "PHYSICS_FaceTargetAutomaticallyAtAttackStart": 1,
+        "PHYSICS_FaceTargetAutomaticallyAtAirAttackStart": 0,
+        "PHYSICS_AllowFacingChangeAtAirAttackStart": 1,
+        "MOVE_Dashes_DoubleTapTime": 12,
+        "MOVE_Dashes_HighjumpInputTime": 12
+      }
+    },
+    "Graphics": {
+      "Defines": {
+        "GRAPHICS_Scale": 1000,
+        "GRAPHICS_PauseAttackerVFXOnHitstop": 1,
+        "GRAPHICS_AutomaticZOrder": 1,
+        "GRAPHICS_UseModel": 1,
+        "GRAPHICS_ModelPath": "res://castagne/assets/fighters/baston/model/BastonModel.tscn",
+        "GRAPHICS_ModelPath_AnimPlayer": "AnimationPlayer",
+        "GRAPHICS_UseSprites": 0,
+        "GRAPHICS_SpritePalette": "res://castagne/assets/helpers/palette/PaletteManual01.png"
+      },
+      "Spritesheets": {
+        "TemporaryStickman": {
+          "InstanceName": "TemporaryStickman",
+          "Path": "res://castagne/assets/fighters/baston/sprites/StickmanSpriteSheet.png",
+          "SpritesX": 16,
+          "SpritesY": 4,
+          "OriginX": 32,
+          "OriginY": 6,
+          "PixelSize": 100000,
+          "PaletteMode": 0,
+          "Null": 0
+        }
+      },
+      "Palettes": {
+        "0": {
+          "InstanceName": "0",
+          "ModelPath": "res://castagne/assets/fighters/baston/model/BastonModel-Pal02.tscn",
+          "SpritePalettePath": "res://castagne/assets/helpers/palette/PaletteManual01.png",
+          "Extra": 0,
+          "Null": 0,
+          "DisplayName": "Blue"
+        },
+        "1": {
+          "InstanceName": "1",
+          "ModelPath": "res://castagne/assets/fighters/baston/model/BastonModel-Pal03.tscn",
+          "SpritePalettePath": "res://castagne/assets/helpers/palette/PaletteManual01.png",
+          "Extra": 0,
+          "Null": 0,
+          "DisplayName": "Green"
+        },
+        "2": {
+          "InstanceName": "2",
+          "ModelPath": "res://castagne/assets/fighters/baston/model/BastonModel-Pal04.tscn",
+          "SpritePalettePath": "res://castagne/assets/helpers/palette/PaletteManual01.png",
+          "Extra": 0,
+          "Null": 0,
+          "DisplayName": "Yellow"
+        },
+        "3": {
+          "InstanceName": "3",
+          "ModelPath": "res://castagne/assets/fighters/baston/model/BastonModel-Pal05.tscn",
+          "SpritePalettePath": "res://castagne/assets/helpers/palette/PaletteManual01.png",
+          "Extra": 0,
+          "Null": 0,
+          "DisplayName": "Purple"
+        },
+        "4": {
+          "InstanceName": "4",
+          "ModelPath": "res://castagne/assets/fighters/baston/model/BastonModel-Pal06.tscn",
+          "SpritePalettePath": "res://castagne/assets/helpers/palette/PaletteManual01.png",
+          "Extra": 0,
+          "Null": 0,
+          "DisplayName": "White"
+        }
+      }
+    },
+    "Anims": {
+      "Defines": {
+        "ANIMS_UseStandardAnims": 1,
+        "ANIM_Movement_Basic_Stand": "Stand",
+        "ANIM_Movement_Basic_Stand_Loop": 56,
+        "ANIM_Movement_Basic_WalkF": "WalkF",
+        "ANIM_Movement_Basic_WalkF_Loop": 52,
+        "ANIM_Movement_Basic_WalkB": "WalkB",
+        "ANIM_Movement_Basic_WalkB_Loop": 30,
+        "ANIM_Movement_Basic_Crouching": "Crouch",
+        "ANIM_Movement_Basic_Crouching_Loop": 56,
+        "ANIM_Movement_Basic_CrawlF": "CrawlF",
+        "ANIM_Movement_Basic_CrawlF_Loop": 15,
+        "ANIM_Movement_Basic_CrawlB": "CrawlB",
+        "ANIM_Movement_Basic_CrawlB_Loop": 15,
+        "ANIM_Movement_Basic_Turnaround": "TurnaroundStand",
+        "ANIM_Movement_Basic_TurnaroundCrouch": "TurnaroundCrouch",
+        "ANIM_Movement_Basic_TurnaroundAirborne": "TurnaroundAirIdle",
+        "ANIM_Movement_Basic_StandToCrouch": "StandToCrouch",
+        "ANIM_Movement_Basic_CrouchToStand": "CrouchToStand",
+        "ANIM_Movement_Basic_Landing": "Jumpsquat",
+        "ANIM_Movement_Basic_Jumpsquat": "Jumpsquat",
+        "ANIM_Movement_Basic_AirIdle": "AirIdle",
+        "ANIM_Movement_Basic_JumpN": "AirIdle",
+        "ANIM_Movement_Basic_JumpF": "AirIdle",
+        "ANIM_Movement_Basic_JumpB": "AirIdle",
+        "ANIM_Movement_Dashes_RunStart": "RunStart",
+        "ANIM_Movement_Dashes_Run": "Run",
+        "ANIM_Movement_Dashes_Run_Loop": 15,
+        "ANIM_Movement_Dashes_RunStop": "RunStop",
+        "ANIM_Movement_Dashes_TurnaroundRun": "TurnaroundRun",
+        "ANIM_Movement_Dashes_StepDash": "StepDash",
+        "ANIM_Movement_Dashes_Backdash": "Backdash",
+        "ANIM_Movement_Dashes_HighjumpN": "AirIdle",
+        "ANIM_Movement_Dashes_HighjumpF": "AirIdle",
+        "ANIM_Movement_Dashes_HighjumpB": "AirIdle",
+        "ANIM_Movement_Dashes_AirjumpN": "AirIdle",
+        "ANIM_Movement_Dashes_AirjumpF": "AirIdle",
+        "ANIM_Movement_Dashes_AirjumpB": "AirIdle",
+        "ANIM_Movement_Dashes_AirdashF": "AirdashF",
+        "ANIM_Movement_Dashes_AirdashB": "AirdashB",
+        "ANIM_Reacts_Hitstun_Standing": "H-HitstunStand",
+        "ANIM_Reacts_Hitstun_Crouching": "H-HitstunCrouch",
+        "ANIM_Reacts_Hitstun_Airborne": "H-HitstunAir",
+        "ANIM_Reacts_Knockdown": "Knockdown",
+        "ANIM_Reacts_Dead": "Knockdown",
+        "ANIM_Reacts_Blockstun_Standing": "B-BlockStand",
+        "ANIM_Reacts_Blockstun_Crouching": "B-BlockCrouch",
+        "ANIM_Reacts_Blockstun_Airborne": "B-BlockAir",
+        "ANIM_Reacts_Throw_Ground_Held": "ThrowHeld",
+        "ANIM_Reacts_Throw_Ground_Holding": "ThrowHold",
+        "ANIM_Reacts_Throw_Ground_Teched": "ThrowTeched",
+        "ANIM_Reacts_Throw_Ground_Teching": "ThrowTeching",
+        "ANIM_Reacts_Throw_Air_Held": "ThrowHeld",
+        "ANIM_Reacts_Throw_Air_Holding": "ThrowHold",
+        "ANIM_Reacts_Throw_Air_Teched": "ThrowTeched",
+        "ANIM_Reacts_Throw_Air_Teching": "ThrowTeching",
+        "ANIM_Reacts_Tech_Grounded_Neutral": "AirIdle",
+        "ANIM_Reacts_Tech_Grounded_Forward": "AirIdle",
+        "ANIM_Reacts_Tech_Grounded_Backward": "AirIdle",
+        "ANIM_Reacts_Tech_Grounded_Up": "AirIdle",
+        "ANIM_Reacts_Tech_Airborne_Neutral": "AirIdle",
+        "ANIM_Reacts_Tech_Airborne_Forward": "AirIdle",
+        "ANIM_Reacts_Tech_Airborne_Backward": "AirIdle",
+        "ANIM_Reacts_Tech_Airborne_Up": "AirIdle",
+        "ANIM_Reacts_Tech_Airborne_Down": "AirIdle",
+        "ANIM_Reacts_Tech_Knockdown_Neutral": "Wakeup",
+        "ANIM_Reacts_Tech_Knockdown_Forward": "Wakeup",
+        "ANIM_Reacts_Tech_Knockdown_Backward": "Wakeup",
+        "ANIM_Reacts_Tech_Knockdown_Up": "AirIdle"
+      },
+      "SpriteAnimations": {
+
+      }
+    },
+    "UI": {
+      "Defines": {
+        "UI_UseWidgets": 1
+      },
+      "Widgets": {
+        "HPBar": {
+          "InstanceName": "HPBar",
+          "UseWidget": 1,
+          "Type": 1,
+          "ScenePath": "res://",
+          "HookPoint": "HP",
+          "Direction": 1,
+          "Variable1": "HP",
+          "Variable2": "",
+          "Variable3": "HPMax",
+          "Asset1": "",
+          "Asset1Mirror": "",
+          "Asset2": "",
+          "Asset2Mirror": "",
+          "Asset3": "",
+          "Asset3Mirror": "",
+          "DefaultColor": 1,
+          "Null": 0
+        },
+        "Meter": {
+          "InstanceName": "Meter",
+          "UseWidget": 1,
+          "Type": 1,
+          "ScenePath": "res://",
+          "HookPoint": "Meter",
+          "Direction": 1,
+          "Variable1": "Meter",
+          "Variable2": "",
+          "Variable3": "MeterMax",
+          "Asset1": "",
+          "Asset1Mirror": "",
+          "Asset2": "",
+          "Asset2Mirror": "",
+          "Asset3": "",
+          "Asset3Mirror": "",
+          "DefaultColor": 3,
+          "Null": 0
+        }
+      }
+    }
   }
 }

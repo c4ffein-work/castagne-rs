@@ -116,7 +116,7 @@ fi
 cp project3.godot project.godot
 
 # Run the generation script
-${GODOT3_BIN} --path . --script scripts/generate_golden_masters.gd
+${GODOT3_BIN} --path . scripts/golden_master_generator.tscn
 
 # Save the exit code
 EXIT_CODE=$?
