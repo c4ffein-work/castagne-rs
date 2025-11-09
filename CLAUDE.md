@@ -2,6 +2,22 @@
 
 This document contains configuration and guidelines for AI assistants (like Claude) working on this project.
 
+## ⚠️ FIRST STEP: Godot 4 Setup (ALWAYS CHECK THIS FIRST!)
+
+**CRITICAL: Before doing ANY work on this project, verify Godot 4 is installed:**
+
+```bash
+make godot-check
+```
+
+**If not installed, run:**
+
+```bash
+make godot-setup
+```
+
+This is required because the parser uses Godot types and cannot be tested without the Godot runtime.
+
 ## Network Access Requirements
 
 When working on this project, AI assistants may need to download dependencies and resources. If you encounter problems during dependency installation or downloads, you must authorize the following domains:
