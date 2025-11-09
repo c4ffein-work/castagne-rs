@@ -131,7 +131,7 @@ pub struct ParsedCharacter {
 /// This is a minimal implementation - the original is much more complex!
 pub struct CastagneParser {
     logs_active: bool,
-    errors: Vec<String>,
+    pub errors: Vec<String>,
 
     // Parsing state
     current_lines: Vec<String>,
