@@ -443,12 +443,24 @@ impl CastagneTestRunner {
         )
     }
 
+    /// Test parser with simple test file (good for initial testing)
+    #[func]
+    pub fn test_parser_simple(&mut self) -> bool {
+        godot_print!("Testing parser comparison (test_character_complete)...");
+        self.test_parser_with_golden_master(
+            "test_character_complete.casp",
+            "golden_masters/test_character_complete.json"
+        )
+    }
+
     /// Helper method to test parser against a golden master file
     fn test_parser_with_golden_master(&self, casp_file: &str, golden_master_file: &str) -> bool {
         use std::fs;
 
-        // Load golden master JSON
-        let golden_json = match fs::read_to_string(golden_master_file) {
+        godot_print!("  → Loading golden master: {}", golden_master_file);
+
+        // Load and parse golden master JSON
+        let golden_json_str = match fs::read_to_string(golden_master_file) {
             Ok(content) => content,
             Err(e) => {
                 godot_error!("❌ Failed to load golden master {}: {}", golden_master_file, e);
@@ -456,8 +468,15 @@ impl CastagneTestRunner {
             }
         };
 
-        // Parse the golden master JSON manually (simple approach without serde)
-        // For now, we'll do basic structure verification
+        let golden_json: serde_json::Value = match serde_json::from_str(&golden_json_str) {
+            Ok(json) => json,
+            Err(e) => {
+                godot_error!("❌ Failed to parse golden master JSON: {}", e);
+                return false;
+            }
+        };
+
+        godot_print!("  → Parsing .casp file with Rust parser: {}", casp_file);
 
         // Parse the .casp file with Rust parser
         let mut parser = CastagneParser::new();
@@ -472,33 +491,115 @@ impl CastagneTestRunner {
             }
         };
 
-        // Basic verification - check metadata fields exist
-        if !golden_json.contains(&format!("\"name\": \"{}\"", rust_result.metadata.name)) {
-            godot_error!("❌ Metadata name mismatch");
-            godot_error!("   Rust: {}", rust_result.metadata.name);
-            return false;
+        godot_print!("  → Serializing Rust parser output to JSON");
+
+        // Serialize Rust parser output to JSON
+        let rust_json = match rust_result.to_json_value() {
+            Ok(json) => json,
+            Err(e) => {
+                godot_error!("❌ Failed to serialize Rust parser output: {}", e);
+                return false;
+            }
+        };
+
+        godot_print!("  → Comparing parser outputs...");
+
+        // Compare the two JSON structures
+        let mut differences = Vec::new();
+        self.compare_json_recursive(&rust_json, &golden_json, "", &mut differences);
+
+        if differences.is_empty() {
+            godot_print!("  ✅ Perfect match! Rust parser output matches golden master exactly.");
+            return true;
         }
 
-        // Check states exist
-        let states_count = rust_result.states.len();
-        if states_count == 0 {
-            godot_warn!("⚠️  Rust parser found 0 states (golden master likely has many)");
-            // Don't fail yet - parser might not be fully implemented
-        } else {
-            godot_print!("  ✓ Rust parser found {} states", states_count);
+        // Report differences
+        godot_warn!("  ⚠️  Found {} differences between Rust parser and golden master:", differences.len());
+
+        // Show first 10 differences
+        for (i, diff) in differences.iter().enumerate().take(10) {
+            godot_print!("    {}: {}", i + 1, diff);
         }
 
-        // Check variables exist
-        let vars_count = rust_result.variables.len();
-        if vars_count == 0 {
-            godot_warn!("⚠️  Rust parser found 0 variables (golden master likely has some)");
-        } else {
-            godot_print!("  ✓ Rust parser found {} variables", vars_count);
+        if differences.len() > 10 {
+            godot_print!("    ... and {} more differences", differences.len() - 10);
         }
 
-        godot_print!("  ✅ Basic parser test passed (detailed comparison TODO)");
-        godot_warn!("  ⚠️  Note: Full comparison not yet implemented - only basic checks");
-        true
+        // Print summary statistics
+        godot_print!("  → Summary:");
+        godot_print!("    Rust metadata.name: {}", rust_result.metadata.name);
+        godot_print!("    Golden metadata.name: {}", golden_json["metadata"]["name"].as_str().unwrap_or("N/A"));
+        godot_print!("    Rust states count: {}", rust_result.states.len());
+        godot_print!("    Golden states count: {}", golden_json["states"].as_object().map(|o| o.len()).unwrap_or(0));
+        godot_print!("    Rust variables count: {}", rust_result.variables.len());
+        godot_print!("    Golden variables count: {}", golden_json["variables"].as_object().map(|o| o.len()).unwrap_or(0));
+
+        // For now, return true if basic metadata matches (parser is still in development)
+        rust_result.metadata.name == golden_json["metadata"]["name"].as_str().unwrap_or("")
+    }
+
+    /// Recursively compare two JSON values and collect differences
+    fn compare_json_recursive(&self, rust: &serde_json::Value, golden: &serde_json::Value,
+                              path: &str, differences: &mut Vec<String>) {
+        use serde_json::Value;
+
+        match (rust, golden) {
+            (Value::Object(rust_obj), Value::Object(golden_obj)) => {
+                // Check for missing keys in Rust
+                for key in golden_obj.keys() {
+                    if !rust_obj.contains_key(key) {
+                        let new_path = if path.is_empty() { key.clone() } else { format!("{}.{}", path, key) };
+                        differences.push(format!("{}: missing in Rust output", new_path));
+                    }
+                }
+
+                // Check for extra keys in Rust
+                for key in rust_obj.keys() {
+                    if !golden_obj.contains_key(key) {
+                        let new_path = if path.is_empty() { key.clone() } else { format!("{}.{}", path, key) };
+                        differences.push(format!("{}: extra in Rust output (not in golden)", new_path));
+                    }
+                }
+
+                // Recursively compare common keys
+                for (key, rust_val) in rust_obj.iter() {
+                    if let Some(golden_val) = golden_obj.get(key) {
+                        let new_path = if path.is_empty() { key.clone() } else { format!("{}.{}", path, key) };
+                        self.compare_json_recursive(rust_val, golden_val, &new_path, differences);
+                    }
+                }
+            }
+            (Value::Array(rust_arr), Value::Array(golden_arr)) => {
+                if rust_arr.len() != golden_arr.len() {
+                    differences.push(format!("{}: array length mismatch (Rust: {}, Golden: {})",
+                        path, rust_arr.len(), golden_arr.len()));
+                }
+
+                for (i, (rust_item, golden_item)) in rust_arr.iter().zip(golden_arr.iter()).enumerate() {
+                    let new_path = format!("{}[{}]", path, i);
+                    self.compare_json_recursive(rust_item, golden_item, &new_path, differences);
+                }
+            }
+            (rust_val, golden_val) => {
+                if rust_val != golden_val {
+                    // Truncate long values for readability
+                    let rust_str = format!("{:?}", rust_val);
+                    let golden_str = format!("{:?}", golden_val);
+                    let rust_display = if rust_str.len() > 50 {
+                        format!("{}...", &rust_str[..50])
+                    } else {
+                        rust_str
+                    };
+                    let golden_display = if golden_str.len() > 50 {
+                        format!("{}...", &golden_str[..50])
+                    } else {
+                        golden_str
+                    };
+                    differences.push(format!("{}: value mismatch\n      Rust: {}\n      Golden: {}",
+                        path, rust_display, golden_display));
+                }
+            }
+        }
     }
 
     /// Compare metadata between Rust and GDScript parsers
