@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "skeleton": "res://castagne/examples/fighters/baston/Baston-Model.casp",
+    "filepath": "castagne/editor/tutorials/assets/TutorialBaston.casp",
+    "name": "Baston Labatte",
+    "editorname": "Baston Labatte (Custom Character)"
+  },
+  "subentities": {
+
+  },
+  "variables": {
+
+  },
+  "states": {
+
+  },
+  "transformed_data": {
+
+  }
+}

@@ -20,12 +20,11 @@ func _init():
 	var config_data = Node.new()
 	config_data.set_script(load("res://castagne/engine/CastagneConfig.gd"))
 
-	# Files to parse - start with our simpler test files
-	# Note: Baston example file requires full Castagne module system, so we skip it for now
+	# Files to parse - Castagne example files
 	var test_files = [
-		"test_character.casp",
-		"test_character_advanced.casp",
-		"test_character_complete.casp"
+		"castagne/examples/fighters/baston/Baston-Model.casp",
+		"castagne/examples/fighters/baston/Baston-2D.casp",
+		"castagne/editor/tutorials/assets/TutorialBaston.casp"
 	]
 
 	var success_count = 0

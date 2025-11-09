@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "name": "Baston Labatte",
+    "editorname": "Baston 2D (Example Character)",
+    "skeleton": "res://castagne/examples/fighters/baston/Baston-Model.casp",
+    "filepath": "castagne/examples/fighters/baston/Baston-2D.casp"
+  },
+  "subentities": {
+
+  },
+  "variables": {
+
+  },
+  "states": {
+
+  },
+  "transformed_data": {
+
+  }
+}
