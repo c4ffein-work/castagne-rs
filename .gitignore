@@ -7,8 +7,10 @@ Cargo.lock
 *.import
 .godot/
 .godot-bin/
+.godot3-bin/
 export_presets.cfg
 *.uid
+*.bak
 
 # OS
 .DS_Store

@@ -1,26 +1,32 @@
-extends SceneTree
+extends Node
 
-# Generate golden master JSON files by parsing .casp files with the original Castagne parser
-# Usage: godot --script scripts/generate_golden_masters.gd
+# Generate golden master JSON files by parsing .casp files
+# Runs as a proper scene so Castagne autoload is available
 
-func _init():
+func _ready():
 	print("===========================================")
 	print("  Generating Golden Master Files")
 	print("===========================================")
 	print("")
 
-	# Load the parser
+	# Wait for Castagne autoload to initialize
+	yield(get_tree(), "idle_frame")
+
+	# Use the global Castagne config with all modules
+	var config_data = Castagne.baseConfigData
+	if !config_data:
+		print("ERROR: Castagne baseConfigData not available!")
+		get_tree().quit(1)
+		return
+
+	# Load the parser script
 	var parser_script = load("res://castagne/engine/CastagneParser.gd")
 	if !parser_script:
 		print("ERROR: Could not load Castagne parser!")
-		quit(1)
+		get_tree().quit(1)
 		return
 
-	# Create a minimal config (the parser needs this)
-	var config_data = Node.new()
-	config_data.set_script(load("res://castagne/engine/CastagneConfig.gd"))
-
-	# Files to parse - Castagne example files
+	# Files to parse
 	var test_files = [
 		"castagne/examples/fighters/baston/Baston-Model.casp",
 		"castagne/examples/fighters/baston/Baston-2D.casp",
@@ -33,8 +39,14 @@ func _init():
 	for filename in test_files:
 		print("Processing: %s" % filename)
 
+		# Create parser and add to tree (needed for onready variables)
 		var parser = parser_script.new()
+		add_child(parser)
+
 		var result = parser.CreateFullCharacter(filename, config_data, true)
+
+		# Clean up
+		parser.queue_free()
 
 		if result == null:
 			print("  ✗ FAILED to parse %s" % filename)
@@ -44,10 +56,10 @@ func _init():
 			fail_count += 1
 			continue
 
-		# Convert to a serializable dictionary
+		# Convert to JSON
 		var output = serialize_character(result)
 
-		# Save as JSON - create nested directory structure if needed
+		# Save file
 		var json_filename = "golden_masters/" + filename.replace(".casp", ".json").get_file()
 		var file = File.new()
 		var dir = Directory.new()
@@ -75,34 +87,29 @@ func _init():
 
 	if fail_count == 0:
 		print("  ✓ All golden masters generated successfully!")
-		quit(0)
+		get_tree().quit(0)
 	else:
 		print("  ✗ Some files failed to generate")
-		quit(1)
+		get_tree().quit(1)
 
 func serialize_character(character):
-	# Convert the ParsedCharacter object to a plain dictionary
-	# Parser returns: Character, Subentities, Variables, States, TransformedData
 	var output = {}
 
 	# Metadata
 	output["metadata"] = {}
 	if "Character" in character and character["Character"]:
-		var meta = character["Character"]
-		# The metadata is a dictionary with keys like Name, Author, Description, Skeleton
-		for key in meta:
-			output["metadata"][key.to_lower()] = meta[key]
+		for key in character["Character"]:
+			output["metadata"][key.to_lower()] = character["Character"][key]
 
 	# Subentities
 	output["subentities"] = {}
 	if "Subentities" in character:
 		for entity_name in character["Subentities"]:
-			var entity = character["Subentities"][entity_name]
 			output["subentities"][entity_name] = {}
-			for key in entity:
-				output["subentities"][entity_name][key.to_lower()] = entity[key]
+			for key in character["Subentities"][entity_name]:
+				output["subentities"][entity_name][key.to_lower()] = character["Subentities"][entity_name][key]
 
-	# Variables (note: capital V in parser output!)
+	# Variables
 	output["variables"] = {}
 	if "Variables" in character:
 		for var_name in character["Variables"]:
@@ -115,7 +122,7 @@ func serialize_character(character):
 				"Mutability": var_data.get("Mutability", "")
 			}
 
-	# States (note: capital S in parser output!)
+	# States
 	output["states"] = {}
 	if "States" in character:
 		for state_name in character["States"]:
@@ -126,16 +133,15 @@ func serialize_character(character):
 				"TransitionFlags": state.get("TransitionFlags", []),
 				"Phases": {}
 			}
-			# Each phase contains an array of instructions
 			if "Phases" in state:
 				for phase_name in state["Phases"]:
 					var instructions = state["Phases"][phase_name]
 					output["states"][state_name]["Phases"][phase_name] = {
 						"instruction_count": instructions.size(),
-						"instructions": instructions  # Full instruction data for comparison
+						"instructions": instructions
 					}
 
-	# TransformedData (this contains processed specblocks and other data)
+	# TransformedData
 	output["transformed_data"] = {}
 	if "TransformedData" in character:
 		output["transformed_data"] = character["TransformedData"].duplicate(true)
