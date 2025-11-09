@@ -4,7 +4,7 @@ compatibility_minimum = 4.2
 reloadable = false
 
 [libraries]
-linux.debug.x86_64 = "res://target/debug/libcastagne_rs.so"
+linux.debug.x86_64 = "res://target/release/libcastagne_rs.so"
 linux.release.x86_64 = "res://target/release/libcastagne_rs.so"
 macos.debug = "res://target/debug/libcastagne_rs.dylib"
 macos.release = "res://target/release/libcastagne_rs.dylib"

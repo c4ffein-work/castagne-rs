@@ -7,6 +7,7 @@
 use godot::prelude::*;
 use godot::classes::GDScript;
 use crate::memory::CastagneMemory;
+use crate::parser::CastagneParser;
 
 /// Test runner that compares Rust and GDScript implementations
 #[derive(GodotClass)]
@@ -31,14 +32,19 @@ impl CastagneTestRunner {
         godot_print!("=== Running Castagne Comparison Tests ===");
         let mut results = Dictionary::new();
 
-        // Test memory operations
+        // Test memory operations - will FAIL until GDScript files are ported to Godot 4
         results.set("memory_global", self.test_memory_global());
         results.set("memory_player", self.test_memory_player());
         results.set("memory_entity", self.test_memory_entity());
 
-        // Test StateHandle operations
+        // Test StateHandle operations - Rust-only tests (no GDScript dependency)
         results.set("state_handle_point_to", self.test_state_handle_point_to());
         results.set("state_handle_target_entity", self.test_state_handle_target());
+
+        // Test parser operations - will FAIL until golden master pipeline is complete
+        results.set("parser_basic_character", self.test_parser_basic_character());
+        results.set("parser_complete_character", self.test_parser_complete_character());
+        results.set("parser_advanced_character", self.test_parser_advanced_character());
 
         // Print summary
         let passed = results.iter_shared()
@@ -55,12 +61,14 @@ impl CastagneTestRunner {
     fn test_memory_global(&self) -> bool {
         godot_print!("Testing global memory operations...");
 
+        // TODO: Need Godot 4 port of CastagneMemory.gd or golden master approach
         // Create GDScript version
         let mut gd_script = match try_load::<GDScript>("res://castagne/engine/CastagneMemory.gd") {
             Ok(script) => script,
             Err(_) => {
-                godot_print!("  ⊘ SKIPPED: GDScript CastagneMemory.gd not found (comparison test requires original Castagne)");
-                return true; // Pass when GDScript not available
+                godot_error!("❌ GDScript CastagneMemory.gd not found!");
+                godot_error!("   TODO: Port CastagneMemory.gd to Godot 4 or use golden master approach");
+                return false; // FAIL - don't hide the problem
             }
         };
 
@@ -122,12 +130,14 @@ impl CastagneTestRunner {
     fn test_memory_player(&self) -> bool {
         godot_print!("Testing player memory operations...");
 
+        // TODO: Need Godot 4 port of CastagneMemory.gd or golden master approach
         // Create GDScript version
         let mut gd_script = match try_load::<GDScript>("res://castagne/engine/CastagneMemory.gd") {
             Ok(script) => script,
             Err(_) => {
-                godot_print!("  ⊘ SKIPPED: GDScript CastagneMemory.gd not found (comparison test requires original Castagne)");
-                return true; // Pass when GDScript not available
+                godot_error!("❌ GDScript CastagneMemory.gd not found!");
+                godot_error!("   TODO: Port CastagneMemory.gd to Godot 4 or use golden master approach");
+                return false; // FAIL - don't hide the problem
             }
         };
 
@@ -185,12 +195,14 @@ impl CastagneTestRunner {
     fn test_memory_entity(&self) -> bool {
         godot_print!("Testing entity memory operations...");
 
+        // TODO: Need Godot 4 port of CastagneMemory.gd or golden master approach
         // Create GDScript version
         let mut gd_script = match try_load::<GDScript>("res://castagne/engine/CastagneMemory.gd") {
             Ok(script) => script,
             Err(_) => {
-                godot_print!("  ⊘ SKIPPED: GDScript CastagneMemory.gd not found (comparison test requires original Castagne)");
-                return true; // Pass when GDScript not available
+                godot_error!("❌ GDScript CastagneMemory.gd not found!");
+                godot_error!("   TODO: Port CastagneMemory.gd to Godot 4 or use golden master approach");
+                return false; // FAIL - don't hide the problem
             }
         };
 
@@ -401,6 +413,196 @@ impl CastagneTestRunner {
         }
 
         godot_print!("  ✅ StateHandle target entity test passed!");
+        true
+    }
+
+    /// Test parser comparison - basic character file
+    fn test_parser_basic_character(&self) -> bool {
+        godot_print!("Testing parser comparison (basic character)...");
+        self.test_parser_file("test_character.casp")
+    }
+
+    /// Test parser comparison - complete character file
+    fn test_parser_complete_character(&self) -> bool {
+        godot_print!("Testing parser comparison (complete character)...");
+        self.test_parser_file("test_character_complete.casp")
+    }
+
+    /// Test parser comparison - advanced character file
+    fn test_parser_advanced_character(&self) -> bool {
+        godot_print!("Testing parser comparison (advanced character)...");
+        self.test_parser_file("test_character_advanced.casp")
+    }
+
+    /// Helper method to test parser on a specific file
+    fn test_parser_file(&self, filename: &str) -> bool {
+        // TODO(URGENT): This test is NOT IMPLEMENTED - need golden master pipeline
+        // TODO: Create full pipeline to generate golden master files from Godot 3 + GDScript Castagne
+        // TODO: Should compare Rust parser output against golden master JSON files, not live GDScript
+        // TODO: Use real .casp files from castagne/examples (e.g., Baston-Model.casp), not our test files
+        // TODO: Our test files use different syntax than actual Castagne format - parser isn't compatible
+
+        godot_error!("❌ PARSER COMPARISON TEST NOT IMPLEMENTED FOR: {}", filename);
+        godot_error!("   TODO: Generate golden master JSON files using Godot 3 + GDScript parser");
+        godot_error!("   TODO: Update test to load golden master and compare Rust output");
+        godot_error!("   TODO: Use real Castagne .casp files, not our simplified test files");
+        godot_error!("   See scripts/generate_golden_masters.gd for WIP golden master generation");
+
+        // FAIL HARD - don't hide the problem by returning true
+        false
+    }
+
+    /// Compare metadata between Rust and GDScript parsers
+    fn compare_metadata(&self, rust_char: &crate::parser::ParsedCharacter, gd_char: &Gd<Object>) -> bool {
+        let gd_meta = gd_char.get("metadata").to::<Gd<Object>>();
+
+        // Compare name
+        let gd_name = gd_meta.get("name").to::<GString>().to_string();
+        if rust_char.metadata.name != gd_name {
+            godot_error!("  Name mismatch: Rust='{}' vs GD='{}'", rust_char.metadata.name, gd_name);
+            return false;
+        }
+
+        // Compare author
+        let gd_author = gd_meta.get("author").to::<GString>().to_string();
+        if rust_char.metadata.author != gd_author {
+            godot_error!("  Author mismatch: Rust='{}' vs GD='{}'", rust_char.metadata.author, gd_author);
+            return false;
+        }
+
+        // Compare description
+        let gd_desc = gd_meta.get("description").to::<GString>().to_string();
+        if rust_char.metadata.description != gd_desc {
+            godot_error!("  Description mismatch: Rust='{}' vs GD='{}'", rust_char.metadata.description, gd_desc);
+            return false;
+        }
+
+        true
+    }
+
+    /// Compare variables between Rust and GDScript parsers
+    fn compare_variables(&self, rust_char: &crate::parser::ParsedCharacter, gd_char: &Gd<Object>) -> bool {
+        let gd_vars = gd_char.get("variables").to::<Dictionary>();
+
+        // Compare variable count
+        if rust_char.variables.len() != gd_vars.len() {
+            godot_error!("  Variable count mismatch: Rust={} vs GD={}",
+                rust_char.variables.len(), gd_vars.len());
+            return false;
+        }
+
+        // Compare each variable
+        for (name, rust_var) in &rust_char.variables {
+            if !gd_vars.contains_key(name.as_str()) {
+                godot_error!("  Variable '{}' exists in Rust but not in GDScript", name);
+                return false;
+            }
+
+            let gd_var = gd_vars.get(name.as_str()).unwrap().to::<Dictionary>();
+
+            // Compare variable value
+            let gd_value = gd_var.get("value").unwrap().to::<GString>().to_string();
+            if rust_var.value != gd_value {
+                godot_error!("  Variable '{}' value mismatch: Rust='{}' vs GD='{}'",
+                    name, rust_var.value, gd_value);
+                return false;
+            }
+        }
+
+        true
+    }
+
+    /// Compare states between Rust and GDScript parsers
+    fn compare_states(&self, rust_char: &crate::parser::ParsedCharacter, gd_char: &Gd<Object>) -> bool {
+        let gd_states = gd_char.get("states").to::<Dictionary>();
+
+        // Compare state count
+        if rust_char.states.len() != gd_states.len() {
+            godot_error!("  State count mismatch: Rust={} vs GD={}",
+                rust_char.states.len(), gd_states.len());
+            return false;
+        }
+
+        // Compare each state
+        for (name, rust_state) in &rust_char.states {
+            if !gd_states.contains_key(name.as_str()) {
+                godot_error!("  State '{}' exists in Rust but not in GDScript", name);
+                return false;
+            }
+
+            let gd_state = gd_states.get(name.as_str()).unwrap().to::<Dictionary>();
+
+            // Compare state parent
+            let gd_parent = gd_state.get("parent").map(|v| {
+                if v.is_nil() {
+                    None
+                } else {
+                    Some(v.to::<GString>().to_string())
+                }
+            }).unwrap_or(None);
+
+            if rust_state.parent != gd_parent {
+                godot_error!("  State '{}' parent mismatch: Rust={:?} vs GD={:?}",
+                    name, rust_state.parent, gd_parent);
+                return false;
+            }
+
+            // Compare actions (phases)
+            let gd_actions = gd_state.get("actions").unwrap().to::<Dictionary>();
+            if rust_state.actions.len() != gd_actions.len() {
+                godot_error!("  State '{}' action count mismatch: Rust={} vs GD={}",
+                    name, rust_state.actions.len(), gd_actions.len());
+                return false;
+            }
+        }
+
+        true
+    }
+
+    /// Compare specblocks between Rust and GDScript parsers
+    fn compare_specblocks(&self, rust_char: &crate::parser::ParsedCharacter, gd_char: &Gd<Object>) -> bool {
+        let gd_specblocks = gd_char.get("specblocks").to::<Dictionary>();
+
+        // Compare specblock count
+        if rust_char.specblocks.len() != gd_specblocks.len() {
+            godot_error!("  Specblock count mismatch: Rust={} vs GD={}",
+                rust_char.specblocks.len(), gd_specblocks.len());
+            return false;
+        }
+
+        // Compare each specblock
+        for (name, rust_specblock) in &rust_char.specblocks {
+            if !gd_specblocks.contains_key(name.as_str()) {
+                godot_error!("  Specblock '{}' exists in Rust but not in GDScript", name);
+                return false;
+            }
+
+            let gd_specblock = gd_specblocks.get(name.as_str()).unwrap().to::<Dictionary>();
+
+            // Compare specblock entry count
+            if rust_specblock.len() != gd_specblock.len() {
+                godot_error!("  Specblock '{}' entry count mismatch: Rust={} vs GD={}",
+                    name, rust_specblock.len(), gd_specblock.len());
+                return false;
+            }
+
+            // Compare each entry
+            for (key, rust_value) in rust_specblock {
+                if !gd_specblock.contains_key(key.as_str()) {
+                    godot_error!("  Specblock '{}' key '{}' exists in Rust but not in GDScript",
+                        name, key);
+                    return false;
+                }
+
+                let gd_value = gd_specblock.get(key.as_str()).unwrap().to::<GString>().to_string();
+                if rust_value != &gd_value {
+                    godot_error!("  Specblock '{}' key '{}' value mismatch: Rust='{}' vs GD='{}'",
+                        name, key, rust_value, gd_value);
+                    return false;
+                }
+            }
+        }
+
         true
     }
 }
