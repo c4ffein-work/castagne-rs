@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "name": "Complete Test Fighter",
+    "author": "Parser Development Team",
+    "description": "A comprehensive character file testing all parser features",
+    "version": "2.0",
+    "filepath": "test_character_complete.casp"
+  },
+  "subentities": {
+
+  },
+  "variables": {
+
+  },
+  "states": {
+
+  },
+  "transformed_data": {
+
+  }
+}

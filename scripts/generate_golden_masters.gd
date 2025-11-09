@@ -20,9 +20,12 @@ func _init():
 	var config_data = Node.new()
 	config_data.set_script(load("res://castagne/engine/CastagneConfig.gd"))
 
-	# Files to parse - using actual Castagne example files
+	# Files to parse - start with our simpler test files
+	# Note: Baston example file requires full Castagne module system, so we skip it for now
 	var test_files = [
-		"castagne/examples/fighters/baston/Baston-Model.casp"
+		"test_character.casp",
+		"test_character_advanced.casp",
+		"test_character_complete.casp"
 	]
 
 	var success_count = 0
@@ -45,8 +48,8 @@ func _init():
 		# Convert to a serializable dictionary
 		var output = serialize_character(result)
 
-		# Save as JSON
-		var json_filename = "golden_masters/" + filename.replace(".casp", ".json")
+		# Save as JSON - create nested directory structure if needed
+		var json_filename = "golden_masters/" + filename.replace(".casp", ".json").get_file()
 		var file = File.new()
 		var dir = Directory.new()
 		if !dir.dir_exists("golden_masters"):
@@ -80,48 +83,62 @@ func _init():
 
 func serialize_character(character):
 	# Convert the ParsedCharacter object to a plain dictionary
+	# Parser returns: Character, Subentities, Variables, States, TransformedData
 	var output = {}
 
 	# Metadata
 	output["metadata"] = {}
 	if "Character" in character and character["Character"]:
 		var meta = character["Character"]
-		output["metadata"]["name"] = meta.get("name", "")
-		output["metadata"]["author"] = meta.get("author", "")
-		output["metadata"]["description"] = meta.get("description", "")
-		if "skeleton" in meta:
-			output["metadata"]["skeleton"] = meta["skeleton"]
+		# The metadata is a dictionary with keys like Name, Author, Description, Skeleton
+		for key in meta:
+			output["metadata"][key.to_lower()] = meta[key]
 
-	# Variables
+	# Subentities
+	output["subentities"] = {}
+	if "Subentities" in character:
+		for entity_name in character["Subentities"]:
+			var entity = character["Subentities"][entity_name]
+			output["subentities"][entity_name] = {}
+			for key in entity:
+				output["subentities"][entity_name][key.to_lower()] = entity[key]
+
+	# Variables (note: capital V in parser output!)
 	output["variables"] = {}
-	if "variables" in character:
-		for var_name in character["variables"]:
-			var var_data = character["variables"][var_name]
+	if "Variables" in character:
+		for var_name in character["Variables"]:
+			var var_data = character["Variables"][var_name]
 			output["variables"][var_name] = {
-				"value": var_data.get("value", ""),
-				"type": var_data.get("type", ""),
-				"mutability": var_data.get("mutability", "")
+				"Name": var_data.get("Name", var_name),
+				"Value": str(var_data.get("Value", "")),
+				"Type": var_data.get("Type", ""),
+				"Subtype": var_data.get("Subtype", ""),
+				"Mutability": var_data.get("Mutability", "")
 			}
 
-	# States
+	# States (note: capital S in parser output!)
 	output["states"] = {}
-	if "states" in character:
-		for state_name in character["states"]:
-			var state = character["states"][state_name]
+	if "States" in character:
+		for state_name in character["States"]:
+			var state = character["States"][state_name]
 			output["states"][state_name] = {
-				"parent": state.get("parent", null),
-				"type": state.get("type", "Normal"),
-				"actions": {}
+				"Parent": state.get("Parent", null),
+				"Type": state.get("Type", "Normal"),
+				"TransitionFlags": state.get("TransitionFlags", []),
+				"Phases": {}
 			}
-			if "actions" in state:
-				for phase in state["actions"]:
-					var actions = state["actions"][phase]
-					output["states"][state_name]["actions"][phase] = actions.size()
+			# Each phase contains an array of instructions
+			if "Phases" in state:
+				for phase_name in state["Phases"]:
+					var instructions = state["Phases"][phase_name]
+					output["states"][state_name]["Phases"][phase_name] = {
+						"instruction_count": instructions.size(),
+						"instructions": instructions  # Full instruction data for comparison
+					}
 
-	# Specblocks
-	output["specblocks"] = {}
-	if "specblocks" in character:
-		for block_name in character["specblocks"]:
-			output["specblocks"][block_name] = character["specblocks"][block_name].duplicate()
+	# TransformedData (this contains processed specblocks and other data)
+	output["transformed_data"] = {}
+	if "TransformedData" in character:
+		output["transformed_data"] = character["TransformedData"].duplicate(true)
 
 	return output
