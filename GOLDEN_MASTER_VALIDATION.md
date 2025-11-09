@@ -124,19 +124,27 @@ All golden masters follow this structure:
 
 ## Next Steps: Rust Parser Validation
 
-### Phase 1: Basic Structure ⏳
+### Phase 1: Infrastructure Setup ✅ (2025-11-09)
+- [x] Add serde serialization support to parser structures
+- [x] Implement `to_json()` method for `ParsedCharacter`
+- [x] Create comparison test framework in `tests/parser_comparison.rs`
+- [x] Validate golden master structure and content
+- [x] Create helper functions for JSON comparison
+
+### Phase 2: Basic Structure Comparison ⏳
 - [ ] Parse metadata (Name, EditorName, Skeleton, etc.)
 - [ ] Parse variable definitions
 - [ ] Parse state names and basic structure
 - [ ] Compare counts (states, variables, etc.)
+- **Note**: Requires parser to work without Godot runtime, or integration tests in Godot
 
-### Phase 2: Detailed Parsing ⏳
+### Phase 3: Detailed Parsing ⏳
 - [ ] Parse Specs blocks (Graphics, Anims, etc.)
 - [ ] Parse state phases (Init, Action, etc.)
 - [ ] Parse instructions within phases
 - [ ] Compare transformed_data structure
 
-### Phase 3: Complete Validation ⏳
+### Phase 4: Complete Validation ⏳
 - [ ] Full instruction-by-instruction comparison
 - [ ] Verify all numeric values match exactly
 - [ ] Verify all string values match exactly
@@ -144,7 +152,7 @@ All golden masters follow this structure:
 
 ## Test Infrastructure
 
-### Rust Tests (tests/golden_master_tests.rs)
+### Rust Tests - Golden Master Validation (tests/golden_master_tests.rs)
 
 Standalone tests that verify golden master content:
 - ✅ Metadata extraction
@@ -153,6 +161,32 @@ Standalone tests that verify golden master content:
 - ✅ Spritesheet parameters
 - ✅ Animation loop values
 - ✅ Palette data
+
+**Status**: 7 tests passing
+
+### Rust Tests - Parser Comparison (tests/parser_comparison.rs) ✨ NEW
+
+Comparison test framework for validating Rust parser output:
+- ✅ Golden master structure validation
+- ✅ Baston-Model golden master validation
+- ✅ Baston-2D golden master validation
+- ✅ test_character_complete golden master validation
+- ✅ State structure validation
+- ✅ Variable structure validation
+- ✅ Helper functions for JSON comparison
+- ⏳ Full parser comparison (requires Godot runtime or standalone parser)
+
+**Status**: 5 tests passing, 1 ignored (example test for future implementation)
+
+### Parser Serialization Support ✨ NEW
+
+Added JSON serialization capabilities to parser:
+- ✅ `serde` and `serde_json` dependencies
+- ✅ `Serialize` derive on all parser structures:
+  - `VariableMutability`, `VariableType`, `StateType`
+  - `ParsedVariable`, `ParsedState`, `ParsedAction`
+  - `CharacterMetadata`, `ParsedCharacter`
+- ✅ `to_json()` and `to_json_value()` methods on `ParsedCharacter`
 
 ### Godot Tests (src/test_runner.rs)
 
@@ -170,17 +204,36 @@ The golden masters are **valid and ready for use** in testing the Rust parser im
 2. ✅ All source values correctly captured
 3. ✅ JSON structure is complete and parseable
 4. ✅ Test infrastructure is in place
-5. ⏳ Rust parser implementation needed for full comparison
+5. ✅ **NEW**: Parser serialization support added (2025-11-09)
+6. ✅ **NEW**: Comparison test framework created (2025-11-09)
+7. ⏳ Rust parser implementation needed for full comparison
+
+### Recent Progress (2025-11-09)
+
+**Infrastructure Improvements:**
+- Added `serde` serialization support to all parser structures
+- Implemented `to_json()` and `to_json_value()` methods for `ParsedCharacter`
+- Created comprehensive test suite in `tests/parser_comparison.rs`
+- All 12 golden master tests passing (7 validation + 5 comparison)
+
+**Next Steps:**
+- Make parser work without Godot runtime for standalone testing, OR
+- Create integration tests within Godot that parse .casp files and compare output
+- Once parser can produce output, enable the ignored test in `parser_comparison.rs`
+- Implement detailed field-by-field comparison
 
 ### Recommendations
 
-1. **Implement Rust parser features** to match GDScript parser capabilities
-2. **Add detailed comparison tests** that check every field
-3. **Consider adding more test cases** for edge cases
-4. **Document any intentional differences** between parsers
+1. ✅ **DONE**: Add JSON serialization to parser structures
+2. ✅ **DONE**: Create test framework for comparison
+3. **TODO**: Make parser work standalone or create Godot integration tests
+4. **TODO**: Add detailed comparison tests that check every field
+5. **TODO**: Consider adding more test cases for edge cases
+6. **TODO**: Document any intentional differences between parsers
 
 ---
 
-Generated: 2025-11-09
+Generated: 2025-11-09 (Updated: 2025-11-09)
 Godot Version: 3.5.3
 Test Framework: Rust (cargo test)
+Parser Serialization: ✅ Implemented

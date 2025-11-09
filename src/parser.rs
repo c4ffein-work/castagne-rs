@@ -9,6 +9,7 @@
 //! This version provides the basic structure with TODOs for full implementation.
 
 use godot::prelude::*;
+use serde::Serialize;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
@@ -22,7 +23,7 @@ const PHASES_BASE: &[&str] = &[
 ];
 
 /// Variable mutability types
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum VariableMutability {
     Variable,
     Define,
@@ -30,7 +31,7 @@ pub enum VariableMutability {
 }
 
 /// Variable types
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum VariableType {
     Int,
     Str,
@@ -42,7 +43,7 @@ pub enum VariableType {
 }
 
 /// State type
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum StateType {
     Normal,
     BaseState,
@@ -52,7 +53,7 @@ pub enum StateType {
 }
 
 /// Parsed variable definition
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ParsedVariable {
     pub name: String,
     pub mutability: VariableMutability,
@@ -88,7 +89,7 @@ impl ParsedVariable {
 }
 
 /// Parsed state information
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ParsedState {
     pub name: String,
     pub state_type: StateType,
@@ -97,7 +98,7 @@ pub struct ParsedState {
 }
 
 /// A parsed action/instruction
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ParsedAction {
     pub instruction: String,
     pub args: Vec<String>,
@@ -105,17 +106,18 @@ pub struct ParsedAction {
 }
 
 /// Character metadata
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct CharacterMetadata {
     pub name: String,
     pub author: String,
     pub description: String,
     pub skeleton: Option<String>,
+    #[serde(flatten)]
     pub other_fields: HashMap<String, String>,
 }
 
 /// Full parsed character data
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ParsedCharacter {
     pub metadata: CharacterMetadata,
     pub variables: HashMap<String, ParsedVariable>,
@@ -123,6 +125,18 @@ pub struct ParsedCharacter {
     pub specblocks: HashMap<String, HashMap<String, String>>,
     pub subentities: HashMap<String, CharacterMetadata>,
     pub transformed_data: HashMap<String, HashMap<String, String>>,
+}
+
+impl ParsedCharacter {
+    /// Serialize this character to JSON string
+    pub fn to_json(&self) -> Result<String, serde_json::Error> {
+        serde_json::to_string_pretty(self)
+    }
+
+    /// Serialize this character to a JSON Value
+    pub fn to_json_value(&self) -> Result<serde_json::Value, serde_json::Error> {
+        serde_json::to_value(self)
+    }
 }
 
 /// CastagneParser - Main parser struct
