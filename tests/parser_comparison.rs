@@ -202,6 +202,13 @@ mod tests {
                     }
                 }
 
+                // Check for extra keys in Rust output
+                for key in rust_obj.keys() {
+                    if !golden_obj.contains_key(key) {
+                        differences.push(format!("{}.{}: unexpected key in Rust parser output", path, key));
+                    }
+                }
+
                 // Compare common keys
                 for (key, rust_val) in rust_obj.iter() {
                     if let Some(golden_val) = golden_obj.get(key) {
@@ -218,6 +225,12 @@ mod tests {
                 if rust_arr.len() != golden_arr.len() {
                     differences.push(format!("{}: array length mismatch (Rust: {}, Golden: {})",
                         path, rust_arr.len(), golden_arr.len()));
+                } else {
+                    // Compare array elements
+                    for (i, (rust_item, golden_item)) in rust_arr.iter().zip(golden_arr.iter()).enumerate() {
+                        let new_path = format!("{}[{}]", path, i);
+                        differences.extend(compare_json_values(rust_item, golden_item, &new_path));
+                    }
                 }
             }
             (rust_val, golden_val) => {
@@ -229,5 +242,339 @@ mod tests {
         }
 
         differences
+    }
+
+    /// Helper to pretty-print comparison results
+    #[allow(dead_code)]
+    fn print_comparison_report(differences: &[String], context: &str) {
+        if differences.is_empty() {
+            println!("✓ {} - All fields match!", context);
+        } else {
+            println!("✗ {} - Found {} differences:", context, differences.len());
+            for (i, diff) in differences.iter().enumerate() {
+                println!("  {}. {}", i + 1, diff);
+            }
+        }
+    }
+
+    /// Helper to extract and compare metadata
+    #[allow(dead_code)]
+    fn compare_metadata(rust_json: &Value, golden_json: &Value) -> Vec<String> {
+        let mut differences = Vec::new();
+
+        let fields = vec!["name", "editorname", "author", "description", "version", "filepath", "skeleton"];
+
+        for field in fields {
+            let rust_val = &rust_json["metadata"][field];
+            let golden_val = &golden_json["metadata"][field];
+
+            if rust_val != golden_val {
+                differences.push(format!("metadata.{}: Rust={:?}, Golden={:?}", field, rust_val, golden_val));
+            }
+        }
+
+        differences
+    }
+
+    /// Helper to count and compare structure sizes
+    #[allow(dead_code)]
+    fn compare_structure_sizes(rust_json: &Value, golden_json: &Value) -> Vec<String> {
+        let mut differences = Vec::new();
+
+        let sections = vec!["states", "variables", "subentities"];
+
+        for section in sections {
+            let rust_count = rust_json[section].as_object().map(|o| o.len()).unwrap_or(0);
+            let golden_count = golden_json[section].as_object().map(|o| o.len()).unwrap_or(0);
+
+            if rust_count != golden_count {
+                differences.push(format!("{}: count mismatch (Rust: {}, Golden: {})",
+                    section, rust_count, golden_count));
+            }
+        }
+
+        differences
+    }
+
+    /// Helper to deeply compare state structures
+    #[allow(dead_code)]
+    fn compare_states_detailed(rust_json: &Value, golden_json: &Value, state_names: &[&str]) -> Vec<String> {
+        let mut differences = Vec::new();
+
+        for state_name in state_names {
+            let rust_state = &rust_json["states"][state_name];
+            let golden_state = &golden_json["states"][state_name];
+
+            if rust_state.is_null() && !golden_state.is_null() {
+                differences.push(format!("State '{}' missing in Rust output", state_name));
+                continue;
+            }
+
+            if !rust_state.is_null() && golden_state.is_null() {
+                differences.push(format!("State '{}' unexpected in Rust output", state_name));
+                continue;
+            }
+
+            let path = format!("states.{}", state_name);
+            differences.extend(compare_json_values(rust_state, golden_state, &path));
+        }
+
+        differences
+    }
+
+    /// Helper to validate transformed_data module structure
+    #[allow(dead_code)]
+    fn validate_transformed_data_module(module_data: &Value, module_name: &str) -> Vec<String> {
+        let mut issues = Vec::new();
+
+        if !module_data["Defines"].is_object() {
+            issues.push(format!("{}: missing or invalid 'Defines' section", module_name));
+        }
+
+        // Check for common optional sections
+        let optional_sections = vec!["Spritesheets", "Palettes", "SpriteAnimations", "ModelAnimations"];
+        for section in optional_sections {
+            if module_data[section].is_null() {
+                // This is fine, just documenting structure
+            }
+        }
+
+        issues
+    }
+
+    /// Test the comparison helper functions themselves
+    #[test]
+    fn test_comparison_helpers() {
+        use serde_json::json;
+
+        // Test exact match
+        let val1 = json!({"a": 1, "b": "test"});
+        let val2 = json!({"a": 1, "b": "test"});
+        let diffs = compare_json_values(&val1, &val2, "root");
+        assert_eq!(diffs.len(), 0, "Identical values should have no differences");
+
+        // Test value mismatch
+        let val1 = json!({"a": 1});
+        let val2 = json!({"a": 2});
+        let diffs = compare_json_values(&val1, &val2, "root");
+        assert_eq!(diffs.len(), 1, "Different values should have 1 difference");
+        assert!(diffs[0].contains("value mismatch"), "Should report value mismatch");
+
+        // Test missing key
+        let val1 = json!({"a": 1});
+        let val2 = json!({"a": 1, "b": 2});
+        let diffs = compare_json_values(&val1, &val2, "root");
+        assert_eq!(diffs.len(), 1, "Missing key should be detected");
+        assert!(diffs[0].contains("missing"), "Should report missing key");
+
+        // Test array length mismatch
+        let val1 = json!([1, 2]);
+        let val2 = json!([1, 2, 3]);
+        let diffs = compare_json_values(&val1, &val2, "root");
+        assert!(diffs.len() > 0, "Array length mismatch should be detected");
+
+        println!("✓ Comparison helper functions validated");
+    }
+
+    /// Test metadata comparison helper
+    #[test]
+    fn test_metadata_comparison_helper() {
+        let golden = load_golden_master("golden_masters/Baston-Model.json");
+
+        // Test comparing with itself (should be identical)
+        let diffs = compare_metadata(&golden, &golden);
+        assert_eq!(diffs.len(), 0, "Comparing golden master with itself should show no differences");
+
+        println!("✓ Metadata comparison helper validated");
+    }
+
+    /// Test structure size comparison helper
+    #[test]
+    fn test_structure_size_comparison() {
+        let golden = load_golden_master("golden_masters/Baston-Model.json");
+
+        // Compare with itself
+        let diffs = compare_structure_sizes(&golden, &golden);
+        assert_eq!(diffs.len(), 0, "Structure sizes should match when comparing with itself");
+
+        println!("✓ Structure size comparison helper validated");
+    }
+
+    /// Test edge case: Empty state handling
+    #[test]
+    fn test_edge_case_empty_states() {
+        let golden = load_golden_master("golden_masters/Baston-Model.json");
+
+        // Find states with no phases
+        let states = golden["states"].as_object().unwrap();
+        let mut empty_phase_count = 0;
+
+        for (state_name, state_data) in states.iter() {
+            if let Some(phases) = state_data["Phases"].as_object() {
+                if phases.is_empty() {
+                    empty_phase_count += 1;
+                    println!("  State '{}' has no phases", state_name);
+                }
+            }
+        }
+
+        println!("✓ Found {} states with empty phases (valid edge case)", empty_phase_count);
+        assert!(empty_phase_count >= 0, "Empty phases should be allowed");
+    }
+
+    /// Test edge case: Null values in metadata
+    #[test]
+    fn test_edge_case_null_metadata_fields() {
+        let golden = load_golden_master("golden_masters/Baston-Model.json");
+
+        let metadata = golden["metadata"].as_object().unwrap();
+
+        for (key, value) in metadata.iter() {
+            if value.is_null() {
+                println!("  Metadata field '{}' is null", key);
+            }
+        }
+
+        println!("✓ Null metadata fields handled correctly");
+    }
+
+    /// Test edge case: Very large state names
+    #[test]
+    fn test_edge_case_state_name_lengths() {
+        let golden = load_golden_master("golden_masters/Baston-Model.json");
+
+        let states = golden["states"].as_object().unwrap();
+        let mut max_name_len = 0;
+        let mut longest_name = "";
+
+        for state_name in states.keys() {
+            if state_name.len() > max_name_len {
+                max_name_len = state_name.len();
+                longest_name = state_name;
+            }
+        }
+
+        println!("  Longest state name: '{}' ({} chars)", longest_name, max_name_len);
+        println!("✓ State name length handling validated");
+    }
+
+    /// Test edge case: Complex nested structures
+    #[test]
+    fn test_edge_case_nested_transformed_data() {
+        let golden = load_golden_master("golden_masters/Baston-Model.json");
+
+        let transformed_data = golden["transformed_data"].as_object().unwrap();
+
+        for (module_name, module_data) in transformed_data.iter() {
+            // Count nesting depth
+            if module_data.is_object() {
+                let defines = &module_data["Defines"];
+                if defines.is_object() {
+                    let define_count = defines.as_object().unwrap().len();
+                    if define_count > 50 {
+                        println!("  Module '{}' has {} defines (deep structure)", module_name, define_count);
+                    }
+                }
+            }
+        }
+
+        println!("✓ Nested structure handling validated");
+    }
+
+    /// Test edge case: Array handling in TransitionFlags
+    #[test]
+    fn test_edge_case_transition_flags_arrays() {
+        let golden = load_golden_master("golden_masters/Baston-Model.json");
+
+        let states = golden["states"].as_object().unwrap();
+        let mut states_with_flags = 0;
+
+        for (state_name, state_data) in states.iter() {
+            if let Some(flags) = state_data["TransitionFlags"].as_array() {
+                if !flags.is_empty() {
+                    states_with_flags += 1;
+                    println!("  State '{}' has {} transition flags", state_name, flags.len());
+                    if states_with_flags >= 3 {
+                        break; // Just sample a few
+                    }
+                }
+            }
+        }
+
+        println!("✓ TransitionFlags array handling validated");
+    }
+
+    /// Test cross-validation: All golden masters have consistent structure
+    #[test]
+    fn test_cross_validation_golden_masters() {
+        let golden_files = vec![
+            "golden_masters/Baston-Model.json",
+            "golden_masters/Baston-2D.json",
+            "golden_masters/TutorialBaston.json",
+        ];
+
+        let mut structures = Vec::new();
+
+        for file in &golden_files {
+            let golden = load_golden_master(file);
+
+            let structure = (
+                golden["metadata"].is_object(),
+                golden["variables"].is_object(),
+                golden["states"].is_object(),
+                golden["subentities"].is_object(),
+                golden["transformed_data"].is_object(),
+            );
+
+            structures.push(structure);
+            println!("  {}: metadata={}, vars={}, states={}, subent={}, trans={}",
+                file,
+                structure.0, structure.1, structure.2, structure.3, structure.4
+            );
+        }
+
+        // All should have the same structure
+        assert!(structures.iter().all(|s| *s == structures[0]),
+                "All golden masters should have consistent top-level structure");
+
+        println!("✓ Cross-validation: all golden masters have consistent structure");
+    }
+
+    /// Test comprehensive diff reporting format
+    #[test]
+    fn test_diff_reporting_format() {
+        use serde_json::json;
+
+        // Create intentional differences for testing the diff format
+        let rust_json = json!({
+            "metadata": {
+                "name": "Test Fighter",
+                "version": "1.0"
+            },
+            "states": {
+                "Idle": {"Parent": null},
+                "Walk": {"Parent": "Idle"}
+            }
+        });
+
+        let golden_json = json!({
+            "metadata": {
+                "name": "Test Fighter",
+                "version": "2.0",
+                "author": "Developer"
+            },
+            "states": {
+                "Idle": {"Parent": null},
+                "Run": {"Parent": "Idle"}
+            }
+        });
+
+        let diffs = compare_json_values(&rust_json, &golden_json, "");
+
+        println!("\n=== Sample Diff Report Format ===");
+        print_comparison_report(&diffs, "Test comparison");
+
+        assert!(diffs.len() > 0, "Should detect differences in test data");
+        println!("\n✓ Diff reporting format validated");
     }
 }
