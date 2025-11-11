@@ -8,15 +8,16 @@ godot-check:
 
 # Install Godot 4
 godot-setup:
-	@echo "Installing Godot 4..."
+	@echo "Installing Godot 4.5..."
 	@mkdir -p ~/godot
 	@cd ~/godot && \
-		wget -q https://github.com/godotengine/godot/releases/download/4.2-stable/Godot_v4.2-stable_linux.x86_64.zip && \
-		unzip -q Godot_v4.2-stable_linux.x86_64.zip && \
-		chmod +x Godot_v4.2-stable_linux.x86_64 && \
-		sudo ln -sf ~/godot/Godot_v4.2-stable_linux.x86_64 /usr/local/bin/godot
-	@echo "✅ Godot 4 installed successfully"
-	@godot --version
+		wget -q https://github.com/godotengine/godot/releases/download/4.5-stable/Godot_v4.5-stable_linux.x86_64.zip && \
+		unzip -o -q Godot_v4.5-stable_linux.x86_64.zip && \
+		chmod +x Godot_v4.5-stable_linux.x86_64 && \
+		sudo ln -sf ~/godot/Godot_v4.5-stable_linux.x86_64 /usr/local/bin/godot || \
+		echo "⚠ Note: Could not create /usr/local/bin/godot symlink (requires sudo). Use ~/godot/Godot_v4.5-stable_linux.x86_64 directly."
+	@echo "✅ Godot 4.5 installed successfully"
+	@if command -v godot > /dev/null 2>&1; then godot --version; else ~/godot/Godot_v4.5-stable_linux.x86_64 --version; fi
 
 # Build the Rust library
 build:

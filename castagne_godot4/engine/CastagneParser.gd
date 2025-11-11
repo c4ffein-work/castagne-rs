@@ -9,7 +9,7 @@
 
 
 # Useful to get access to functions and implement branches
-extends "res://castagne_godot4/modules/CastagneModule.gd"
+extends "../modules/CastagneModule.gd"
 
 
 
@@ -2000,7 +2000,7 @@ func _GetPureStateNameFromStateName(stateName):
 		return stateName
 	return stateName.right(entity.length()+3)
 
-@onready var KnownVariableTypes = {"int":Castagne.VARIABLE_TYPE.Int, "str":Castagne.VARIABLE_TYPE.Str, "bool":Castagne.VARIABLE_TYPE.Bool}
+onready var KnownVariableTypes = {"int":Castagne.VARIABLE_TYPE.Int, "str":Castagne.VARIABLE_TYPE.Str, "bool":Castagne.VARIABLE_TYPE.Bool}
 func _ExtractVariable(line): #, returnIncompleteType = false):
 	# Structure: var NAME int() = 5
 	var variableMutability = null

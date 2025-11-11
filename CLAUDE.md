@@ -2,9 +2,9 @@
 
 This document contains configuration and guidelines for AI assistants (like Claude) working on this project.
 
-## ⚠️ FIRST STEP: Godot 4 Setup (ALWAYS CHECK THIS FIRST!)
+## ⚠️ FIRST STEP: Godot 4.5 Setup (ALWAYS CHECK THIS FIRST!)
 
-**CRITICAL: Before doing ANY work on this project, verify Godot 4 is installed:**
+**CRITICAL: Before doing ANY work on this project, verify Godot 4.5 is installed:**
 
 ```bash
 make godot-check
@@ -16,7 +16,7 @@ make godot-check
 make godot-setup
 ```
 
-This is required because the parser uses Godot types and cannot be tested without the Godot runtime.
+This is required because the parser uses Godot types and cannot be tested without the Godot runtime. Note: This project requires Godot 4.5 or later due to godot-rust compatibility requirements.
 
 ## Network Access Requirements
 

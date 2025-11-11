@@ -925,48 +925,8 @@ impl CastagneParser {
         args.to_vec()
     }
 
-    /// Execute an instruction of type I (Integer operations)
-    pub fn instruction_i(&self, _args: &[String], _state_handle: &crate::state_handle::CastagneStateHandle) {
-        // TODO: Implement integer instruction execution
-        // Examples: Set, Add, Mul, etc.
-    }
-
-    /// Execute an instruction of type F (Flag operations)
-    pub fn instruction_f(&self, _args: &[String], _state_handle: &crate::state_handle::CastagneStateHandle) {
-        // TODO: Implement flag instruction execution
-        // Examples: Flag, Unflag, IfFlag, etc.
-    }
-
-    /// Execute an instruction of type S (String operations)
-    pub fn instruction_s(&self, _args: &[String], _state_handle: &crate::state_handle::CastagneStateHandle) {
-        // TODO: Implement string instruction execution
-    }
-
-    /// Execute an instruction of type L (caLl / function call)
-    pub fn instruction_l(&self, _args: &[String], _state_handle: &crate::state_handle::CastagneStateHandle) {
-        // TODO: Implement function call instruction
-    }
-
-    /// Execute an instruction of type V (adVanced operations)
-    pub fn instruction_v(&self, _args: &[String], _state_handle: &crate::state_handle::CastagneStateHandle) {
-        // TODO: Implement advanced instruction execution
-    }
-
-    /// Execute an instruction of type P (Parser operations)
-    pub fn instruction_p(&self, _args: &[String], _state_handle: &crate::state_handle::CastagneStateHandle) {
-        // TODO: Implement parser instruction execution
-    }
-
-    /// Execute an instruction of type R (bRanch / conditional)
-    pub fn instruction_r(&self, _args: &[String], _state_handle: &crate::state_handle::CastagneStateHandle) {
-        // TODO: Implement branch instruction execution
-        // Examples: If, Else, EndIf
-    }
-
-    /// Execute a branch instruction with a condition
-    pub fn instruction_branch(&self, _args: &[String], _state_handle: &crate::state_handle::CastagneStateHandle, _condition: bool) {
-        // TODO: Implement conditional branching
-    }
+    // Note: Instruction execution is handled by the GDScript engine.
+    // The parser's job is to parse .casp files into data structures only.
 
     // -------------------------------------------------------------------------
     // Logging and errors
