@@ -7,7 +7,7 @@ extends "CMGraphicsBase.gd"
 
 func ModuleSetup():
 	RegisterModule("Graphics 3D", Castagne.MODULE_SLOTS_BASE.GRAPHICS)
-	.ModuleSetup()
+	super.ModuleSetup()
 
 
 func _UpdateSprite(sprite, stateHandle):

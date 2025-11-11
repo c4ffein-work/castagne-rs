@@ -718,7 +718,7 @@ func AbortWithError(error, showParserErrors = false):
 
 	l.set_text(error + t)
 	get_node("..").add_child(l)
-	l.set_anchors_and_margins_preset(Control.PRESET_WIDE)
-	l.set_align(Label.ALIGN_CENTER)
-	l.set_valign(Label.VALIGN_CENTER)
+	l.set_anchors_and_margins_preset(Control.PRESET_FULL_RECT)
+	l.set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER)
+	l.set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER)
 	_errorScreen = l

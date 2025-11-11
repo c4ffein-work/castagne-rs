@@ -85,7 +85,7 @@ func Old1_StartNetworkMatch_RPC(battleInitData):
 
 
 func StartLogging():
-	SyncManager.start_logging("user://network_logs/"+str(Time.get_unix_time())+"-"+str(get_tree().network_peer.get_unique_id())+".log")
+	SyncManager.start_logging("user://network_logs/"+str(Time.get_unix_time_from_system())+"-"+str(get_tree().network_peer.get_unique_id())+".log")
 
 
 # --------------------------------------

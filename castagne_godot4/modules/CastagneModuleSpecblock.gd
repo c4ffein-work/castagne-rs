@@ -206,7 +206,7 @@ func _InterfaceCode_CreateDefault():
 	
 	var title = Label.new()
 	title.set_text("--- " + GetDisplayName() + " ---")
-	title.set_align(Label.ALIGN_CENTER)
+	title.set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER)
 	root.add_child(title)
 	
 	_InterfaceCode_CreateCategory(_definesPerCategory, root)
@@ -228,7 +228,7 @@ func _InterfaceCode_CreateCategory(category, root, categoryName = null):
 		var categoryOpenButton = Button.new()
 		categoryTitle.add_child(categoryOpenButton)
 		_categories[categoryName]["OpenButton"] = categoryOpenButton
-		categoryOpenButton.connect("pressed", Callable(self, "_InterfaceCode_SetCategoryVisible").bind( [categoryName]
+		categoryOpenButton.connect("pressed", Callable(self, "_InterfaceCode_SetCategoryVisible").bind([categoryName]))
 		
 		var labelCategoryName = Label.new()
 		labelCategoryName.set_text(categoryName)
@@ -343,7 +343,7 @@ var _interfaceMain_StructEditor = null
 func _CreateInterfaceMain_CreateStructEditor():
 	#_interfaceMain_StructEditor = ScrollContainer.new()
 	_interfaceMain_StructEditor = Control.new()
-	#_interfaceMain_StructEditor.set_anchors_and_margins_preset(Control.PRESET_WIDE)
+	#_interfaceMain_StructEditor.set_anchors_and_margins_preset(Control.PRESET_FULL_RECT)
 	_interfaceMain_StructEditor.set_h_size_flags(Control.SIZE_EXPAND_FILL)
 	_interfaceMain_StructEditor.set_v_size_flags(Control.SIZE_EXPAND_FILL)
 	return _interfaceMain_StructEditor
@@ -580,7 +580,7 @@ func StructList_UpdateList(structType):
 			else:
 				var prevSIN = structInstancesKeys[i-1]
 				moveUpButton.connect("pressed", Callable(self, "StructEditor_SwapNames").bind(
-					[structType, siN, prevSIN, prevSIN]
+					[structType, siN, prevSIN, prevSIN]))
 			structElementRoot.add_child(moveUpButton)
 			
 			var moveDownButton = Button.new()
@@ -590,7 +590,7 @@ func StructList_UpdateList(structType):
 			else:
 				var nextSIN = structInstancesKeys[i+1]
 				moveDownButton.connect("pressed", Callable(self, "StructEditor_SwapNames").bind(
-					[structType, siN, nextSIN, nextSIN]
+					[structType, siN, nextSIN, nextSIN]))
 			structElementRoot.add_child(moveDownButton)
 
 func StructList_ToggleVisibility(toggled, structType):
@@ -631,15 +631,15 @@ func StructEditorShow(structType = null, structInstance = null):
 	var rootScroll = ScrollContainer.new()
 	rootScroll.set_h_size_flags(Control.SIZE_EXPAND_FILL)
 	rootScroll.set_v_size_flags(Control.SIZE_EXPAND_FILL)
-	rootScroll.set_anchors_and_margins_preset(Control.PRESET_WIDE)
+	rootScroll.set_anchors_and_margins_preset(Control.PRESET_FULL_RECT)
 	var root = VBoxContainer.new()
 	root.set_h_size_flags(Control.SIZE_EXPAND_FILL)
 	root.set_v_size_flags(Control.SIZE_EXPAND_FILL)
-	root.set_anchors_and_margins_preset(Control.PRESET_WIDE)
+	root.set_anchors_and_margins_preset(Control.PRESET_FULL_RECT)
 	rootScroll.add_child(root)
 	_interfaceMain_StructEditor.add_child(rootScroll)
 	var title = Label.new()
-	title.set_align(Label.ALIGN_CENTER)
+	title.set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER)
 	title.set_h_size_flags(Control.SIZE_EXPAND_FILL)
 	root.add_child(title)
 	

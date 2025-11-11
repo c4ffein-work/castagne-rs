@@ -11,7 +11,7 @@ var viewportContainer
 
 func ModuleSetup():
 	RegisterModule("Graphics 2D", Castagne.MODULE_SLOTS_BASE.GRAPHICS)
-	.ModuleSetup()
+	super.ModuleSetup()
 	IS_2D = true
 	
 	RegisterCategory("2D Specific")
@@ -108,9 +108,9 @@ func _CreateGraphicsRootNode(engine):
 	viewportContainer = vpc
 	viewport = vp
 	
-	mainRoot.set_anchors_and_margins_preset(Control.PRESET_WIDE)
+	mainRoot.set_anchors_and_margins_preset(Control.PRESET_FULL_RECT)
 	vp.set_size(Vector2(engine.configData.Get("2DScreenSizeX"), engine.configData.Get("2DScreenSizeY")))
-	vpc.set_anchors_and_margins_preset(Control.PRESET_WIDE)
+	vpc.set_anchors_and_margins_preset(Control.PRESET_FULL_RECT)
 	
 	vp.set_usage(Viewport.USAGE_2D)
 	vp.set_update_mode(Viewport.UPDATE_ALWAYS)

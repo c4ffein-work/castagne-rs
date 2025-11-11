@@ -1340,7 +1340,7 @@ func _ADApplyOverride(attackData, newOverride):
 	# Sort the multiple overrides and apply them in order
 	# Maybe not most efficient but at this point what is ? Will do a better system later in v0.7
 	multipleOverrides = multipleOverrides.values()
-	multipleOverrides.sort_custom(Callable(self, "_AD_SortOverrideLists")
+	multipleOverrides.sort_custom(Callable(self, "_AD_SortOverrideLists"))
 	
 	for i in range(-1, multipleOverrides.size()):
 		# Apply flags

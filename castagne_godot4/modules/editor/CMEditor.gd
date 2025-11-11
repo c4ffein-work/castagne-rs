@@ -138,7 +138,7 @@ func BattleInit(stateHandle, battleInitData):
 		gizmoDisplay.set_script(gizmoDisplayScript)
 		gizmoDisplay.emodule = self
 		stateHandle._engine.add_child(gizmoDisplay)
-		gizmoDisplay.set_anchors_and_margins_preset(Control.PRESET_WIDE)
+		gizmoDisplay.set_anchors_and_margins_preset(Control.PRESET_FULL_RECT)
 
 
 

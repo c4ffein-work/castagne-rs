@@ -694,7 +694,7 @@ func _HandleCopyToBuffer(memory, eidsToHandle):
 	var variablesSetByOrigin = {}
 	var variablesSetByTarget = {}
 	
-	copyToBuffer.sort_custom(Callable(self, "_CopyToBufferSort")
+	copyToBuffer.sort_custom(Callable(self, "_CopyToBufferSort"))
 	
 	for ctb in copyToBuffer:
 		var targetEID = ctb["TargetEID"]
@@ -724,7 +724,7 @@ func _HandleCopyToBuffer(memory, eidsToHandle):
 	
 func _HandleFlagTargetBuffer(stateHandle, eidsToHandle):
 	var flagTargetBuffer = stateHandle.GlobalGet("_FlagTargetBuffer")
-	flagTargetBuffer.sort_custom(Callable(self, "_CopyToBufferSort")
+	flagTargetBuffer.sort_custom(Callable(self, "_CopyToBufferSort"))
 	
 	for ftb in flagTargetBuffer:
 		var targetEID = ftb["TargetEID"]

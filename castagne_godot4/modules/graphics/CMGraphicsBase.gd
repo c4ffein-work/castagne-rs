@@ -660,7 +660,7 @@ func UpdateGraphics(stateHandle):
 	cameraPosRegular = IngameToGodotPos(cameraPosRegular)
 	
 	
-	cameraOverrideStack.sort_custom(Callable(self, "_CameraOverrides_Sort")
+	cameraOverrideStack.sort_custom(Callable(self, "_CameraOverrides_Sort"))
 	var cameraPos = cameraPosRegular
 	var cameraLookAtPoint = cameraPosRegular
 	if(!IS_2D):
