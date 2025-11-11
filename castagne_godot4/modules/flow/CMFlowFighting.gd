@@ -5,7 +5,7 @@
 extends "CMFlow.gd"
 
 func ModuleSetup():
-	.ModuleSetup()
+	super.ModuleSetup()
 	RegisterModule("Flow Fighting", Castagne.MODULE_SLOTS_BASE.FLOW, {
 		"Description":"Flow module for fighting games, handles match entry and exit, as well as mid-match events.\nThis offers better interfaces for regular fighting game matches.",
 		"docname":"flowfighting",
@@ -40,7 +40,7 @@ func GetBaseBattleInitData(configData):
 	return bid
 
 func ActionPhaseStartEntity(stateHandle):
-	.ActionPhaseStartEntity(stateHandle)
+	super.ActionPhaseStartEntity(stateHandle)
 	if(stateHandle.GlobalGet("_NbPlayers") == 2):
 		var playerPID = stateHandle.EntityGet("_Player")
 		var otherPID = (1 if playerPID == 0 else 0)
