@@ -416,7 +416,7 @@ mod tests {
             let variables = golden["variables"].as_object().unwrap();
 
             assert!(states.len() > 0, "{} has no states", file_path);
-            assert!(variables.len() >= 0, "{} missing variables section", file_path);
+            // Variables section exists (validated by unwrap above)
 
             println!("  ✓ {} states, {} variables", states.len(), variables.len());
         }
