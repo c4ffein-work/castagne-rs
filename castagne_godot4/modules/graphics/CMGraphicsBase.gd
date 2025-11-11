@@ -10,10 +10,10 @@ var IS_2D = false
 
 func ModuleSetup():
 	RegisterModule("Graphics", Castagne.MODULE_SLOTS_BASE.GRAPHICS)
-	RegisterBaseCaspFile("res://castagne/modules/graphics/Base-Graphics.casp")
-	RegisterSpecblock("Graphics", "res://castagne/modules/graphics/CMGraphicsSBGraphics.gd")
-	RegisterSpecblock("Anims", "res://castagne/modules/graphics/CMGraphicsSBAnims.gd")
-	RegisterSpecblock("UI", "res://castagne/modules/graphics/CMGraphicsSBUI.gd")
+	RegisterBaseCaspFile("res://castagne_godot4/modules/graphics/Base-Graphics.casp")
+	RegisterSpecblock("Graphics", "res://castagne_godot4/modules/graphics/CMGraphicsSBGraphics.gd")
+	RegisterSpecblock("Anims", "res://castagne_godot4/modules/graphics/CMGraphicsSBAnims.gd")
+	RegisterSpecblock("UI", "res://castagne_godot4/modules/graphics/CMGraphicsSBUI.gd")
 	
 	
 	# -[CTG_MODEL]----------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ Model functions affect the whole graphics side, so even sprites are affected her
 	# TODO Reduce the amount needed as static
 	RegisterConfig("PositionScale", 100)
 	#RegisterVariableEntity("_SpritePaletteID", 0, ["InheritToSubentity"])
-	RegisterConfig("SpriteScriptPath", "res://castagne/modules/graphics/CMGraphics_Sprite.gd")
+	RegisterConfig("SpriteScriptPath", "res://castagne_godot4/modules/graphics/CMGraphics_Sprite.gd")
 	RegisterConfig("SpriteShaderPath", "")
 	
 	
@@ -193,7 +193,7 @@ Model functions affect the whole graphics side, so even sprites are affected her
 	
 	
 	# -[CTG_CAMERA]---------------------------------------------------------------------------------
-	RegisterCategory("Camera")
+	RegisterCategory("Camera3D")
 	
 	RegisterFunction("CameraOverrideLookAt", [6, 7, 8, 9], null, {
 		"Description": "Sets up a camera override for this frame using the camera position and a target point in space.",
@@ -273,7 +273,7 @@ Model functions affect the whole graphics side, so even sprites are affected her
 		"Arguments": ["Priority"]
 	})
 	RegisterFunction("CameraOverrideStop", [0], null, {
-		"Description": "Removes a previously set camera override. Camera overrides only stay for one frame."
+		"Description": "Removes a previously set camera override. Camera3D overrides only stay for one frame."
 	})
 	
 	RegisterFunction("CameraShake", [0,1,2,3], null, {
@@ -281,16 +281,16 @@ Model functions affect the whole graphics side, so even sprites are affected her
 		"Arguments":["Strength of shake (Optional)", "Time of shake (Optional)", "Shake Decay Speed (Optional)"]
 	})
 	
-	RegisterVariableEntity("_CameraOverride_PositionX", 0, ["ResetEachFrame"], {"Description":"Camera Position X for Camera Override"})
-	RegisterVariableEntity("_CameraOverride_PositionY", 0, ["ResetEachFrame"], {"Description":"Camera Position Y for Camera Override"})
-	RegisterVariableEntity("_CameraOverride_PositionZ", 0, ["ResetEachFrame"], {"Description":"Camera Position Z for Camera Override"})
-	RegisterVariableEntity("_CameraOverride_LookAtX", 0, ["ResetEachFrame"], {"Description":"Look At Position X for Camera Override"})
-	RegisterVariableEntity("_CameraOverride_LookAtY", 0, ["ResetEachFrame"], {"Description":"Look At Position Y for Camera Override"})
-	RegisterVariableEntity("_CameraOverride_LookAtZ", 0, ["ResetEachFrame"], {"Description":"Look At Position Z for Camera Override"})
-	RegisterVariableEntity("_CameraOverride_Roll", 0, ["ResetEachFrame"], {"Description":"Camera Roll for Camera Override"})
-	RegisterVariableEntity("_CameraOverride_FOV", 0, ["ResetEachFrame"], {"Description":"Camera FOV for Camera Override"})
-	RegisterVariableEntity("_CameraOverride_Priority", 0, ["ResetEachFrame"], {"Description":"Camera interpolation order priority for Camera Override"})
-	RegisterVariableEntity("_CameraOverride_Strength", 0, ["ResetEachFrame"], {"Description":"Interpolation strength for Camera Override"})
+	RegisterVariableEntity("_CameraOverride_PositionX", 0, ["ResetEachFrame"], {"Description":"Camera3D Position X for Camera3D Override"})
+	RegisterVariableEntity("_CameraOverride_PositionY", 0, ["ResetEachFrame"], {"Description":"Camera3D Position Y for Camera3D Override"})
+	RegisterVariableEntity("_CameraOverride_PositionZ", 0, ["ResetEachFrame"], {"Description":"Camera3D Position Z for Camera3D Override"})
+	RegisterVariableEntity("_CameraOverride_LookAtX", 0, ["ResetEachFrame"], {"Description":"Look At Position X for Camera3D Override"})
+	RegisterVariableEntity("_CameraOverride_LookAtY", 0, ["ResetEachFrame"], {"Description":"Look At Position Y for Camera3D Override"})
+	RegisterVariableEntity("_CameraOverride_LookAtZ", 0, ["ResetEachFrame"], {"Description":"Look At Position Z for Camera3D Override"})
+	RegisterVariableEntity("_CameraOverride_Roll", 0, ["ResetEachFrame"], {"Description":"Camera3D Roll for Camera3D Override"})
+	RegisterVariableEntity("_CameraOverride_FOV", 0, ["ResetEachFrame"], {"Description":"Camera3D FOV for Camera3D Override"})
+	RegisterVariableEntity("_CameraOverride_Priority", 0, ["ResetEachFrame"], {"Description":"Camera3D interpolation order priority for Camera3D Override"})
+	RegisterVariableEntity("_CameraOverride_Strength", 0, ["ResetEachFrame"], {"Description":"Interpolation strength for Camera3D Override"})
 	
 	RegisterVariableEntity("_CameraShake_StartFrame", 0, null, {"Description":"First frame in camera shake"})
 	RegisterVariableEntity("_CameraShake_TotalFrames", 0, null, {"Description":"Frames in camera shake"})
@@ -456,29 +456,29 @@ Model functions affect the whole graphics side, so even sprites are affected her
 	})
 	
 	RegisterVariableEntity("_PaletteID", 0, ["InheritToSubentity"], {"Description":"Current palette ID."})
-	RegisterVariableEntity("_SpritePalettePath", "res://castagne/assets/helpers/palette/PaletteManual01.png", ["InheritToSubentity"],{
+	RegisterVariableEntity("_SpritePalettePath", "res://castagne_godot4/assets/helpers/palette/PaletteManual01.png", ["InheritToSubentity"],{
 		"Description":"Path to the sprite palette lookup texture.",
 	})
-	RegisterVariableEntity("_ModelPath", "res://castagne/assets/fighters/castagneur/CastagneurModel.tscn", ["InheritToSubentity"], {
+	RegisterVariableEntity("_ModelPath", "res://castagne_godot4/assets/fighters/castagneur/CastagneurModel.tscn", ["InheritToSubentity"], {
 		"Description":"Path to the model to spawn, set by the palette",
 	})
 	RegisterVariableEntity("_PaletteExtra", 0, ["InheritToSubentity"], {"Description":"Extra palette parameter."})
-	RegisterVariableEntity("_Tmp_DefaultSpritePalettePath", "res://castagne/assets/helpers/palette/PaletteManual01.png", ["InheritToSubentity"])
-	RegisterVariableEntity("_Tmp_DefaultModelPath", "res://castagne/assets/fighters/castagneur/CastagneurModel.tscn", ["InheritToSubentity"])
+	RegisterVariableEntity("_Tmp_DefaultSpritePalettePath", "res://castagne_godot4/assets/helpers/palette/PaletteManual01.png", ["InheritToSubentity"])
+	RegisterVariableEntity("_Tmp_DefaultModelPath", "res://castagne_godot4/assets/fighters/castagneur/CastagneurModel.tscn", ["InheritToSubentity"])
 	
 	
 	
 	# -[CTG_UI]-------------------------------------------------------------------------------------
 	RegisterCategory("UI")
 	
-	RegisterConfig("UIGlobalRootScene", "res://castagne/helpers/ui/roots/CUIGlobalRoot-Fighting.tscn")
-	RegisterConfig("UIPlayerRootScene", "res://castagne/helpers/ui/roots/CUIPlayerRoot-Fighting.tscn")
+	RegisterConfig("UIGlobalRootScene", "res://castagne_godot4/helpers/ui/roots/CUIGlobalRoot-Fighting.tscn")
+	RegisterConfig("UIPlayerRootScene", "res://castagne_godot4/helpers/ui/roots/CUIPlayerRoot-Fighting.tscn")
 	RegisterBattleInitData(Castagne.MEMORY_STACKS.Player, "uiplayerroot-path", null)
 	RegisterBattleInitData(Castagne.MEMORY_STACKS.Player, "uiplayerroot-use", true)
-	RegisterConfig("UIDefaultWidget_Bar", "res://castagne/helpers/ui/widgets/default/DefaultWidgetBar.tscn")
-	RegisterConfig("UIDefaultWidget_Icons", "res://castagne/helpers/ui/widgets/default/DefaultWidgetIcons.tscn")
-	RegisterConfig("UIDefaultWidget_IconSwitch", "res://castagne/helpers/ui/widgets/default/DefaultWidgetIconSwitch.tscn")
-	RegisterConfig("UIDefaultWidget_Text", "res://castagne/helpers/ui/widgets/default/DefaultWidgetText.tscn")
+	RegisterConfig("UIDefaultWidget_Bar", "res://castagne_godot4/helpers/ui/widgets/default/DefaultWidgetBar.tscn")
+	RegisterConfig("UIDefaultWidget_Icons", "res://castagne_godot4/helpers/ui/widgets/default/DefaultWidgetIcons.tscn")
+	RegisterConfig("UIDefaultWidget_IconSwitch", "res://castagne_godot4/helpers/ui/widgets/default/DefaultWidgetIconSwitch.tscn")
+	RegisterConfig("UIDefaultWidget_Text", "res://castagne_godot4/helpers/ui/widgets/default/DefaultWidgetText.tscn")
 	
 	# -[CTG_INTERNALS]------------------------------------------------------------------------------
 
@@ -493,7 +493,7 @@ func BattleInit(stateHandle, battleInitData):
 	POSITION_SCALE = config.Get("PositionScale") / 1000000.0
 	
 	stateHandle.IDGlobalSet("GraphicsRoot", graphicsRoot)
-	stateHandle.IDGlobalSet("Camera", camera)
+	stateHandle.IDGlobalSet("Camera3D", camera)
 	lastRegisteredCamera = camera
 	
 	cameraOffsetFar = Vector3(config.Get("CameraOffsetX"), config.Get("CameraOffsetY"), config.Get("CameraOffsetZ"))
@@ -596,7 +596,7 @@ func UpdateGraphics(stateHandle):
 	for eid in stateHandle.GlobalGet("_ActiveEntities"):
 		stateHandle.PointToEntity(eid)
 		
-		# Camera information gathering
+		# Camera3D information gathering
 		var co = _CameraOverrides_GatherOverrides(stateHandle)
 		if(co != null):
 			cameraOverrideStack.push_back(co)
@@ -634,7 +634,7 @@ func UpdateGraphics(stateHandle):
 	
 	
 	# Compute camera position
-	var camera = stateHandle.IDGlobalGet("Camera")
+	var camera = stateHandle.IDGlobalGet("Camera3D")
 	var playerPosCenter = Vector3(stateHandle.GlobalGet("_CameraX"), stateHandle.GlobalGet("_CameraY") - stateHandle.ConfigData().Get("CameraYBuffer"), 0)
 	var playerDist = 0
 	if(stateHandle.GlobalGet("_NbPlayers") >= 2):
@@ -660,7 +660,7 @@ func UpdateGraphics(stateHandle):
 	cameraPosRegular = IngameToGodotPos(cameraPosRegular)
 	
 	
-	cameraOverrideStack.sort_custom(self, "_CameraOverrides_Sort")
+	cameraOverrideStack.sort_custom(Callable(self, "_CameraOverrides_Sort")
 	var cameraPos = cameraPosRegular
 	var cameraLookAtPoint = cameraPosRegular
 	if(!IS_2D):
@@ -759,8 +759,8 @@ func _ModelZOrderSet(stateHandle, zOrderCoarse = null, zOrderFine = null):
 	
 	var zOrder = zOrderCoarse * 100 + zOrderFine
 	stateHandle.EntitySet("_ModelZOrder", zOrder)
-	if(zOrder < VisualServer.CANVAS_ITEM_Z_MIN or zOrder > VisualServer.CANVAS_ITEM_Z_MAX):
-		ModuleError("Sprite order out of bounds: " + str(zOrder) + " is outside of ["+str(VisualServer.CANVAS_ITEM_Z_MIN)+", "+str(VisualServer.CANVAS_ITEM_Z_MAX)+"]!", stateHandle)
+	if(zOrder < RenderingServer.CANVAS_ITEM_Z_MIN or zOrder > RenderingServer.CANVAS_ITEM_Z_MAX):
+		ModuleError("Sprite order out of bounds: " + str(zOrder) + " is outside of ["+str(RenderingServer.CANVAS_ITEM_Z_MIN)+", "+str(RenderingServer.CANVAS_ITEM_Z_MAX)+"]!", stateHandle)
 
 func ModelShaderParamI(args, stateHandle):
 	var paramName = ArgRaw(args, 0)
@@ -1429,7 +1429,7 @@ func _EnsureRootIsSet(stateHandle):
 		graphicsRoot.add_child(root)
 
 func _InitCamera(_stateHandle, _battleInitData):
-	var cam = Camera.new()
+	var cam = Camera3D.new()
 	return cam
 
 func _CreateSprite_Instance(stateHandle):

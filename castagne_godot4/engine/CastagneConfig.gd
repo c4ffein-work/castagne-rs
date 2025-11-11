@@ -250,7 +250,7 @@ func GetBaseCaspFilePaths():
 			var c = m.baseCaspFilePath.duplicate(true)
 			c[2] = bcfp.size()
 			bcfp += [c]
-	bcfp.sort_custom(self, "_BaseCaspFilePathsSort")
+	bcfp.sort_custom(Callable(self, "_BaseCaspFilePathsSort"))
 	var paths = []
 	for b in bcfp:
 		paths.append_array(b[0])
@@ -297,7 +297,7 @@ func GetEditorCharacterList(sortByEditorOrder = false):
 			c["EditorOrder"] = maxEditorOrder
 	
 	if(sortByEditorOrder):
-		characters.sort_custom(self, "_GetEditorCharacterList_SortByEditorOrder")
+		characters.sort_custom(Callable(self, "_GetEditorCharacterList_SortByEditorOrder"))
 	
 	return characters
 

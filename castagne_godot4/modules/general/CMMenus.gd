@@ -6,14 +6,14 @@ extends "../CastagneModule.gd"
 
 func ModuleSetup():
 	RegisterModule("Menus", null)
-	RegisterBaseCaspFile("res://castagne/modules/general/Base-Training.casp", 9000)
-	RegisterSpecblock("MenuData", "res://castagne/modules/general/CMMenusSBMenuData.gd")
+	RegisterBaseCaspFile("res://castagne_godot4/modules/general/Base-Training.casp", 9000)
+	RegisterSpecblock("MenuData", "res://castagne_godot4/modules/general/CMMenusSBMenuData.gd")
 	
 	RegisterCategory("General")
 	
 	
 	RegisterCategory("Main Menu")
-	RegisterConfig("MenuScene-MainMenu", "res://castagne/helpers/menus/menus/default/CMenu-Main.tscn")
+	RegisterConfig("MenuScene-MainMenu", "res://castagne_godot4/helpers/menus/menus/default/CMenu-Main.tscn")
 	RegisterConfig("MenuData-MainMenu", {
 		"Options":[
 			{
@@ -33,7 +33,7 @@ func ModuleSetup():
 	})
 	
 	RegisterCategory("Character Select")
-	RegisterConfig("MenuScene-CSS", "res://castagne/helpers/menus/menus/default/CMenu-CSS.tscn")
+	RegisterConfig("MenuScene-CSS", "res://castagne_godot4/helpers/menus/menus/default/CMenu-CSS.tscn")
 	RegisterConfig("MenuData-CSS", {
 		"Options":[],
 	})
@@ -44,7 +44,7 @@ func ModuleSetup():
 	
 	
 	RegisterCategory("Pause")
-	RegisterConfig("MenuScene-Pause", "res://castagne/helpers/menus/menus/default/CMenu-Pause.tscn")
+	RegisterConfig("MenuScene-Pause", "res://castagne_godot4/helpers/menus/menus/default/CMenu-Pause.tscn")
 	RegisterConfig("MenuData-Pause", {
 		"Options":[
 			{
@@ -69,7 +69,7 @@ func ModuleSetup():
 	
 	
 	RegisterCategory("Training")
-	RegisterConfig("MenuScene-Training", "res://castagne/helpers/menus/menus/default/CMenu-Training.tscn")
+	RegisterConfig("MenuScene-Training", "res://castagne_godot4/helpers/menus/menus/default/CMenu-Training.tscn")
 	RegisterConfig("MenuData-Training", {
 		"Options":[
 			{

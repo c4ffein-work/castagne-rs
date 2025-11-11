@@ -7,8 +7,8 @@ extends "../CastagneModule.gd"
 
 func ModuleSetup():
 	RegisterModule("Audio", null)
-	RegisterBaseCaspFile("res://castagne/modules/general/Base-Audio.casp")
-	RegisterSpecblock("AudioSFX", "res://castagne/modules/general/CMAudioSBSFX.gd")
+	RegisterBaseCaspFile("res://castagne_godot4/modules/general/Base-Audio.casp")
+	RegisterSpecblock("AudioSFX", "res://castagne_godot4/modules/general/CMAudioSBSFX.gd")
 	
 	RegisterCategory("Audio", {"Description":"General audio parameters."})
 	RegisterConfig("AudioVolumeMaster",1000, {
@@ -73,7 +73,7 @@ func BattleInit(stateHandle, battleInitData):
 	
 	var musicData = musicDataAll[musicID-1]
 	var musicPlayer = AudioStreamPlayer.new()
-	var musicPlayerScript = load("res://castagne/modules/general/CMAudio_MusicPlayer.gd")
+	var musicPlayerScript = load("res://castagne_godot4/modules/general/CMAudio_MusicPlayer.gd")
 	musicPlayer.set_script(musicPlayerScript)
 	stateHandle.Engine().add_child(musicPlayer)
 	musicPlayer.InitFromData(musicData)

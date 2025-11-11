@@ -12,8 +12,8 @@ func ModuleSetup():
 	RegisterModule("Core", Castagne.MODULE_SLOTS_BASE.CORE, {
 		"Description":"Contains the absolute core functions of the engine. This should be included in virtually all cases, and tends to be relied upon by the engine itself."
 		})
-	RegisterBaseCaspFile("res://castagne/modules/core/Base-Core.casp", -9000)
-	RegisterSpecblock("Subentity", "res://castagne/modules/core/CMCoreSBSubentity.gd")
+	RegisterBaseCaspFile("res://castagne_godot4/modules/core/Base-Core.casp", -9000)
+	RegisterSpecblock("Subentity", "res://castagne_godot4/modules/core/CMCoreSBSubentity.gd")
 	RegisterCASPEvent("Enter")
 	RegisterCASPEvent("Exit")
 	
@@ -419,7 +419,7 @@ This can be overriden by other modules (mainly, FlowFighting which will target t
 		"Flags":["Basic"],
 		})
 	RegisterCustomConfig("Genre Select", "GenreSelector", {"Flags":["ReloadFull", "LockBack"]})
-	RegisterConfig("CharacterPaths","res://castagne/examples/fighters/baston/Baston-25D.casp, res://castagne/examples/fighters/baston/Baston-2D.casp", {
+	RegisterConfig("CharacterPaths","res://castagne_godot4/examples/fighters/baston/Baston-25D.casp, res://castagne_godot4/examples/fighters/baston/Baston-2D.casp", {
 		"Flags":["Hidden"],
 		"Description":"The list of characters that can be loaded."
 		})
@@ -428,7 +428,7 @@ This can be overriden by other modules (mainly, FlowFighting which will target t
 		"Description":"The list of skeletons that may be loaded. Used when the Skeleton parameter of a character is set to an int, or when none is given."
 		})
 	RegisterCustomConfig("Manage Characters", "CharacterSet", {"Flags":["LockBack"]})
-	RegisterConfig("StagePaths","res://castagne/examples/stages/default-25d-stage/Default25DStage.tscn", {
+	RegisterConfig("StagePaths","res://castagne_godot4/examples/stages/default-25d-stage/Default25DStage.tscn", {
 		"Description":"The list of stages that may be loaded.",
 		"Flags":["Intermediate"],
 		})
@@ -510,26 +510,26 @@ This can be overriden by other modules (mainly, FlowFighting which will target t
 		"Flags":["Hidden", "Reload", "Advanced"],
 		"Description":"Internal version of the Castagne engine."
 		})
-	RegisterConfig("PathEngine", "res://castagne/engine/CastagneEngine.tscn", {
+	RegisterConfig("PathEngine", "res://castagne_godot4/engine/CastagneEngine.tscn", {
 		"Flags":["Expert"],
 		"Description":"Filepath to the engine scene."
 		})
-	RegisterConfig("PathEditor", "res://castagne/editor/CastagneEditor.tscn", {
+	RegisterConfig("PathEditor", "res://castagne_godot4/editor/CastagneEditor.tscn", {
 		"Flags":["Expert"], "Description":"Filepath to the editor scene."
 		})
-	RegisterConfig("PathDevTools", "res://castagne/devtools/DevTools.tscn", {
+	RegisterConfig("PathDevTools", "res://castagne_godot4/devtools/DevTools.tscn", {
 		"Flags":["Expert"],
 		"Description":"Filepath to the devtools scene."
 		})
-	RegisterConfig("PathMainMenu","res://castagne/menus/mainmenu/DefaultMainMenu.tscn", {
+	RegisterConfig("PathMainMenu","res://castagne_godot4/menus/mainmenu/DefaultMainMenu.tscn", {
 		"Flags":["Advanced"],
 		"Description":"Filepath to the main menu scene."
 		})
-	RegisterConfig("PathCharacterSelect","res://castagne/menus/characterselect/DefaultCharacterSelect.tscn", {
+	RegisterConfig("PathCharacterSelect","res://castagne_godot4/menus/characterselect/DefaultCharacterSelect.tscn", {
 		"Flags":["Advanced"],
 		"Description":"Filepath to the character select screen scene."
 		})
-	RegisterConfig("PathPostBattle","res://castagne/menus/postbattle/DefaultPostBattle.tscn", {
+	RegisterConfig("PathPostBattle","res://castagne_godot4/menus/postbattle/DefaultPostBattle.tscn", {
 		"Flags":["Advanced"],
 		"Description":"Filepath to the post battle scene."
 		})
@@ -550,30 +550,30 @@ This can be overriden by other modules (mainly, FlowFighting which will target t
 	var castagneStandardModules = {
 		# Coreset
 		"coreset":"editor, functions, attacks, audio, input, ai, menus",
-		"editor":"res://castagne/modules/editor/CMEditor.gd",
-		"functions":"res://castagne/modules/general/CMFunctions.gd",
-		"audio":"res://castagne/modules/general/CMAudio.gd",
-		"attacks":"res://castagne/modules/attacks/CMAttacks.gd",
-		"input":"res://castagne/modules/general/CMInput.gd",
-		"menus":"res://castagne/modules/general/CMMenus.gd",
-		"ai": "res://castagne/modules/general/CMAI.gd",
+		"editor":"res://castagne_godot4/modules/editor/CMEditor.gd",
+		"functions":"res://castagne_godot4/modules/general/CMFunctions.gd",
+		"audio":"res://castagne_godot4/modules/general/CMAudio.gd",
+		"attacks":"res://castagne_godot4/modules/attacks/CMAttacks.gd",
+		"input":"res://castagne_godot4/modules/general/CMInput.gd",
+		"menus":"res://castagne_godot4/modules/general/CMMenus.gd",
+		"ai": "res://castagne_godot4/modules/general/CMAI.gd",
 		
 		# Flow
 		"flow": "flowfighting",
-		"flowgeneric": "res://castagne/modules/flow/CMFlow.gd",
-		"flowfighting": "res://castagne/modules/flow/CMFlowFighting.gd",
+		"flowgeneric": "res://castagne_godot4/modules/flow/CMFlow.gd",
+		"flowfighting": "res://castagne_godot4/modules/flow/CMFlowFighting.gd",
 		"flowuser": "",
 		
 		# Physics
 		"physics": "physics2d",
-		"physics2d": "res://castagne/modules/physics/CMPhysics2D.gd",
+		"physics2d": "res://castagne_godot4/modules/physics/CMPhysics2D.gd",
 		"physicsuser": "",
 		
 		# Graphics
 		"graphics": "graphics25d",
-		"graphics2d": "res://castagne/modules/graphics/CMGraphics2D.gd",
-		"graphics25d": "res://castagne/modules/graphics/CMGraphics2HalfD.gd",
-		"graphics3d": "res://castagne/modules/graphics/CMGraphics3D.gd",
+		"graphics2d": "res://castagne_godot4/modules/graphics/CMGraphics2D.gd",
+		"graphics25d": "res://castagne_godot4/modules/graphics/CMGraphics2HalfD.gd",
+		"graphics3d": "res://castagne_godot4/modules/graphics/CMGraphics3D.gd",
 		"graphicsuser": "",
 		
 		# User
@@ -694,7 +694,7 @@ func _HandleCopyToBuffer(memory, eidsToHandle):
 	var variablesSetByOrigin = {}
 	var variablesSetByTarget = {}
 	
-	copyToBuffer.sort_custom(self, "_CopyToBufferSort")
+	copyToBuffer.sort_custom(Callable(self, "_CopyToBufferSort")
 	
 	for ctb in copyToBuffer:
 		var targetEID = ctb["TargetEID"]
@@ -724,7 +724,7 @@ func _HandleCopyToBuffer(memory, eidsToHandle):
 	
 func _HandleFlagTargetBuffer(stateHandle, eidsToHandle):
 	var flagTargetBuffer = stateHandle.GlobalGet("_FlagTargetBuffer")
-	flagTargetBuffer.sort_custom(self, "_CopyToBufferSort")
+	flagTargetBuffer.sort_custom(Callable(self, "_CopyToBufferSort")
 	
 	for ftb in flagTargetBuffer:
 		var targetEID = ftb["TargetEID"]

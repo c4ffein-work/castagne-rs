@@ -8,10 +8,10 @@ var ATTACK_FLAG_PREFIX = "AF_"
 
 func ModuleSetup():
 	RegisterModule("Attacks", Castagne.MODULE_SLOTS_BASE.ATTACKS, {"Description":"Specialized module to help with making attacks and combat systems."})
-	RegisterBaseCaspFile("res://castagne/modules/attacks/Base-Attacks.casp", -5000)
-	RegisterSpecblock("AttacksTypes", "res://castagne/modules/attacks/CMAttacksSBTypes.gd")
-	RegisterSpecblock("AttacksThrows", "res://castagne/modules/attacks/CMAttacksSBThrows.gd")
-	RegisterSpecblock("AttacksMechanics", "res://castagne/modules/attacks/CMAttacksSBMechanics.gd")
+	RegisterBaseCaspFile("res://castagne_godot4/modules/attacks/Base-Attacks.casp", -5000)
+	RegisterSpecblock("AttacksTypes", "res://castagne_godot4/modules/attacks/CMAttacksSBTypes.gd")
+	RegisterSpecblock("AttacksThrows", "res://castagne_godot4/modules/attacks/CMAttacksSBThrows.gd")
+	RegisterSpecblock("AttacksMechanics", "res://castagne_godot4/modules/attacks/CMAttacksSBMechanics.gd")
 	RegisterCASPEvent("DefenderAttackOverrides")
 	RegisterCASPEvent("OnAttackHit")
 	RegisterCASPEvent("OnAttackBlocked")
@@ -1340,7 +1340,7 @@ func _ADApplyOverride(attackData, newOverride):
 	# Sort the multiple overrides and apply them in order
 	# Maybe not most efficient but at this point what is ? Will do a better system later in v0.7
 	multipleOverrides = multipleOverrides.values()
-	multipleOverrides.sort_custom(self, "_AD_SortOverrideLists")
+	multipleOverrides.sort_custom(Callable(self, "_AD_SortOverrideLists")
 	
 	for i in range(-1, multipleOverrides.size()):
 		# Apply flags

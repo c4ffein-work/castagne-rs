@@ -31,10 +31,10 @@ func ModuleSetup():
 	RegisterModule("Physics 2D", Castagne.MODULE_SLOTS_BASE.PHYSICS, {
 		"Description":"Physics module optimized for 2D fighting games."
 	})
-	RegisterBaseCaspFile("res://castagne/modules/physics/Base-Physics2D.casp")
-	RegisterSpecblock("PhysicsMovement", "res://castagne/modules/physics/CMPhysicsSBMovement.gd")
-	RegisterSpecblock("PhysicsTeching", "res://castagne/modules/physics/CMPhysicsSBTeching.gd")
-	RegisterSpecblock("PhysicsSystem", "res://castagne/modules/physics/CMPhysicsSBSystem.gd")
+	RegisterBaseCaspFile("res://castagne_godot4/modules/physics/Base-Physics2D.casp")
+	RegisterSpecblock("PhysicsMovement", "res://castagne_godot4/modules/physics/CMPhysicsSBMovement.gd")
+	RegisterSpecblock("PhysicsTeching", "res://castagne_godot4/modules/physics/CMPhysicsSBTeching.gd")
+	RegisterSpecblock("PhysicsSystem", "res://castagne_godot4/modules/physics/CMPhysicsSBSystem.gd")
 	RegisterCASPEvent("Landing")
 	RegisterCASPEvent("Liftoff")
 	
@@ -916,12 +916,12 @@ func CopyFacingToOtherFacing(args, stateHandle):
 
 
 @onready var _TransformAxisFunctions = [
-	funcref(self, "TransformPosEntityToWorld"),
-	funcref(self, "TransformWorldPosToEntity"),
-	funcref(self, "TransformPosEntityToAbsolute"),
-	funcref(self, "TransformPosEntityAbsoluteToEntity"),
-	funcref(self, "TransformPosEntityAbsoluteToWorld"),
-	funcref(self, "TransformWorldPosToEntityAbsolute"),
+	Callable(self, "TransformPosEntityToWorld"),
+	Callable(self, "TransformWorldPosToEntity"),
+	Callable(self, "TransformPosEntityToAbsolute"),
+	Callable(self, "TransformPosEntityAbsoluteToEntity"),
+	Callable(self, "TransformPosEntityAbsoluteToWorld"),
+	Callable(self, "TransformWorldPosToEntityAbsolute"),
 	]
 func _TransformAxisFunction(args, stateHandle, index, type, getArgID = 0, setArgID = 1):
 	# More efficient ways exists, good enough for now
@@ -1245,19 +1245,19 @@ var _castProfiling_Atk_SetupDone = -1
 var _castProfiling_PhysicsEnd = -1
 
 func PhysicsPhase(stateHandle, activeEIDs):
-	_castProfiling_PhysicsStart = OS.get_ticks_usec()
+	_castProfiling_PhysicsStart = Time.get_ticks_usec()
 	
 	# 1. Setup data needed
 	PhysicsPhaseSetup(stateHandle, activeEIDs)
-	_castProfiling_PhysicsSetupDone = OS.get_ticks_usec()
+	_castProfiling_PhysicsSetupDone = Time.get_ticks_usec()
 	
 	# 2. Colbox and Environment Collisions
 	PhysicsPhaseEnvironment(stateHandle, activeEIDs)
-	_castProfiling_EnvColEnd = OS.get_ticks_usec()
+	_castProfiling_EnvColEnd = Time.get_ticks_usec()
 	
 	# 3. Attack collisions
 	PhysicsPhaseAttack(stateHandle, activeEIDs)
-	_castProfiling_PhysicsEnd = OS.get_ticks_usec()
+	_castProfiling_PhysicsEnd = Time.get_ticks_usec()
 
 var ppAttackModule
 var ppStateHandlesByEID
@@ -1327,7 +1327,7 @@ func PhysicsPhaseEnvironment(stateHandle, activeEIDs):
 		buckets[0][1] += movement[1]%nbBuckets
 		movementBuckets[eid] = buckets
 	
-	_castProfiling_Env_SetupDone = OS.get_ticks_usec()
+	_castProfiling_Env_SetupDone = Time.get_ticks_usec()
 	
 	# Main Loop
 	for loopID in nbBuckets:
@@ -1548,7 +1548,7 @@ func PhysicsPhaseAttack(stateHandle, activeEIDs):
 		hitboxes[eid] = hit
 		friendlyFireHitboxes[eid] = ffHit
 	
-	_castProfiling_Atk_SetupDone = OS.get_ticks_usec()
+	_castProfiling_Atk_SetupDone = Time.get_ticks_usec()
 	
 	# Gather potential character collisions
 	for eidAID in range(activeEIDs.size()-1):

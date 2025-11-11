@@ -15,13 +15,13 @@ func SetupSpecblock(_argument):
 	AddDefine("GRAPHICS_AutomaticZOrder", true, "Use Automatic Z-Order")
 	AddCategory("Models")
 	AddDefine("GRAPHICS_UseModel", true)
-	AddDefine("GRAPHICS_ModelPath", "res://castagne/assets/fighters/baston/model/BastonModel.tscn")
+	AddDefine("GRAPHICS_ModelPath", "res://castagne_godot4/assets/fighters/baston/model/BastonModel.tscn")
 	AddDefine("GRAPHICS_ModelPath_AnimPlayer", "AnimationPlayer")
 	
 	
 	AddCategory("Sprites")
 	AddDefine("GRAPHICS_UseSprites", false)
-	AddDefine("GRAPHICS_SpritePalette", "res://castagne/assets/helpers/palette/PaletteManual01.png")
+	AddDefine("GRAPHICS_SpritePalette", "res://castagne_godot4/assets/helpers/palette/PaletteManual01.png")
 	
 	
 	AddStructure("Spritesheets", "GRAPHICS_SPRITESHEET_")
@@ -36,15 +36,15 @@ func SetupSpecblock(_argument):
 	})
 	
 	AddStructure("Palettes", "GRAPHICS_SPRITE_PALETTE_", "Palettes", 2)
-	AddStructureDefine("ModelPath", "res://castagne/assets/fighters/baston/model/BastonModel.tscn")
-	AddStructureDefine("SpritePalettePath", "res://castagne/assets/helpers/palette/PaletteManual01.png")
+	AddStructureDefine("ModelPath", "res://castagne_godot4/assets/fighters/baston/model/BastonModel.tscn")
+	AddStructureDefine("SpritePalettePath", "res://castagne_godot4/assets/helpers/palette/PaletteManual01.png")
 	AddStructureDefine("Extra", 0)
 
 
 func StructEditorShow(structType = null, structInstance = null):
 	var root = .StructEditorShow(structType, structInstance)
 	if(structType == "Spritesheets"):
-		var visuPacked = preload("res://castagne/modules/graphics/CMGraphics-SpritesheetVisualizer.tscn")
+		var visuPacked = preload("res://castagne_godot4/modules/graphics/CMGraphics-SpritesheetVisualizer.tscn")
 		var visu = visuPacked.instantiate()
 		var sD = _structureDefinitions[structType]
 		var prefix = sD["Prefix"] + structInstance["InstanceName"] + _struct_namevar_separator

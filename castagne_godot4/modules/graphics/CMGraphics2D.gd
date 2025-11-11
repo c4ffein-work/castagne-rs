@@ -4,7 +4,7 @@
 
 extends "CMGraphicsBase.gd"
 
-var prefabVPC = preload("res://castagne/modules/graphics/Graphics2DRoot.tscn")
+var prefabVPC = preload("res://castagne_godot4/modules/graphics/Graphics2DRoot.tscn")
 var pixelArtMode = false
 var viewport
 var viewportContainer
@@ -59,7 +59,7 @@ func _CreateSprite_Instance(stateHandle):
 	return s2D
 
 func _UpdateCamera(stateHandle, camera, cameraPos, _cameraLookAt, cameraFOV, _cameraRoll, cameraShake, _cameraExtra):
-	# TODO Camera size isn't really consistent, needs design
+	# TODO Camera3D size isn't really consistent, needs design
 	if(pixelArtMode):
 		cameraPos = cameraPos.round()
 	

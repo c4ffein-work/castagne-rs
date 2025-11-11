@@ -9,8 +9,8 @@ var emodule
 
 func _ready():
 	var canvasRID = self.get_canvas_item()
-	VisualServer.canvas_item_set_draw_index(canvasRID, 1000)
-	VisualServer.canvas_item_set_z_index(canvasRID, 1000)
+	RenderingServer.canvas_item_set_draw_index(canvasRID, 1000)
+	RenderingServer.canvas_item_set_z_index(canvasRID, 1000)
 
 func _draw():
 	for d in drawList:

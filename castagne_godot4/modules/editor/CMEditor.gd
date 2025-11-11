@@ -4,7 +4,7 @@
 
 extends "../CastagneModule.gd"
 
-var gizmoDisplayScript = preload("res://castagne/modules/editor/CMEditor-GizmoDisplay.gd")
+var gizmoDisplayScript = preload("res://castagne_godot4/modules/editor/CMEditor-GizmoDisplay.gd")
 var gizmoDisplay = null
 
 signal EngineTick_FramePreStart
@@ -47,15 +47,15 @@ func ModuleSetup():
 	
 	RegisterCategory("Castagne Editor")
 	RegisterConfig("Editor-SelectedCharacter", 0, {"Flags":["Hidden"]})
-	RegisterConfig("Editor-DocumentationFolders", "res://castagne/docs", {"Flags":["Advanced"]})
+	RegisterConfig("Editor-DocumentationFolders", "res://castagne_godot4/docs", {"Flags":["Advanced"]})
 	RegisterConfig("Editor-Tools", "")
 	RegisterConfig("Editor-ToolsCastagne",
-		"res://castagne/editor/tools/compile/CETool-Compile.tscn,"+
-		"res://castagne/editor/tools/inputs/CETool-Inputs.tscn,"+
-		"res://castagne/editor/tools/perf/CETool-Perf.tscn,"+
-		"res://castagne/editor/tools/sceneviewer/CETool-SceneViewer.tscn,"+
-		"res://castagne/editor/tools/freecam/CETool-Freecam.tscn,"+
-		"res://castagne/editor/tools/debugoptions/CETool-DebugOptions.tscn,", {"Flags":["Advanced"]})
+		"res://castagne_godot4/editor/tools/compile/CETool-Compile.tscn,"+
+		"res://castagne_godot4/editor/tools/inputs/CETool-Inputs.tscn,"+
+		"res://castagne_godot4/editor/tools/perf/CETool-Perf.tscn,"+
+		"res://castagne_godot4/editor/tools/sceneviewer/CETool-SceneViewer.tscn,"+
+		"res://castagne_godot4/editor/tools/freecam/CETool-Freecam.tscn,"+
+		"res://castagne_godot4/editor/tools/debugoptions/CETool-DebugOptions.tscn,", {"Flags":["Advanced"]})
 	
 	RegisterConfig("Editor-LockCastagneFiles", true, {"Flags":["Advanced"]})
 	RegisterConfig("Editor-LockBaseSkeleton", false, {"Flags":["Advanced"]})

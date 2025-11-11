@@ -15,8 +15,8 @@ extends Node
 
 const CONFIG_FILE_PATH = "res://castagne-config.json"
 const CONFIG_LOCAL_FILE_PATH = "user://castagne-local-config.json"
-const CONFIG_CORE_MODULE_PATH = "res://castagne/modules/core/CMCore.gd"
-const CONFIG_VERSION_FILE_PATH = "res://castagne/castagne-version.json"
+const CONFIG_CORE_MODULE_PATH = "res://castagne_godot4/modules/core/CMCore.gd"
+const CONFIG_VERSION_FILE_PATH = "res://castagne_godot4/castagne-version.json"
 const INPUT_LOCAL = 0
 const INPUT_ONLINE = 1
 const INPUT_AI = 2
@@ -207,7 +207,7 @@ func LoadModulesAndConfigAdditive(configFilePath, baseConfig = null):
 	
 	return configData
 
-var prefabConfigData = preload("res://castagne/engine/CastagneConfig.gd")
+var prefabConfigData = preload("res://castagne_godot4/engine/CastagneConfig.gd")
 func CreateNewEmptyConfigData():
 	var configData = Node.new()
 	configData.set_script(prefabConfigData)

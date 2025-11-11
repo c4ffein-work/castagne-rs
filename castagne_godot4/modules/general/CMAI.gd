@@ -6,7 +6,7 @@ extends "../CastagneModule.gd"
 
 func ModuleSetup():
 	RegisterModule("AI", Castagne.MODULE_SLOTS_BASE.AI, {"Description":"Specialized module to help with making AIs."})
-	RegisterBaseCaspFile("res://castagne/modules/general/Base-AI.casp", 5000)
+	RegisterBaseCaspFile("res://castagne_godot4/modules/general/Base-AI.casp", 5000)
 	
 	# [F_STATES] -----------------------------------------------------------------------------------
 	RegisterCategory("AI States")

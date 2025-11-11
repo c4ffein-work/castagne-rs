@@ -13,15 +13,15 @@ func ModuleSetup():
 	RegisterConfig("InputLayout", [
 		{"Name":"Movement", "Type":Castagne.PHYSICALINPUT_TYPES.STICK,
 			"KeyboardInputs":[[[KEY_A, KEY_Q, KEY_LEFT]], [[KEY_D, KEY_RIGHT]], [[KEY_S, KEY_DOWN]], [[KEY_Z, KEY_W, KEY_SPACE, KEY_UP]]],
-			"ControllerInputs":[[[JOY_DPAD_LEFT]], [[JOY_DPAD_RIGHT]], [[JOY_DPAD_DOWN]], [[JOY_DPAD_UP]]],
+			"ControllerInputs":[[[JOY_BUTTON_DPAD_LEFT]], [[JOY_BUTTON_DPAD_RIGHT]], [[JOY_BUTTON_DPAD_DOWN]], [[JOY_BUTTON_DPAD_UP]]],
 			"GameInputNames":["Left", "Right", "Down", "Up", "Back", "Forward", "Portside", "Starboard", "NeutralH", "NeutralV"]},
-		{"Name":"L", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_H, KEY_KP_4]]], "ControllerInputs":[[[JOY_XBOX_X]]]},
-		{"Name":"M", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_J, KEY_KP_5]]], "ControllerInputs":[[[JOY_XBOX_Y]]]},
-		{"Name":"H", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_K, KEY_KP_6]]], "ControllerInputs":[[[JOY_XBOX_B]]]},
-		{"Name":"S", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_N, KEY_KP_0]]], "ControllerInputs":[[[JOY_XBOX_A]]]},
-		{"Name":"E", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_L, KEY_KP_ADD]]], "ControllerInputs":[[[JOY_R]]]},
+		{"Name":"L", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_H, KEY_KP_4]]], "ControllerInputs":[[[JOY_BUTTON_X]]]},
+		{"Name":"M", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_J, KEY_KP_5]]], "ControllerInputs":[[[JOY_BUTTON_Y]]]},
+		{"Name":"H", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_K, KEY_KP_6]]], "ControllerInputs":[[[JOY_BUTTON_B]]]},
+		{"Name":"S", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_N, KEY_KP_0]]], "ControllerInputs":[[[JOY_BUTTON_A]]]},
+		{"Name":"E", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_L, KEY_KP_ADD]]], "ControllerInputs":[[[JOY_BUTTON_RIGHT_SHOULDER]]]},
 		{"Name":"Throw", "Type":Castagne.PHYSICALINPUT_TYPES.COMBINATION,
-			"KeyboardInputs":[[[KEY_SHIFT]]], "ControllerInputs":[[[JOY_L]]],
+			"KeyboardInputs":[[[KEY_SHIFT]]], "ControllerInputs":[[[JOY_BUTTON_LEFT_SHOULDER]]],
 			"Combination":[[1, 0], [2, 0]]},
 		{"Name":"Jump", "Type":Castagne.PHYSICALINPUT_TYPES.ANY,
 			"KeyboardInputs":[[]], "ControllerInputs":[[]],
@@ -29,22 +29,22 @@ func ModuleSetup():
 		{"Name":"Tech", "Type":Castagne.PHYSICALINPUT_TYPES.ANY,
 			"KeyboardInputs":[[]], "ControllerInputs":[[]],
 			"Combination":[[1, 0], [2, 0], [3, 0]]},
-		{"Name":"Pause", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_ENTER, KEY_ESCAPE]]], "ControllerInputs":[[[JOY_START]]]},
-		{"Name":"Reset", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_BACKSPACE, KEY_KP_SUBTRACT]]], "ControllerInputs":[[[JOY_SELECT]]]},
-		{"Name":"TrainingButton1", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_KP_DIVIDE]]], "ControllerInputs":[[[JOY_L3]]]},
-		{"Name":"TrainingButton2", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_KP_MULTIPLY]]], "ControllerInputs":[[[JOY_R3]]]},
+		{"Name":"Pause", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_ENTER, KEY_ESCAPE]]], "ControllerInputs":[[[JOY_BUTTON_START]]]},
+		{"Name":"Reset", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_BACKSPACE, KEY_KP_SUBTRACT]]], "ControllerInputs":[[[JOY_BUTTON_BACK]]]},
+		{"Name":"TrainingButton1", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_KP_DIVIDE]]], "ControllerInputs":[[[JOY_BUTTON_LEFT_STICK]]]},
+		{"Name":"TrainingButton2", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_KP_MULTIPLY]]], "ControllerInputs":[[[JOY_BUTTON_RIGHT_STICK]]]},
 	], {"Flags":["Hidden"], "Description":"The complete InputLayout to use."})
 	
 	RegisterConfig("InputLayoutMenu", [
-		{"Name":"MenuUp", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_Z, KEY_W, KEY_SPACE, KEY_UP]]], "ControllerInputs":[[[JOY_DPAD_UP]]]},
-		{"Name":"MenuDown", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_S, KEY_DOWN]]], "ControllerInputs":[[[JOY_DPAD_DOWN]]]},
-		{"Name":"MenuLeft", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_A, KEY_Q, KEY_LEFT]]], "ControllerInputs":[[[JOY_DPAD_LEFT]]]},
-		{"Name":"MenuRight", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_D, KEY_RIGHT]]], "ControllerInputs":[[[JOY_DPAD_RIGHT]]]},
+		{"Name":"MenuUp", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_Z, KEY_W, KEY_SPACE, KEY_UP]]], "ControllerInputs":[[[JOY_BUTTON_DPAD_UP]]]},
+		{"Name":"MenuDown", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_S, KEY_DOWN]]], "ControllerInputs":[[[JOY_BUTTON_DPAD_DOWN]]]},
+		{"Name":"MenuLeft", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_A, KEY_Q, KEY_LEFT]]], "ControllerInputs":[[[JOY_BUTTON_DPAD_LEFT]]]},
+		{"Name":"MenuRight", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_D, KEY_RIGHT]]], "ControllerInputs":[[[JOY_BUTTON_DPAD_RIGHT]]]},
 		
-		{"Name":"MenuConfirm", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_N, KEY_KP_0]]], "ControllerInputs":[[[JOY_XBOX_A]]]},
-		{"Name":"MenuBack", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_K, KEY_KP_6]]], "ControllerInputs":[[[JOY_XBOX_B]]]},
-		{"Name":"MenuPrevious", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_Y, KEY_KP_1]]], "ControllerInputs":[[[JOY_L]]]},
-		{"Name":"MenuNext", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_U, KEY_KP_2]]], "ControllerInputs":[[[JOY_R]]]},
+		{"Name":"MenuConfirm", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_N, KEY_KP_0]]], "ControllerInputs":[[[JOY_BUTTON_A]]]},
+		{"Name":"MenuBack", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_K, KEY_KP_6]]], "ControllerInputs":[[[JOY_BUTTON_B]]]},
+		{"Name":"MenuPrevious", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_Y, KEY_KP_1]]], "ControllerInputs":[[[JOY_BUTTON_LEFT_SHOULDER]]]},
+		{"Name":"MenuNext", "Type":Castagne.PHYSICALINPUT_TYPES.BUTTON, "KeyboardInputs":[[[KEY_U, KEY_KP_2]]], "ControllerInputs":[[[JOY_BUTTON_RIGHT_SHOULDER]]]},
 	], {"Flags":["Hidden"], "Description":"The complete input layout for menus."})
 
 	RegisterCustomConfig("Define Input Layout", "InputConfig", {"Flags":["ReloadFull", "LockBack"]})
@@ -139,7 +139,7 @@ func ModuleSetup():
 
 	RegisterVariableEntity("_DirectionalInputLog", [], null, {"Description":"Array containing just the raw directional inputs for a player on each frame. Inputs are held for a number of frames equal to the buffer config variable."})
 
-var _castagneInputScript = load("res://castagne/engine/CastagneInput.gd")
+var _castagneInputScript = load("res://castagne_godot4/engine/CastagneInput.gd")
 func OnModuleRegistration(configData):
 	var input = Node.new()
 	input.set_script(_castagneInputScript)

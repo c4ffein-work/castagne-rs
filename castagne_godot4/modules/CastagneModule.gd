@@ -259,16 +259,16 @@ func RegisterFunction(functionName, nbArguments, flags = null, documentation = n
 		flags.erase(f)
 	
 	if(has_method("Parse"+functionName)):
-		parseFunc = funcref(self, "Parse"+functionName)
+		parseFunc = Callable(self, "Parse"+functionName)
 	
 	if(has_method(functionName)):
-		actionFunc = funcref(self, functionName)
+		actionFunc = Callable(self, functionName)
 	
 	if(has_method("Gizmo"+functionName)):
-		gizmoFunc = funcref(self, "Gizmo"+functionName)
+		gizmoFunc = Callable(self, "Gizmo"+functionName)
 	
 	if(parseFunc == null and flags.has("NoFunc")):
-		parseFunc = funcref(self, "ParseFunc_NoFunc")
+		parseFunc = Callable(self, "ParseFunc_NoFunc")
 	
 	if(parseFunc == null and actionFunc == null):
 		Castagne.Error(functionName+" : Parse function or Action func couldn't be found.")
