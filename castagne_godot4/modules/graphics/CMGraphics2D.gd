@@ -75,7 +75,7 @@ func _UpdateCamera(stateHandle, camera, cameraPos, _cameraLookAt, cameraFOV, _ca
 	var cameraShakeBase = stateHandle.ConfigData().Get("CameraShake_BaseStrength") * POSITION_SCALE
 	cameraShake = (cameraShake / 1000.0) * cameraShakeBase
 	
-	var randomAngle = deg2rad(stateHandle.GlobalGet("_FrameID") * 67)
+	var randomAngle = deg_to_rad(stateHandle.GlobalGet("_FrameID") * 67)
 	camera.translate(Vector2(cos(randomAngle), sin(randomAngle)) * cameraShake)
 
 func _ModelApplyTransformDirect(modelRoot, modelPosition, modelRotation, modelScale, facingH):
@@ -100,7 +100,7 @@ func _CreateRootNode():
 func _CreateGraphicsRootNode(engine):
 	var mainRoot = Control.new()
 	engine.add_child(mainRoot)
-	var vpc = prefabVPC.instance()
+	var vpc = prefabVPC.instantiate()
 	mainRoot.add_child(vpc)
 	var vp = Viewport.new()
 	vpc.add_child(vp)

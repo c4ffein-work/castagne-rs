@@ -442,8 +442,8 @@ func _on_SyncManager_sync_started() -> void:
 
 var SyncManager = null # temp
 func _OnlineInit():
-	#SyncManager.connect("scene_spawned", self, "_on_SyncManager_scene_spawned")
-	SyncManager.connect("sync_started", self, "_on_SyncManager_sync_started")
+	#SyncManager.connect("scene_spawned", Callable(self, "_on_SyncManager_scene_spawned"))
+	SyncManager.connect("sync_started", Callable(self, "_on_SyncManager_sync_started"))
 	#get_tree().paused = true
 	set_network_master(1)
 	Castagne.Net.StartLogging()
@@ -580,7 +580,7 @@ func InstanceModel(eid, modelPath, animPlayerPath=null):
 		Castagne.Error("InstanceModel: Scene not found for " + str(modelPath))
 		return
 
-	var playerModel = playerModelPrefab.instance()
+	var playerModel = playerModelPrefab.instantiate()
 
 	instancedData["Entities"][eid]["Model"] = playerModel
 	var modelRoot = instancedData["Entities"][eid]["Root"]

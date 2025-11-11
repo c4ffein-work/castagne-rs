@@ -105,7 +105,7 @@ func SetupSpecblock(_argument):
 var graph
 var _prefabInterfaceMain = preload("res://castagne/modules/attacks/CMAttacks-TypesBigWindow.tscn")
 func CreateInterfaceMain():
-	var i = _prefabInterfaceMain.instance()
+	var i = _prefabInterfaceMain.instantiate()
 	graph = i.get_node("Graph/GraphBack/Graph")
 	graph.sb = self
 	return i

@@ -502,7 +502,7 @@ func BattleInit(stateHandle, battleInitData):
 	cameraThresholdClose = config.Get("CameraThresholdClose")
 	
 	var prefabMap = Castagne.Loader.Load(Castagne.SplitStringToArray(config.Get("StagePaths"))[battleInitData["map"]])
-	var map = prefabMap.instance()
+	var map = prefabMap.instantiate()
 	graphicsRoot.add_child(map)
 	stateHandle.IDGlobalSet("map", map)
 	
@@ -513,7 +513,7 @@ func BattleInit(stateHandle, battleInitData):
 	if(!uiRootScenePath.empty()):
 		var uiRootScenePacked = Castagne.Loader.Load(uiRootScenePath)
 		if(uiRootScenePacked != null):
-			uiRoot = uiRootScenePacked.instance()
+			uiRoot = uiRootScenePacked.instantiate()
 			stateHandle.Engine().add_child(uiRoot)
 			uiRoot.UIInitialize(stateHandle, battleInitData)
 		else:
@@ -673,7 +673,7 @@ func UpdateGraphics(stateHandle):
 		var coPos = IngameToGodotPos([co[3], co[4], co[5]])
 		var coLookAt = IngameToGodotPos([co[6], co[7], co[8]])
 		var coFOV = float(co[9]) / 100.0
-		var coRoll = deg2rad(float(co[10]) / 100.0)
+		var coRoll = deg_to_rad(float(co[10]) / 100.0)
 		cameraPos = lerp(cameraPos, coPos, coStrength)
 		cameraLookAtPoint = lerp(cameraLookAtPoint, coLookAt, coStrength)
 		cameraFOV = lerp(cameraFOV, coFOV, coStrength)
@@ -1200,7 +1200,7 @@ func VFXCreate(_args, stateHandle):
 		vfxNode = _CreateSprite_Instance(stateHandle)
 	else:
 		var modelPS = Castagne.Loader.Load(vfxData["ScenePath"])
-		vfxNode = modelPS.instance()
+		vfxNode = modelPS.instantiate()
 	
 	if(isSprite):
 		vfxNode.Initialize(stateHandle, vfxNode)
@@ -1406,7 +1406,7 @@ func UI_SpawnWidgetFromData(stateHandle, widgetData):
 		Castagne.Error("Couldn't spawn UI Widget at path " + str(scenePath))
 		return
 	
-	var widget = packedScene.instance()
+	var widget = packedScene.instantiate()
 	
 	if(uiRoot.AddPlayerWidget(stateHandle.GetPlayer(), widget, hookPoint)):
 		widget.WidgetInitialize(stateHandle, null, widgetData)
@@ -1461,7 +1461,7 @@ func _UpdateCamera(stateHandle, camera, cameraPos, cameraLookAt, cameraFOV, came
 	var cameraShakeBase = stateHandle.ConfigData().Get("CameraShake_BaseStrength") * POSITION_SCALE
 	cameraShake = (cameraShake / 1000.0) * cameraShakeBase
 	
-	var randomAngle = deg2rad(stateHandle.GlobalGet("_FrameID") * 67)
+	var randomAngle = deg_to_rad(stateHandle.GlobalGet("_FrameID") * 67)
 	camera.translate(Vector3(cos(randomAngle), sin(randomAngle), 0) * cameraShake)
 
 func _ModelApplyTransform(stateHandle, modelRoot, modelPosition, modelRotation, modelScale):
@@ -1478,7 +1478,7 @@ func _ModelApplyTransformDirect(modelRoot, modelPosition, modelRotation, modelSc
 	modelRoot.set_scale(Vector3(modelScale, modelScale, facingH * modelScale))
 
 func _CreateRootNode():
-	return Spatial.new()
+	return Node3D.new()
 
 func _CreateGraphicsRootNode(engine):
 	var gr = _CreateRootNode()

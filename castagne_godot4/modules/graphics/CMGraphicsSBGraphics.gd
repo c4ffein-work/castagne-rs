@@ -45,7 +45,7 @@ func StructEditorShow(structType = null, structInstance = null):
 	var root = .StructEditorShow(structType, structInstance)
 	if(structType == "Spritesheets"):
 		var visuPacked = preload("res://castagne/modules/graphics/CMGraphics-SpritesheetVisualizer.tscn")
-		var visu = visuPacked.instance()
+		var visu = visuPacked.instantiate()
 		var sD = _structureDefinitions[structType]
 		var prefix = sD["Prefix"] + structInstance["InstanceName"] + _struct_namevar_separator
 		connect("UpdateVisualizer", visu, "UpdateDisplay")

@@ -228,7 +228,7 @@ func _InterfaceCode_CreateCategory(category, root, categoryName = null):
 		var categoryOpenButton = Button.new()
 		categoryTitle.add_child(categoryOpenButton)
 		_categories[categoryName]["OpenButton"] = categoryOpenButton
-		categoryOpenButton.connect("pressed", self, "_InterfaceCode_SetCategoryVisible", [categoryName])
+		categoryOpenButton.connect("pressed", Callable(self, "_InterfaceCode_SetCategoryVisible").bind( [categoryName]
 		
 		var labelCategoryName = Label.new()
 		labelCategoryName.set_text(categoryName)
@@ -579,8 +579,8 @@ func StructList_UpdateList(structType):
 				moveUpButton.set_disabled(true)
 			else:
 				var prevSIN = structInstancesKeys[i-1]
-				moveUpButton.connect("pressed", self, "StructEditor_SwapNames",
-					[structType, siN, prevSIN, prevSIN])
+				moveUpButton.connect("pressed", Callable(self, "StructEditor_SwapNames").bind(
+					[structType, siN, prevSIN, prevSIN]
 			structElementRoot.add_child(moveUpButton)
 			
 			var moveDownButton = Button.new()
@@ -589,8 +589,8 @@ func StructList_UpdateList(structType):
 				moveDownButton.set_disabled(true)
 			else:
 				var nextSIN = structInstancesKeys[i+1]
-				moveDownButton.connect("pressed", self, "StructEditor_SwapNames",
-					[structType, siN, nextSIN, nextSIN])
+				moveDownButton.connect("pressed", Callable(self, "StructEditor_SwapNames").bind(
+					[structType, siN, nextSIN, nextSIN]
 			structElementRoot.add_child(moveDownButton)
 
 func StructList_ToggleVisibility(toggled, structType):

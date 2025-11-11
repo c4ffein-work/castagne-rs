@@ -157,16 +157,20 @@ func _EndParsing(_sendDataEvenIfError = false):
 func _OpenFile(filePath):
 	_Log("Opening file " + filePath)
 
-	var file = File.new()
 	_lineIDs.append(0)
 	_filePaths.append(filePath)
 	_currentLines.append("")
-	_files.append(file)
 
-	if(!file.file_exists(filePath)):
+	if(!FileAccess.file_exists(filePath)):
 		_FatalError("File " + filePath + " does not exist.")
+		_files.append(null)
 	else:
-		file.open(filePath, File.READ)
+		var file = FileAccess.open(filePath, FileAccess.READ)
+		if file == null:
+			_FatalError("Failed to open file " + filePath)
+			_files.append(null)
+		else:
+			_files.append(file)
 
 func _ParseFullFile(stopAfterSpecblocks = false):
 	if(_aborting):
@@ -2000,7 +2004,7 @@ func _GetPureStateNameFromStateName(stateName):
 		return stateName
 	return stateName.right(entity.length()+3)
 
-onready var KnownVariableTypes = {"int":Castagne.VARIABLE_TYPE.Int, "str":Castagne.VARIABLE_TYPE.Str, "bool":Castagne.VARIABLE_TYPE.Bool}
+@onready var KnownVariableTypes = {"int":Castagne.VARIABLE_TYPE.Int, "str":Castagne.VARIABLE_TYPE.Str, "bool":Castagne.VARIABLE_TYPE.Bool}
 func _ExtractVariable(line): #, returnIncompleteType = false):
 	# Structure: var NAME int() = 5
 	var variableMutability = null

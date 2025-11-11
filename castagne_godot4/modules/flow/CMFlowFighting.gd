@@ -148,7 +148,7 @@ func _EditorCreateFlowWindow_Global(editor, root):
 	mirrorMatch.set_text_align(Button.ALIGN_CENTER)
 	mirrorMatch.set_text("Mirror Match")
 	mirrorMatch.set_pressed_no_signal(editor.configData.Get(cdbn+"mirror", false))
-	mirrorMatch.connect("toggled", self, "_EditorFlowWindow_MirrorMatchToggle", [root, editor.configData.Get("AmountOfPlayers")])
+	mirrorMatch.connect("toggled", Callable(self, "_EditorFlowWindow_MirrorMatchToggle").bind( [root, editor.configData.Get("AmountOfPlayers")]
 	_EditorFlowWindow_MirrorMatchToggle(mirrorMatch.is_pressed(), root, editor.configData.Get("AmountOfPlayers"))
 	root.add_child(mirrorMatch)
 

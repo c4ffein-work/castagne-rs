@@ -915,7 +915,7 @@ func CopyFacingToOtherFacing(args, stateHandle):
 	SetFacingHV(stateHandle, facing[0], facing[1], targetFacingType)
 
 
-onready var _TransformAxisFunctions = [
+@onready var _TransformAxisFunctions = [
 	funcref(self, "TransformPosEntityToWorld"),
 	funcref(self, "TransformWorldPosToEntity"),
 	funcref(self, "TransformPosEntityToAbsolute"),

@@ -54,7 +54,7 @@ func InstanceMenu(menuName, menuParams = null, configData = null):
 	return InstanceCustomMenu(configData.Get(configKeyScene), menuData, menuParams, configData)
 	
 	
-	#var menu = TMP_sceneMainMenu.instance()
+	#var menu = TMP_sceneMainMenu.instantiate()
 	#for optionName in _menuOptions:
 	#	menu.AddOption(_menuOptions[optionName])
 	#_selectedOption = null
@@ -70,7 +70,7 @@ func InstanceCustomMenu(scenePath, menuData, menuParams = null, configData = nul
 		Castagne.Error("InstanceCustomMenu: Scene "+str(menuPS)+" can't be loaded!")
 		return null
 	
-	var menu = menuPS.instance()
+	var menu = menuPS.instantiate()
 	menu._configData = configData
 	menu.InitMenu(menuData, menuParams)
 	return menu
@@ -92,11 +92,11 @@ func MCB_QuitGame(_args):
 func MCB_BackToMainMenu(args):
 	if(args == null):
 		args = [null, null]
-	get_tree().get_root().add_child(InstanceMenu("MainMenu", args[0], args[1]))
+	get_tree().root.add_child(InstanceMenu("MainMenu", args[0], args[1]))
 
 
 func MCB_StartMatchFromCSS(args):
 	var bid = args["ConfigData"].GetModuleSlot(Castagne.MODULE_SLOTS_BASE.FLOW).GetBattleInitDataFromCSS(args)
 	bid["mode"] = args["CallbackParams"]["Mode"]
 	var e = Castagne.InstanceCastagneEngine(bid, args["ConfigData"])
-	get_tree().get_root().add_child(e)
+	get_tree().root.add_child(e)
