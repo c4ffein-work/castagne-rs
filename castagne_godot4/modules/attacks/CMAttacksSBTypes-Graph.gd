@@ -8,7 +8,7 @@ var types = ["Light", "Medium", "Heavy", "Special", "EX", "Super", "Throw"]
 var sb # specblock
 
 var nbHitsToShow = 20
-onready var paramsRoot = $"../../../Params"
+@onready var paramsRoot = $"../../../Params"
 
 func _ready():
 	for path in ["Starter", "NextHits"]:
@@ -17,13 +17,13 @@ func _ready():
 		for t in types:
 			option.add_item(t)
 		option.select(1)
-		option.connect("item_focused", self, "Redraw")
-		option.connect("item_selected", self, "Redraw")
+		option.connect("item_focused", Callable(self, "Redraw"))
+		option.connect("item_selected", Callable(self, "Redraw"))
 	
-	sb.connect("DefineValueChanged", self, "Redraw")
+	sb.connect("DefineValueChanged", Callable(self, "Redraw"))
 	
-	paramsRoot.get_node("ShowDamage").connect("pressed", self, "Redraw")
-	paramsRoot.get_node("ShowHitstun").connect("pressed", self, "Redraw")
+	paramsRoot.get_node("ShowDamage").connect("pressed", Callable(self, "Redraw"))
+	paramsRoot.get_node("ShowHitstun").connect("pressed", Callable(self, "Redraw"))
 
 func Redraw(_dn = null, _dv = null):
 	update()

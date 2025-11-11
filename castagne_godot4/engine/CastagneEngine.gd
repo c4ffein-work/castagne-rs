@@ -65,35 +65,35 @@ func Init():
 	
 	# 4. Prepare main loop
 	
-	_inputPhaseFunction = funcref(configData.GetModuleSlot(Castagne.MODULE_SLOTS_BASE.INPUT), "InputPhase")
-	_physicsPhaseFunction = funcref(configData.GetModuleSlot(Castagne.MODULE_SLOTS_BASE.PHYSICS), "PhysicsPhase")
+	_inputPhaseFunction = Callable(configData.GetModuleSlot(Castagne.MODULE_SLOTS_BASE.INPUT), "InputPhase")
+	_physicsPhaseFunction = Callable(configData.GetModuleSlot(Castagne.MODULE_SLOTS_BASE.PHYSICS), "PhysicsPhase")
 	_modulePhaseCallbacks = {}
 	for phaseName in ["Init", "Action", "Freeze", "Reaction", "Physics", "AI", "Subentity", "Input"]:
 		_modulePhaseCallbacks[phaseName] = [[], [], [], [], 0, 0]
 		for m in modules:
 			if(m.has_method(phaseName+"PhaseStart") or m.has_method(phaseName+"PhaseStartEntity")):
 				if(m.has_method(phaseName+"PhaseStart")):
-					_modulePhaseCallbacks[phaseName][0].push_back(funcref(m, phaseName+"PhaseStart"))
+					_modulePhaseCallbacks[phaseName][0].push_back(Callable(m, phaseName+"PhaseStart"))
 				else:
-					_modulePhaseCallbacks[phaseName][0].push_back(funcref(self, "_EmptyModuleCallback"))
+					_modulePhaseCallbacks[phaseName][0].push_back(Callable(self, "_EmptyModuleCallback"))
 				
 				if(m.has_method(phaseName+"PhaseStartEntity")):
-					_modulePhaseCallbacks[phaseName][1].push_back(funcref(m, phaseName+"PhaseStartEntity"))
+					_modulePhaseCallbacks[phaseName][1].push_back(Callable(m, phaseName+"PhaseStartEntity"))
 				else:
-					_modulePhaseCallbacks[phaseName][1].push_back(funcref(self, "_EmptyModuleCallback"))
+					_modulePhaseCallbacks[phaseName][1].push_back(Callable(self, "_EmptyModuleCallback"))
 				
 				_modulePhaseCallbacks[phaseName][4] += 1
 			
 			if(m.has_method(phaseName+"PhaseEnd") or m.has_method(phaseName+"PhaseEndEntity")):
 				if(m.has_method(phaseName+"PhaseEndEntity")):
-					_modulePhaseCallbacks[phaseName][2].push_back(funcref(m, phaseName+"PhaseEndEntity"))
+					_modulePhaseCallbacks[phaseName][2].push_back(Callable(m, phaseName+"PhaseEndEntity"))
 				else:
-					_modulePhaseCallbacks[phaseName][2].push_back(funcref(self, "_EmptyModuleCallback"))
+					_modulePhaseCallbacks[phaseName][2].push_back(Callable(self, "_EmptyModuleCallback"))
 				
 				if(m.has_method(phaseName+"PhaseEnd")):
-					_modulePhaseCallbacks[phaseName][3].push_back(funcref(m, phaseName+"PhaseEnd"))
+					_modulePhaseCallbacks[phaseName][3].push_back(Callable(m, phaseName+"PhaseEnd"))
 				else:
-					_modulePhaseCallbacks[phaseName][3].push_back(funcref(self, "_EmptyModuleCallback"))
+					_modulePhaseCallbacks[phaseName][3].push_back(Callable(self, "_EmptyModuleCallback"))
 				
 				_modulePhaseCallbacks[phaseName][5] += 1
 	
@@ -124,7 +124,7 @@ func EngineTick(previousMemory, playerInputs):
 	if(initError):
 		return
 
-	_castProfilingTickStart = OS.get_ticks_usec()
+	_castProfilingTickStart = Time.get_ticks_usec()
 	# Memory Set
 	ResetStateHandles()
 	var memory = CreateMemory(previousMemory)
@@ -389,11 +389,11 @@ func ExecuteCASPEvent(eventName, gameStateHandle, customTarget = null):
 
 
 func UpdateGraphics(memory):
-	_castProfilingGraphicsStart = OS.get_ticks_usec()
+	_castProfilingGraphicsStart = Time.get_ticks_usec()
 	var gameStateHandle = CreateStateHandle(memory)
 	for m in modules:
 		m.UpdateGraphics(gameStateHandle)
-	_castProfilingGraphicsEnd = OS.get_ticks_usec()
+	_castProfilingGraphicsEnd = Time.get_ticks_usec()
 
 
 
@@ -421,7 +421,8 @@ func _network_process(_input: Dictionary) -> void:
 		_memory = EngineTick(_memory, playerInputs)
 
 
-remotesync func _OnlineReady():
+@rpc("any_peer", "call_local")
+func _OnlineReady():
 	if(!get_tree().is_network_server()):
 		return
 	_onlineNbReady += 1
@@ -442,10 +443,10 @@ func _on_SyncManager_sync_started() -> void:
 
 var SyncManager = null # temp
 func _OnlineInit():
-	#SyncManager.connect("scene_spawned", self, "_on_SyncManager_scene_spawned")
-	SyncManager.connect("sync_started", self, "_on_SyncManager_sync_started")
+	#SyncManager.connect("scene_spawned", Callable(self, "_on_SyncManager_scene_spawned"))
+	SyncManager.connect("sync_started", Callable(self, "_on_SyncManager_sync_started"))
 	#get_tree().paused = true
-	set_network_master(1)
+	set_multiplayer_authority(1)
 	Castagne.Net.StartLogging()
 
 	Init()
@@ -454,7 +455,8 @@ func _OnlineInit():
 
 
 
-remotesync func OnlineEndMatch():
+@rpc("any_peer", "call_local")
+func OnlineEndMatch():
 	Castagne.Net.StopSync()
 	queue_free()
 
@@ -568,9 +570,9 @@ func RemoveEntityImmediate(gameStateHandle, eid):
 	if(gameStateHandle.PlayerGet("MainEntity") == eid):
 		var newMainEntity = -1
 		var activeFullEntities = gameStateHandle.GlobalGet("_ActiveFullEntities")
-		for eid in activeFullEntities:
-			if(memory.EntityGet(eid, "_Player") == playerID):
-				newMainEntity = eid
+		for entity_id in activeFullEntities:
+			if(memory.EntityGet(entity_id, "_Player") == playerID):
+				newMainEntity = entity_id
 				break
 		gameStateHandle.PlayerSet("MainEntity", newMainEntity)
 
@@ -580,7 +582,7 @@ func InstanceModel(eid, modelPath, animPlayerPath=null):
 		Castagne.Error("InstanceModel: Scene not found for " + str(modelPath))
 		return
 
-	var playerModel = playerModelPrefab.instance()
+	var playerModel = playerModelPrefab.instantiate()
 
 	instancedData["Entities"][eid]["Model"] = playerModel
 	var modelRoot = instancedData["Entities"][eid]["Root"]
@@ -650,7 +652,7 @@ func _process(_delta):
 		UpdateGraphics(_memory)
 
 
-var _prefabMemory = preload("res://castagne/engine/CastagneMemory.gd")
+var _prefabMemory = preload("res://castagne_godot4/engine/CastagneMemory.gd")
 var _memories = []
 var MAX_MEMORIES_IN_MEMORY = 16
 var _nextMemoryID = 0
@@ -677,7 +679,7 @@ func CreateMemory(_copyFrom = null):
 	#	memory.CopyFrom(copyFrom)
 	#return memory
 
-var _prefabStateHandle = preload("res://castagne/engine/CastagneStateHandle.gd")
+var _prefabStateHandle = preload("res://castagne_godot4/engine/CastagneStateHandle.gd")
 var _stateHandles = []
 var _currentStateHandle = 0
 func CreateStateHandle(memory = null, eid = -1):
@@ -716,7 +718,7 @@ func AbortWithError(error, showParserErrors = false):
 
 	l.set_text(error + t)
 	get_node("..").add_child(l)
-	l.set_anchors_and_margins_preset(Control.PRESET_WIDE)
-	l.set_align(Label.ALIGN_CENTER)
-	l.set_valign(Label.VALIGN_CENTER)
+	l.set_anchors_and_margins_preset(Control.PRESET_FULL_RECT)
+	l.set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER)
+	l.set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER)
 	_errorScreen = l

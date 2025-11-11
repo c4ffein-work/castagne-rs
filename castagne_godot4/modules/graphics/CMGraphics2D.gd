@@ -4,14 +4,14 @@
 
 extends "CMGraphicsBase.gd"
 
-var prefabVPC = preload("res://castagne/modules/graphics/Graphics2DRoot.tscn")
+var prefabVPC = preload("res://castagne_godot4/modules/graphics/Graphics2DRoot.tscn")
 var pixelArtMode = false
 var viewport
 var viewportContainer
 
 func ModuleSetup():
 	RegisterModule("Graphics 2D", Castagne.MODULE_SLOTS_BASE.GRAPHICS)
-	.ModuleSetup()
+	super.ModuleSetup()
 	IS_2D = true
 	
 	RegisterCategory("2D Specific")
@@ -59,7 +59,7 @@ func _CreateSprite_Instance(stateHandle):
 	return s2D
 
 func _UpdateCamera(stateHandle, camera, cameraPos, _cameraLookAt, cameraFOV, _cameraRoll, cameraShake, _cameraExtra):
-	# TODO Camera size isn't really consistent, needs design
+	# TODO Camera3D size isn't really consistent, needs design
 	if(pixelArtMode):
 		cameraPos = cameraPos.round()
 	
@@ -75,7 +75,7 @@ func _UpdateCamera(stateHandle, camera, cameraPos, _cameraLookAt, cameraFOV, _ca
 	var cameraShakeBase = stateHandle.ConfigData().Get("CameraShake_BaseStrength") * POSITION_SCALE
 	cameraShake = (cameraShake / 1000.0) * cameraShakeBase
 	
-	var randomAngle = deg2rad(stateHandle.GlobalGet("_FrameID") * 67)
+	var randomAngle = deg_to_rad(stateHandle.GlobalGet("_FrameID") * 67)
 	camera.translate(Vector2(cos(randomAngle), sin(randomAngle)) * cameraShake)
 
 func _ModelApplyTransformDirect(modelRoot, modelPosition, modelRotation, modelScale, facingH):
@@ -100,7 +100,7 @@ func _CreateRootNode():
 func _CreateGraphicsRootNode(engine):
 	var mainRoot = Control.new()
 	engine.add_child(mainRoot)
-	var vpc = prefabVPC.instance()
+	var vpc = prefabVPC.instantiate()
 	mainRoot.add_child(vpc)
 	var vp = Viewport.new()
 	vpc.add_child(vp)
@@ -108,9 +108,9 @@ func _CreateGraphicsRootNode(engine):
 	viewportContainer = vpc
 	viewport = vp
 	
-	mainRoot.set_anchors_and_margins_preset(Control.PRESET_WIDE)
+	mainRoot.set_anchors_and_margins_preset(Control.PRESET_FULL_RECT)
 	vp.set_size(Vector2(engine.configData.Get("2DScreenSizeX"), engine.configData.Get("2DScreenSizeY")))
-	vpc.set_anchors_and_margins_preset(Control.PRESET_WIDE)
+	vpc.set_anchors_and_margins_preset(Control.PRESET_FULL_RECT)
 	
 	vp.set_usage(Viewport.USAGE_2D)
 	vp.set_update_mode(Viewport.UPDATE_ALWAYS)

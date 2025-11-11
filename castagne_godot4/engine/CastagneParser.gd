@@ -128,7 +128,7 @@ func _StartParsing(filePath, configData, resetErrors = true):
 
 	_branchFunctions = {}
 	for l in _letters:
-		_branchFunctions[l] = funcref(self, "Instruction"+l)
+		_branchFunctions[l] = Callable(self, "Instruction"+l)
 
 	_OpenFile(filePath)
 
@@ -157,16 +157,20 @@ func _EndParsing(_sendDataEvenIfError = false):
 func _OpenFile(filePath):
 	_Log("Opening file " + filePath)
 
-	var file = File.new()
 	_lineIDs.append(0)
 	_filePaths.append(filePath)
 	_currentLines.append("")
-	_files.append(file)
 
-	if(!file.file_exists(filePath)):
+	if(!FileAccess.file_exists(filePath)):
 		_FatalError("File " + filePath + " does not exist.")
+		_files.append(null)
 	else:
-		file.open(filePath, File.READ)
+		var file = FileAccess.open(filePath, FileAccess.READ)
+		if file == null:
+			_FatalError("Failed to open file " + filePath)
+			_files.append(null)
+		else:
+			_files.append(file)
 
 func _ParseFullFile(stopAfterSpecblocks = false):
 	if(_aborting):
@@ -174,7 +178,7 @@ func _ParseFullFile(stopAfterSpecblocks = false):
 
 
 	# 1. Get the metadata and character skeletons
-	var profiling = [OS.get_ticks_usec()]
+	var profiling = [Time.get_ticks_usec()]
 	_Log(">>> Starting to parse the full file.")
 	var fileID = 0
 	while(fileID < _files.size()):
@@ -189,7 +193,7 @@ func _ParseFullFile(stopAfterSpecblocks = false):
 			return
 
 	# 1b. Get the specblocks values
-	#profiling.push_back(OS.get_ticks_usec())
+	#profiling.push_back(Time.get_ticks_usec())
 	_Log(">>> Parsing the spec blocks")
 	_specblockDefines = {}
 	fileID = _files.size() - 1
@@ -242,7 +246,7 @@ func _ParseFullFile(stopAfterSpecblocks = false):
 		return
 
 	# 2. Parse the variables
-	profiling.push_back(OS.get_ticks_usec())
+	profiling.push_back(Time.get_ticks_usec())
 	_Log(">>> Parsing the variables...")
 	fileID = _files.size() - 1
 	while(fileID >= 0):
@@ -279,7 +283,7 @@ func _ParseFullFile(stopAfterSpecblocks = false):
 
 
 	# 3. Parse the states
-	profiling.push_back(OS.get_ticks_usec())
+	profiling.push_back(Time.get_ticks_usec())
 	_Log(">>> Parsing the states...")
 	fileID = _files.size() - 1
 	while(fileID >= 0):
@@ -289,7 +293,7 @@ func _ParseFullFile(stopAfterSpecblocks = false):
 			return
 
 	# 4-5. Optimize the code
-	profiling.push_back(OS.get_ticks_usec())
+	profiling.push_back(Time.get_ticks_usec())
 	_Log(">>> Optimizing...")
 	_optimizedStates = {}
 	for p in PHASES_WITH_EVENTS:
@@ -301,20 +305,20 @@ func _ParseFullFile(stopAfterSpecblocks = false):
 		_OptimizeActionListPhase1(sName)
 	_OptimizeActionListPhase1_After()
 	_optimizedStates2 = []
-	profiling.push_back(OS.get_ticks_usec())
+	profiling.push_back(Time.get_ticks_usec())
 	variablesList_OptimPhase2 = {}
 	for sName in _states:
 		_OptimizeActionListPhase2(sName)
 	_OptimizeActionListPhase3()
 
 	# 6. Tag states correctly
-	profiling.push_back(OS.get_ticks_usec())
+	profiling.push_back(Time.get_ticks_usec())
 	_Log(">>> State Tagging")
 	for sName in _states:
 		_RuntimeStateTagging(sName)
 
 	# 7. Adjusting the variables
-	profiling.push_back(OS.get_ticks_usec())
+	profiling.push_back(Time.get_ticks_usec())
 	var variables = {}
 	for entity in _variables:
 		variables[entity] = {}
@@ -325,7 +329,7 @@ func _ParseFullFile(stopAfterSpecblocks = false):
 			variables[entity][vName] = v["Value"]
 	_variables = variables
 
-	profiling.push_back(OS.get_ticks_usec())
+	profiling.push_back(Time.get_ticks_usec())
 	_PrintProfilingData("["+str(_filePaths[0])+"] GameParse", profiling)
 
 func _PrintProfilingData(title, profiling):
@@ -1078,7 +1082,7 @@ func _ParseForEdition():
 
 	_parseForEditionPostProcessed = []
 	# 1. Parse the character skeleton
-	var profiling = [OS.get_ticks_usec()]
+	var profiling = [Time.get_ticks_usec()]
 	_Log(">>> Starting to parse the full file.")
 	var fileID = 0
 	while(fileID < _files.size()):
@@ -1235,12 +1239,12 @@ func _ParseForEdition():
 		if(_aborting):
 			return result
 
-	profiling.push_back(OS.get_ticks_usec())
+	profiling.push_back(Time.get_ticks_usec())
 	for i in range(_files.size()):
 		for stateName in result[i]["States"]:
 			ParseForEditionPostProcess(i, stateName, result)
 
-	profiling.push_back(OS.get_ticks_usec())
+	profiling.push_back(Time.get_ticks_usec())
 	_PrintProfilingData("["+str(_filePaths[0])+"] EditParse", profiling)
 	return result
 
@@ -2000,7 +2004,7 @@ func _GetPureStateNameFromStateName(stateName):
 		return stateName
 	return stateName.right(entity.length()+3)
 
-onready var KnownVariableTypes = {"int":Castagne.VARIABLE_TYPE.Int, "str":Castagne.VARIABLE_TYPE.Str, "bool":Castagne.VARIABLE_TYPE.Bool}
+@onready var KnownVariableTypes = {"int":Castagne.VARIABLE_TYPE.Int, "str":Castagne.VARIABLE_TYPE.Str, "bool":Castagne.VARIABLE_TYPE.Bool}
 func _ExtractVariable(line): #, returnIncompleteType = false):
 	# Structure: var NAME int() = 5
 	var variableMutability = null

@@ -20,5 +20,5 @@ func Preload(path):
 	return i
 
 func LoadCastagneAsset(path):
-	var fullPath = "res://castagne/assets/"+path
+	var fullPath = "res://castagne_godot4/assets/"+path
 	return Load(fullPath)

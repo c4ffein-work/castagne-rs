@@ -116,8 +116,8 @@ func _CreateSpriteAnims(stateHandle):
 			
 		animations[animName] = animData
 
-var spriteShaderRessourceDefault = preload("res://castagne/modules/graphics/CastagneSpriteShader.gdshader")
-var spriteShader3DRessourceDefault = preload("res://castagne/modules/graphics/CastagneSpriteShader3D.gdshader")
+var spriteShaderRessourceDefault = preload("res://castagne_godot4/modules/graphics/CastagneSpriteShader.gdshader")
+var spriteShader3DRessourceDefault = preload("res://castagne_godot4/modules/graphics/CastagneSpriteShader3D.gdshader")
 func ApplyMaterial(stateHandle, spriteShader = null):
 	var paletteTexturePath = stateHandle.EntityGet("_SpritePalettePath")
 	paletteTexture = Castagne.Loader.Load(paletteTexturePath)

@@ -12,7 +12,7 @@ func SetupSpecblock(_argument):
 	AddDefine("MENU_Hidden", false, "Hide")
 	
 	AddCategory("Character Select Screen")
-	AddDefine("MENU_CSSIconPath", "res://castagne/assets/icons/DefaultIcon.png", "Icon Path")
+	AddDefine("MENU_CSSIconPath", "res://castagne_godot4/assets/icons/DefaultIcon.png", "Icon Path")
 	AddDefine("MENU_CSSGridX", 0, "Grid X")
 	AddDefine("MENU_CSSGridY", 0, "Grid Y")
 	AddDefine("MENU_CSSGridZ", 0, "Grid Z") # Z is more freeform, 0 is only special value

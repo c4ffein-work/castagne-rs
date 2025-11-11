@@ -26,13 +26,13 @@ var networkSyncStatus = NetworkSyncStatus.Off
 
 
 func Host():
-	var peer = NetworkedMultiplayerENet.new()
+	var peer = ENetMultiplayerPeer.new()
 	peer.create_server(SERVER_PORT, 2)
 	get_tree().network_peer = peer
 	nbPeers += 1
 	Log("Hosting Server : " + str(peer))
 func Join():
-	var peer = NetworkedMultiplayerENet.new()
+	var peer = ENetMultiplayerPeer.new()
 	peer.create_client(SERVER_IP, SERVER_PORT)
 	get_tree().network_peer = peer
 	Log("Joining Server : " + str(peer))
@@ -56,7 +56,7 @@ func StopSync():
 		
 
 
-const engineScript = preload("res://castagne/engine/CastagneEngine.gd")
+const engineScript = preload("res://castagne_godot4/engine/CastagneEngine.gd")
 func StartNetworkMatch():
 	Old1_StartNetworkMatch()
 
@@ -65,43 +65,44 @@ func Old2_StartNetworkMatch():
 	Castagne.battleInitData["online"] = true
 	StartSync()
 	while !SyncManager.started:
-		yield(get_tree(),"idle_frame")
-	
-	yield(get_tree().create_timer(2.0), "timeout")
+		await get_tree().process_frame
+
+	await get_tree().create_timer(2.0).timeout
 	Log("Sync started, spawning engine")
 	#var data = {}
-	#SyncManager.spawn("CastagneEngine", get_tree().get_root(), engineprefab, data)
+	#SyncManager.spawn("CastagneEngine", get_tree().root, engineprefab, data)
 
 func Old1_StartNetworkMatch():
 	Log("Starting Network Match...")
 	Castagne.battleInitData["online"] = true
 	rpc("Old1_StartNetworkMatch_RPC", Castagne.battleInitData)
-remotesync func Old1_StartNetworkMatch_RPC(battleInitData):
+@rpc("any_peer", "call_local")
+func Old1_StartNetworkMatch_RPC(battleInitData):
 	Log("Recieved Network Match order : Starting Network Match...")
 	Castagne.battleInitData = battleInitData
-	#var s = engineprefab.instance()
-	#get_tree().get_root().add_child(s)
+	#var s = engineprefab.instantiate()
+	#get_tree().root.add_child(s)
 
 
 func StartLogging():
-	SyncManager.start_logging("user://network_logs/"+str(OS.get_unix_time())+"-"+str(get_tree().network_peer.get_unique_id())+".log")
+	SyncManager.start_logging("user://network_logs/"+str(Time.get_unix_time_from_system())+"-"+str(get_tree().network_peer.get_unique_id())+".log")
 
 
 # --------------------------------------
 
 func _ready():
-	var _r = get_tree().connect("network_peer_connected", self, "_on_network_peer_connected")
-	_r = get_tree().connect("network_peer_disconnected", self, "_on_network_peer_disconnected")
-	_r = get_tree().connect("server_disconnected", self, "_on_server_disconnected")
+	var _r = get_tree().connect("network_peer_connected", Callable(self, "_on_network_peer_connected"))
+	_r = get_tree().connect("network_peer_disconnected", Callable(self, "_on_network_peer_disconnected"))
+	_r = get_tree().connect("server_disconnected", Callable(self, "_on_server_disconnected"))
 	return
-	#SyncManager.connect("sync_started", self, "_on_SyncManager_sync_started")
-	#SyncManager.connect("sync_stopped", self, "_on_SyncManager_sync_stopped")
-	#SyncManager.connect("sync_lost", self, "_on_SyncManager_sync_lost")
-	#SyncManager.connect("sync_regained", self, "_on_SyncManager_sync_regained")
-	#SyncManager.connect("sync_error", self, "_on_SyncManager_sync_error")
+	#SyncManager.connect("sync_started", Callable(self, "_on_SyncManager_sync_started"))
+	#SyncManager.connect("sync_stopped", Callable(self, "_on_SyncManager_sync_stopped"))
+	#SyncManager.connect("sync_lost", Callable(self, "_on_SyncManager_sync_lost"))
+	#SyncManager.connect("sync_regained", Callable(self, "_on_SyncManager_sync_regained"))
+	#SyncManager.connect("sync_error", Callable(self, "_on_SyncManager_sync_error"))
 
 func _on_network_peer_connected(peer_id: int):
-	# Use .set_network_master(peer_id) on the input provider i think
+	# Use .set_multiplayer_authority(peer_id) on the input provider i think
 	# Don't forget SyncManager.start() once everything good
 	Log("Network Peer Connected : " + str(peer_id))
 	SyncManager.add_peer(peer_id)

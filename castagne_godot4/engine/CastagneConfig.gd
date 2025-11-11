@@ -100,17 +100,19 @@ func LoadFromLocalConfigFile(localConfigFilePath):
 	return _LoadFromConfigFile(localConfigFilePath)
 
 func _LoadFromConfigFile(configFilePath):
-	var file = File.new()
-	if(!file.file_exists(configFilePath)):
+	if(!FileAccess.file_exists(configFilePath)):
 		Castagne.Error("File " + configFilePath + " does not exist.")
 		return false
-	file.open(configFilePath, File.READ)
+	var file = FileAccess.open(configFilePath, FileAccess.READ)
+	if file == null:
+		Castagne.Error("Failed to open file " + configFilePath)
+		return false
 	var fileText = file.get_as_text()
 	file.close()
-	
-	_customConfigData = parse_json(fileText)
+
+	_customConfigData = JSON.parse_string(fileText)
 	Castagne.FuseDataOverwrite(_configData, _customConfigData)
-	
+
 	return true
 
 func SaveConfigFile(configFilePath = null, localConfigFilePath = null):
@@ -118,14 +120,13 @@ func SaveConfigFile(configFilePath = null, localConfigFilePath = null):
 		configFilePath = _configFilePath
 	if(localConfigFilePath == null):
 		localConfigFilePath = _localConfigFilePath
-	
-	var file = File.new()
-	if(!file.file_exists(configFilePath)):
+
+	if(!FileAccess.file_exists(configFilePath)):
 		Castagne.Error("File " + configFilePath + " does not exist.")
 		return ERR_FILE_NOT_FOUND
-	
+
 	_defaultConfigData["Modules-core"] = Castagne.CONFIG_CORE_MODULE_PATH
-	
+
 	var savedData = {}
 	var savedLocalData = {}
 	for key in _configData:
@@ -139,24 +140,30 @@ func SaveConfigFile(configFilePath = null, localConfigFilePath = null):
 				save = !Castagne.AreArraysEqual(Get(key), GetBaseOrDefault(key))
 			else:
 				save = true
-		
+
 		if(save):
 			if(localConfigFilePath != null and key.begins_with("LocalConfig-")):
 				savedLocalData[key] = _configData[key]
 			else:
 				savedData[key] = _configData[key]
-	
-	var jsonData = to_json(savedData)
-	file.open(configFilePath, File.WRITE)
+
+	var jsonData = JSON.stringify(savedData)
+	var file = FileAccess.open(configFilePath, FileAccess.WRITE)
+	if file == null:
+		Castagne.Error("Failed to open file " + configFilePath + " for writing")
+		return ERR_FILE_CANT_WRITE
 	file.store_string(jsonData)
 	file.close()
-	
+
 	if(localConfigFilePath != null):
-		jsonData = to_json(savedLocalData)
-		file.open(localConfigFilePath, File.WRITE)
+		jsonData = JSON.stringify(savedLocalData)
+		file = FileAccess.open(localConfigFilePath, FileAccess.WRITE)
+		if file == null:
+			Castagne.Error("Failed to open file " + localConfigFilePath + " for writing")
+			return ERR_FILE_CANT_WRITE
 		file.store_string(jsonData)
 		file.close()
-	
+
 	return OK
 
 
@@ -243,7 +250,7 @@ func GetBaseCaspFilePaths():
 			var c = m.baseCaspFilePath.duplicate(true)
 			c[2] = bcfp.size()
 			bcfp += [c]
-	bcfp.sort_custom(self, "_BaseCaspFilePathsSort")
+	bcfp.sort_custom(Callable(self, "_BaseCaspFilePathsSort"))
 	var paths = []
 	for b in bcfp:
 		paths.append_array(b[0])
@@ -290,7 +297,7 @@ func GetEditorCharacterList(sortByEditorOrder = false):
 			c["EditorOrder"] = maxEditorOrder
 	
 	if(sortByEditorOrder):
-		characters.sort_custom(self, "_GetEditorCharacterList_SortByEditorOrder")
+		characters.sort_custom(Callable(self, "_GetEditorCharacterList_SortByEditorOrder"))
 	
 	return characters
 

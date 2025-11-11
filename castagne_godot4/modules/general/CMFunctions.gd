@@ -49,9 +49,9 @@ func Sin(args, stateHandle):
 	stateHandle.EntitySet(destVar, int(ArgInt(args, stateHandle, 0) * sin(ArgInt(args, stateHandle, 1)/1000.0)))
 func CosD(args, stateHandle):
 	var destVar = ArgVar(args, stateHandle, 2, ArgVar(args, stateHandle, 0))
-	stateHandle.EntitySet(destVar, int(ArgInt(args, stateHandle, 0) * cos(deg2rad(ArgInt(args, stateHandle, 1)/10.0))))
+	stateHandle.EntitySet(destVar, int(ArgInt(args, stateHandle, 0) * cos(deg_to_rad(ArgInt(args, stateHandle, 1)/10.0))))
 func SinD(args, stateHandle):
 	var destVar = ArgVar(args, stateHandle, 2, ArgVar(args, stateHandle, 0))
-	stateHandle.EntitySet(destVar, int(ArgInt(args, stateHandle, 0) * sin(deg2rad(ArgInt(args, stateHandle, 1)/10.0))))
+	stateHandle.EntitySet(destVar, int(ArgInt(args, stateHandle, 0) * sin(deg_to_rad(ArgInt(args, stateHandle, 1)/10.0))))
 
 

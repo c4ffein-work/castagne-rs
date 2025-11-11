@@ -66,11 +66,11 @@ func _EditorCreateFlowWindow_Player(editor, pid):
 	
 	var playerLabel = Label.new()
 	playerLabel.set_text("---- Player " + str(pid+1) + " ----")
-	playerLabel.set_align(Label.ALIGN_CENTER)
+	playerLabel.set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER)
 	playerRoot.add_child(playerLabel)
 	
 	var playerInputDevice = OptionButton.new()
-	playerInputDevice.set_text_align(Button.ALIGN_CENTER)
+	playerInputDevice.set_text_alignment(HORIZONTAL_ALIGNMENT_CENTER)
 	for deviceName in editor.configData.Input().GetDevicesList():
 		var device = editor.configData.Input().GetDevice(deviceName)
 		playerInputDevice.add_item("Input Device: " + device["DisplayName"])
@@ -96,11 +96,11 @@ func _EditorCreateFlowWindow_Character(editor, pid, eid):
 	
 	var title = Label.new()
 	title.set_text("Character "+str(eid+1))
-	title.set_align(Label.ALIGN_CENTER)
+	title.set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER)
 	characterRoot.add_child(title)
 	
 	var scriptPath = OptionButton.new()
-	scriptPath.set_text_align(Button.ALIGN_CENTER)
+	scriptPath.set_text_alignment(HORIZONTAL_ALIGNMENT_CENTER)
 	var characterIDNBDigits = str(_editorCharacterEditorData.size()).length()
 	for c in _editorCharacterEditorData:
 		var cid = str(c["ID"])
@@ -115,7 +115,7 @@ func _EditorCreateFlowWindow_Character(editor, pid, eid):
 	paletteChoice.set_prefix("Palette")
 	paletteChoice.set_min(1)
 	paletteChoice.set_value(editor.configData.Get(cdbn+"palette", 0)+1)
-	paletteChoice.set_align(LineEdit.ALIGN_CENTER)
+	paletteChoice.set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER)
 	characterRoot.add_child(paletteChoice)
 	
 	return characterRoot
@@ -125,7 +125,7 @@ func _EditorCreateFlowWindow_Global(editor, root):
 	var cdbn = localConfigPrefixBase+"Global-"
 	
 	var stageChoice = OptionButton.new()
-	stageChoice.set_text_align(Button.ALIGN_CENTER)
+	stageChoice.set_text_alignment(HORIZONTAL_ALIGNMENT_CENTER)
 	var stages = Castagne.SplitStringToArray(editor.configData.Get("StagePaths"))
 	for sid in range(stages.size()):
 		var sPath = stages[sid]
@@ -134,7 +134,7 @@ func _EditorCreateFlowWindow_Global(editor, root):
 	stageChoice.select(editor.configData.Get(cdbn+"map", 0))
 	
 	var musicChoice = OptionButton.new()
-	musicChoice.set_text_align(Button.ALIGN_CENTER)
+	musicChoice.set_text_alignment(HORIZONTAL_ALIGNMENT_CENTER)
 	musicChoice.add_item("[0] No Music")
 	var i = 1
 	for m in editor.configData.Get("MusicData"):
@@ -145,10 +145,10 @@ func _EditorCreateFlowWindow_Global(editor, root):
 	musicChoice.select(editor.configData.Get(cdbn+"music", 0))
 	
 	var mirrorMatch = CheckButton.new()
-	mirrorMatch.set_text_align(Button.ALIGN_CENTER)
+	mirrorMatch.set_text_alignment(HORIZONTAL_ALIGNMENT_CENTER)
 	mirrorMatch.set_text("Mirror Match")
 	mirrorMatch.set_pressed_no_signal(editor.configData.Get(cdbn+"mirror", false))
-	mirrorMatch.connect("toggled", self, "_EditorFlowWindow_MirrorMatchToggle", [root, editor.configData.Get("AmountOfPlayers")])
+	mirrorMatch.connect("toggled", Callable(self, "_EditorFlowWindow_MirrorMatchToggle").bind( [root, editor.configData.Get("AmountOfPlayers")]
 	_EditorFlowWindow_MirrorMatchToggle(mirrorMatch.is_pressed(), root, editor.configData.Get("AmountOfPlayers"))
 	root.add_child(mirrorMatch)
 

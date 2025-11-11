@@ -12,7 +12,7 @@ func ModuleSetup():
 	RegisterModule("Fighting UI (temporary module)", null)
 	
 	RegisterConfig("ShowFightingUI_Temp", true)
-	RegisterConfig("FightingUIPath_Temp", "res://castagne/menus/battleui/DefaultUI.tscn")
+	RegisterConfig("FightingUIPath_Temp", "res://castagne_godot4/menus/battleui/DefaultUI.tscn")
 	
 func BattleInit(stateHandle, battleInitData):
 	if(!stateHandle.ConfigData().Get("ShowFightingUI_Temp")):

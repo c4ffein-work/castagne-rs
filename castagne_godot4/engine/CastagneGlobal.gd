@@ -7,16 +7,16 @@
 
 extends Node
 
-onready var Parser = $Parser
-onready var Net = $Net
-onready var Loader = $Loader
-onready var Menus = $Menus
+@onready var Parser = $Parser
+@onready var Net = $Net
+@onready var Loader = $Loader
+@onready var Menus = $Menus
 # Dict with options
 
 const CONFIG_FILE_PATH = "res://castagne-config.json"
 const CONFIG_LOCAL_FILE_PATH = "user://castagne-local-config.json"
-const CONFIG_CORE_MODULE_PATH = "res://castagne/modules/core/CMCore.gd"
-const CONFIG_VERSION_FILE_PATH = "res://castagne/castagne-version.json"
+const CONFIG_CORE_MODULE_PATH = "res://castagne_godot4/modules/core/CMCore.gd"
+const CONFIG_VERSION_FILE_PATH = "res://castagne_godot4/castagne-version.json"
 const INPUT_LOCAL = 0
 const INPUT_ONLINE = 1
 const INPUT_AI = 2
@@ -80,7 +80,7 @@ func InstanceCastagneEngine(battleInitData = null, configData = null):
 	if(battleInitData == null):
 		battleInitData = configData.GetBaseBattleInitData()
 	
-	var engine = enginePrefab.instance()
+	var engine = enginePrefab.instantiate()
 	engine.configData = configData
 	engine.battleInitData = battleInitData
 	
@@ -96,7 +96,7 @@ func InstanceCastagneEditor(configData = null):
 		configData = baseConfigData
 		Log("Instancing Castagne Editor.")
 	
-	var editor = editorPrefab.instance()
+	var editor = editorPrefab.instantiate()
 	editor.configData = configData
 	
 	return editor
@@ -105,13 +105,15 @@ func InstanceCastagneEditor(configData = null):
 func LoadVersionInfo(versionFilePath = null):
 	if(versionFilePath == null):
 		versionFilePath = CONFIG_VERSION_FILE_PATH
-	
-	var file = File.new()
-	if(file.file_exists(versionFilePath)):
-		file.open(versionFilePath, File.READ)
+
+	if(FileAccess.file_exists(versionFilePath)):
+		var file = FileAccess.open(versionFilePath, FileAccess.READ)
+		if file == null:
+			Castagne.Error("Failed to open version file at " + versionFilePath)
+			return
 		var fileText = file.get_as_text()
 		file.close()
-		versionInfo = parse_json(fileText)
+		versionInfo = JSON.parse_string(fileText)
 	else:
 		Castagne.Error("Can't load version file at " + versionFilePath)
 		versionInfo = {
@@ -205,7 +207,7 @@ func LoadModulesAndConfigAdditive(configFilePath, baseConfig = null):
 	
 	return configData
 
-var prefabConfigData = preload("res://castagne/engine/CastagneConfig.gd")
+var prefabConfigData = preload("res://castagne_godot4/engine/CastagneConfig.gd")
 func CreateNewEmptyConfigData():
 	var configData = Node.new()
 	configData.set_script(prefabConfigData)
@@ -259,7 +261,7 @@ func LoadSingleModule(modulePath):
 		if(modulePrefab == null):
 			Error("Can't find module to load: "+str(modulePath))
 			return
-		module = modulePrefab.instance()
+		module = modulePrefab.instantiate()
 	elif(modulePath.ends_with(".gd")):
 		var scriptPrefab = load(modulePath)
 		if(scriptPrefab == null):
