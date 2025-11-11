@@ -282,7 +282,7 @@ func _InterfaceCode_CreateFieldValue(defineName, defineType, defineValue, varDat
 			for o in varData["Options"]:
 				fieldValue.add_item(o)
 			fieldValue.select(defineValue)
-			fieldValue.connect("item_selected", self, callbackName, [defineName])
+			fieldValue.connect("item_selected", Callable(self, callbackName).bind(defineName))
 			fieldValue.set_disabled(locked)
 		else:
 			fieldValue = SpinBox.new()
@@ -290,17 +290,17 @@ func _InterfaceCode_CreateFieldValue(defineName, defineType, defineValue, varDat
 			fieldValue.set_allow_lesser(true)
 			fieldValue.set_value(defineValue)
 			fieldValue.set_editable(!locked)
-			fieldValue.connect("value_changed", self, callbackName, [defineName])
+			fieldValue.connect("value_changed", Callable(self, callbackName).bind(defineName))
 	elif(defineType == Castagne.VARIABLE_TYPE.Str):
 		fieldValue = LineEdit.new()
 		fieldValue.set_text(str(defineValue))
 		fieldValue.set_editable(!locked)
-		fieldValue.connect("text_changed", self, callbackName, [defineName])
+		fieldValue.connect("text_changed", Callable(self, callbackName).bind(defineName))
 	elif(defineType == Castagne.VARIABLE_TYPE.Bool):
 		fieldValue = CheckBox.new()
 		fieldValue.set_pressed_no_signal(defineValue)
 		fieldValue.set_disabled(locked)
-		fieldValue.connect("toggled", self, callbackName, [defineName])
+		fieldValue.connect("toggled", Callable(self, callbackName).bind(defineName))
 	else:
 		fieldValue = Label.new()
 		fieldValue.set_text("Define type not supported: " + str(defineType))
@@ -325,7 +325,7 @@ func _InterfaceCode_CreateField(define):
 	overwriteButton.set_text("OW")
 	overwriteButton.set_disabled(true)
 	overwriteButton.set_tooltip("Overwritten variable. Press to remove the value.")
-	overwriteButton.connect("pressed", self, "_FieldRemoveOverwrite", [define["Name"]])
+	overwriteButton.connect("pressed", Callable(self, "_FieldRemoveOverwrite").bind(define["Name"]))
 	define["OverwriteButton"] = overwriteButton
 	root.add_child(overwriteButton)
 	
@@ -413,7 +413,7 @@ func _SetDefineValue(defineName, defineValue, markAsAltered = true, setFieldNode
 	else:
 		if(!_extraValues.has(defineName)):
 			_extraValues[defineName] = {"Name":defineName}
-		if(typeof(defineValue) == TYPE_REAL):
+		if(typeof(defineValue) == TYPE_FLOAT):
 			defineValue = int(defineValue)
 		_extraValues[defineName]["Value"] = defineValue
 		_extraValues[defineName]["Type"] = Castagne.VariableTypeToCastagneType(typeof(defineValue))
@@ -524,7 +524,7 @@ func _InterfaceCode_CreateStructList(sd, root):
 	headerHide.set_text("+")
 	headerHide.set_toggle_mode(true)
 	headerHide.set_pressed_no_signal(true)
-	headerHide.connect("toggled", self, "StructList_ToggleVisibility", [sd["Name"]])
+	headerHide.connect("toggled", Callable(self, "StructList_ToggleVisibility").bind(sd["Name"]))
 	header.add_child(headerHide)
 	
 	var headerName = Label.new()
@@ -534,7 +534,7 @@ func _InterfaceCode_CreateStructList(sd, root):
 	
 	var headerNew = Button.new()
 	headerNew.set_text("New")
-	headerNew.connect("pressed", self, "StructList_NewStruct", [sd["Name"]])
+	headerNew.connect("pressed", Callable(self, "StructList_NewStruct").bind(sd["Name"]))
 	header.add_child(headerNew)
 	root.add_child(header)
 	
@@ -569,7 +569,7 @@ func StructList_UpdateList(structType):
 		if(structInstances[siN]["Parent"]):
 			displayName += " (Override)"
 		sinButton.set_text(displayName)
-		sinButton.connect("pressed", self, "StructEditorShow", [structType, structInstances[siN]])
+		sinButton.connect("pressed", Callable(self, "StructEditorShow").bind(structType, structInstances[siN]))
 		list.add_child(structElementRoot)
 		
 		if(structDefOrderedStart != null):
@@ -668,19 +668,19 @@ func StructEditorShow(structType = null, structInstance = null):
 	if(!needsOverride):
 		var renameButton = Button.new()
 		renameButton.set_text("Rename")
-		renameButton.connect("pressed", self, "StructEditor_Rename", [structType, structInstance["InstanceName"], renameBox])
+		renameButton.connect("pressed", Callable(self, "StructEditor_Rename").bind(structType, structInstance["InstanceName"], renameBox))
 		renameButton.set_disabled(locked)
 		renameHBox.add_child(renameButton)
 		
 		var renameDelete = Button.new()
 		renameDelete.set_text("Delete")
-		renameDelete.connect("pressed", self, "StructEditor_Delete", [structType, structInstance["InstanceName"]])
+		renameDelete.connect("pressed", Callable(self, "StructEditor_Delete").bind(structType, structInstance["InstanceName"]))
 		renameDelete.set_disabled(locked)
 		renameHBox.add_child(renameDelete)
 	else:
 		var renameOverride = Button.new()
 		renameOverride.set_text("Override")
-		renameOverride.connect("pressed", self, "StructEditor_Override", [structType, structInstance["InstanceName"]])
+		renameOverride.connect("pressed", Callable(self, "StructEditor_Override").bind(structType, structInstance["InstanceName"]))
 		renameOverride.set_disabled(lockedFile)
 		renameHBox.add_child(renameOverride)
 	

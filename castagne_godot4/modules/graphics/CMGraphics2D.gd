@@ -23,7 +23,7 @@ func ModuleSetup():
 	RegisterConfig("PixelArtMode", true)
 
 func BattleInit(stateHandle, battleInitData):
-	.BattleInit(stateHandle, battleInitData)
+	super.BattleInit(stateHandle, battleInitData)
 	# Pixels per unit
 	POSITION_SCALE = float(stateHandle.ConfigData().Get("2DScreenSizeX")) / stateHandle.ConfigData().Get("UnitsInScreen")
 	pixelArtMode = stateHandle.ConfigData().Get("PixelArtMode")
@@ -34,7 +34,7 @@ func BattleInit(stateHandle, battleInitData):
 
 func CreateModel(args, stateHandle):
 	ModuleError("CreateModel is not supported for 2D", stateHandle)
-	.CreateModel(args, stateHandle)
+	super.CreateModel(args, stateHandle)
 
 
 
