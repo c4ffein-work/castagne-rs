@@ -16,6 +16,8 @@ config/features=PackedStringArray("4.2")
 
 [autoload]
 
+Castagne="*res://Castagne.tscn"
+
 [editor]
 
 export/convert_text_resources_to_binary=false
