@@ -6,30 +6,25 @@ extends SceneTree
 func _init():
 	print("\n=== E2E Test: Character Loading ===\n")
 
-	# Check if Castagne autoload is available
-	if not has_node("/root/Castagne"):
-		print("⚠ Skipping - Castagne engine not initialized")
-		print("⚠ (This is expected - Castagne has Godot 4 API compatibility issues)")
-		print("TEST_PASS")
-		quit()
-		return
-
-	# Try to load the Castagne parser
-	var parser_path = "res://castagne_godot4/engine/CastagneParser.gd"
-	if not FileAccess.file_exists(parser_path):
-		print("ERROR: Castagne parser not found at: ", parser_path)
+func _process(_delta):
+	# Get Castagne autoload
+	var castagne = root.get_node_or_null("/root/Castagne")
+	if not castagne:
+		print("ERROR: Castagne autoload not found")
 		print("TEST_FAIL")
 		quit()
 		return
 
-	var CastagneParser = load(parser_path)
-	if not CastagneParser:
-		print("ERROR: Failed to load CastagneParser")
+	print("✓ Castagne autoload found")
+
+	# Get the parser from Castagne
+	var parser = castagne.Parser
+	if not parser:
+		print("ERROR: Castagne Parser not available")
 		print("TEST_FAIL")
 		quit()
 		return
 
-	var parser = CastagneParser.new()
 	print("✓ CastagneParser loaded successfully")
 
 	# Try to load a test character

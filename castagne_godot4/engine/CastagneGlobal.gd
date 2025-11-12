@@ -7,10 +7,10 @@
 
 extends Node
 
-@onready var Parser = $Parser
-@onready var Net = $Net
-@onready var Loader = $Loader
-@onready var Menus = $Menus
+var Parser
+var Net
+var Loader
+var Menus
 # Dict with options
 
 const CONFIG_FILE_PATH = "res://castagne-config.json"
@@ -52,8 +52,37 @@ var modulesLoaded
 var versionInfo
 
 func _ready():
+	# Initialize child nodes if they don't exist
+	Parser = get_node_or_null("Parser")
+	if Parser == null:
+		var parser_script = load("res://castagne_godot4/engine/CastagneParser.gd")
+		Parser = parser_script.new()
+		Parser.name = "Parser"
+		add_child(Parser)
+
+	Net = get_node_or_null("Net")
+	if Net == null:
+		var net_script = load("res://castagne_godot4/engine/CastagneNet.gd")
+		Net = net_script.new()
+		Net.name = "Net"
+		add_child(Net)
+
+	Loader = get_node_or_null("Loader")
+	if Loader == null:
+		var loader_script = load("res://castagne_godot4/engine/CastagneLoader.gd")
+		Loader = loader_script.new()
+		Loader.name = "Loader"
+		add_child(Loader)
+
+	Menus = get_node_or_null("Menus")
+	if Menus == null:
+		var menus_script = load("res://castagne_godot4/engine/CastagneMenus.gd")
+		Menus = menus_script.new()
+		Menus.name = "Menus"
+		add_child(Menus)
+
 	Log("Castagne Startup")
-	
+
 	LoadVersionInfo()
 	
 	baseConfigData = LoadModulesAndConfig()

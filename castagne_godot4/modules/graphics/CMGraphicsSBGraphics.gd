@@ -42,7 +42,7 @@ func SetupSpecblock(_argument):
 
 
 func StructEditorShow(structType = null, structInstance = null):
-	var root = .StructEditorShow(structType, structInstance)
+	var root = super.StructEditorShow(structType, structInstance)
 	if(structType == "Spritesheets"):
 		var visuPacked = preload("res://castagne_godot4/modules/graphics/CMGraphics-SpritesheetVisualizer.tscn")
 		var visu = visuPacked.instantiate()
