@@ -60,21 +60,31 @@ cargo build --release
 
 ## Testing
 
-Run comparison tests to verify parity between Rust and GDScript implementations:
+This project has **two types of tests**:
 
+### 1. Parser Integration Tests (540+ tests)
+Fast tests that verify the Rust parser can parse `.casp` character files correctly:
 ```bash
-# One-time setup (downloads Godot)
-./scripts/setup-godot.sh
-
-# Run comparison tests
-./scripts/run-tests.sh
+cargo test --test parser_integration
 ```
 
-Tests compare behavior between:
-- Original Castagne (GDScript)
-- castagne-rs (Rust port)
+### 2. TRUE End-to-End Tests (Godot headless)
+Tests that actually run the fighting game engine in Godot and verify gameplay works:
+```bash
+# One-time setup (installs Godot 4.5)
+make godot-setup
 
-See [TESTING_CLI.md](TESTING_CLI.md) for detailed testing guide.
+# Run E2E tests
+cargo test --test e2e_godot_tests
+```
+
+**Key difference**:
+- Parser tests: "Can we parse this character file?" ✅
+- E2E tests: "Does a Hadouken actually come out when you press QCF+P?" ✅
+
+See [TESTING_STRATEGY.md](TESTING_STRATEGY.md) for the full testing philosophy.
+
+See [TESTING.md](TESTING.md) for GDScript vs Rust testing guide.
 
 ## Development
 
