@@ -1,4 +1,5 @@
 {
 	"CharacterPaths": [],
-	"Skeletons": {}
+	"Skeletons": {},
+	"Modules": "coreset, physics, graphics, flow, user"
 }

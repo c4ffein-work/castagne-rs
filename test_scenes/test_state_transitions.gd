@@ -6,6 +6,7 @@ extends SceneTree
 func _init():
 	print("\n=== E2E Test: State Transitions ===\n")
 
+	# This test works without Castagne (uses mock objects)
 	# Simulate a character in different states
 	var character = create_test_character()
 
@@ -15,28 +16,28 @@ func _init():
 
 	# Simulate transition to attack
 	print("\nSimulating attack input...")
-	character.transition_to("LightPunch")
+	character.transition_to.call("LightPunch")
 	print("State after attack: ", character.current_state)
 	assert(character.current_state == "LightPunch", "Should transition to LightPunch")
 	print("✓ Idle -> LightPunch transition successful")
 
 	# Simulate attack finishing
 	print("\nSimulating attack completion...")
-	character.transition_to("Idle")
+	character.transition_to.call("Idle")
 	print("State after recovery: ", character.current_state)
 	assert(character.current_state == "Idle", "Should return to Idle")
 	print("✓ LightPunch -> Idle transition successful")
 
 	# Test jump transition
 	print("\nSimulating jump input...")
-	character.transition_to("Jump")
+	character.transition_to.call("Jump")
 	print("State after jump: ", character.current_state)
 	assert(character.current_state == "Jump", "Should transition to Jump")
 	print("✓ Idle -> Jump transition successful")
 
 	# Test landing
 	print("\nSimulating landing...")
-	character.transition_to("Idle")
+	character.transition_to.call("Idle")
 	print("State after landing: ", character.current_state)
 	assert(character.current_state == "Idle", "Should return to Idle after landing")
 	print("✓ Jump -> Idle transition successful")

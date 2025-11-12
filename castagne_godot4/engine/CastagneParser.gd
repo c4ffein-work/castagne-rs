@@ -559,7 +559,7 @@ func _OptimizeActionList_Sublist(actionList, baseParentLevel, p, state):
 					var allEmpty = true
 					for j in nbBlocks:
 						a[1][0][j] = _OptimizeActionList_Sublist(a[1][0][j], parentLevel, p, state)
-						if(!a[1][0][j].empty()):
+						if(!a[1][0][j].is_empty()):
 							allEmpty = false
 					if(allEmpty):
 						actionList.remove(i)
@@ -569,7 +569,7 @@ func _OptimizeActionList_Sublist(actionList, baseParentLevel, p, state):
 					a[1][0] = _OptimizeActionList_Sublist(a[1][0], parentLevel, p, state)
 					a[1][1] = _OptimizeActionList_Sublist(a[1][1], parentLevel, p, state)
 
-					if(a[1][0].empty() and a[1][1].empty()):
+					if(a[1][0].is_empty() and a[1][1].is_empty()):
 						actionList.remove(i)
 						loopAgain = true
 						break
@@ -864,7 +864,7 @@ func _ExtractFlagsFromActionList(actionList, metadata, level = 0):
 			if(atkType != null):
 				f.push_back("Attack")
 				f.push_back("AttackType-"+arguments[0])
-				if(!(metadata["AttackNotations"].empty()) and metadata["AttackType"] != atkType):
+				if(!(metadata["AttackNotations"].is_empty()) and metadata["AttackType"] != atkType):
 					_Error("Found several AttackRegister calls in one state ! "+str(metadata["NameShort"]) + "(Parent level "+str(metadata["ParentLevel"])+", entity "+str(metadata["Entity"])+")")
 				metadata["AttackType"] = atkType
 
@@ -1089,7 +1089,7 @@ func _ParseForEdition():
 		_parseForEditionPostProcessed += [[]]
 		var md = _ParseMetadata(fileID)
 		result["NbFiles"] = _files.size()
-		var cName = _filePaths[fileID].right(_filePaths[fileID].find_last("/"))
+		var cName = _filePaths[fileID].right(_filePaths[fileID].rfind("/"))
 
 		var defaultStateData = {
 			"Text":"",
@@ -1313,7 +1313,7 @@ func ParseForEditionPostProcess(fileID, stateName, result):
 						baseStateRef = calledState
 
 	# Additional checks and inheritance
-	if(state["Categories"].empty()):
+	if(state["Categories"].is_empty()):
 		var attackType = null
 		for sf in state["StateFlags"]:
 			if(sf.begins_with("AttackType-")):
@@ -1334,7 +1334,7 @@ func ParseForEditionPostProcess(fileID, stateName, result):
 			state["StateDoc"] = parentState["StateDoc"]
 
 	var entityName = _GetEntityNameFromStateName(stateName)
-	if(entityName != null and state["Categories"].empty()):
+	if(entityName != null and state["Categories"].is_empty()):
 		state["Categories"] = ["Entities/"+entityName]
 
 	if(stateName == "Character"):
@@ -1343,7 +1343,7 @@ func ParseForEditionPostProcess(fileID, stateName, result):
 
 	if(stateName.begins_with("Variables")):
 		state["StateType"] = Castagne.STATE_TYPE.Special
-		if(state["Categories"].empty()):
+		if(state["Categories"].is_empty()):
 			state["Categories"] = ["Variables"]
 	if(stateName.begins_with("Init-") or stateName == "Init"):
 		state["StateType"] = Castagne.STATE_TYPE.Special
@@ -1368,14 +1368,14 @@ func ParseForEditionPostProcess(fileID, stateName, result):
 	if(fdFirstLine >= 0):
 		state["StateDoc"] = state["StateFullDoc"].left(fdFirstLine)
 
-	if(!state["Variables"].empty() or stateName.begins_with("Variables")):
+	if(!state["Variables"].is_empty() or stateName.begins_with("Variables")):
 		state["StateFlags"] += ["CustomEditor"]
 
 	# Code Quality Checks
 	if(state["StateType"] == Castagne.STATE_TYPE.Normal and state["BaseStateDistance"] == -1 and !state["StateFlags"].has("Attack")):
 		state["Warnings"] += ["State doesn't lead back to a base state, and isn't itself a base state, helper, or registered attack."]
 
-	if(!state["Warnings"].empty()):
+	if(!state["Warnings"].is_empty()):
 		state["StateFlags"] += ["Warning"]
 
 
@@ -1383,7 +1383,7 @@ func ParseForEditionPostProcess(fileID, stateName, result):
 	state["StateFlags"].sort()
 	var flags = []
 	for f in state["StateFlags"]:
-		if(flags.empty() or flags.back() != f):
+		if(flags.is_empty() or flags.back() != f):
 			flags += [f]
 	state["StateFlags"] = flags
 
@@ -1465,7 +1465,7 @@ func _IsLineVariable(line):
 
 
 func _IsValidLine(line):
-	return !(line.begins_with("#") or line.empty())
+	return !(line.begins_with("#") or line.is_empty())
 
 
 
@@ -1686,7 +1686,7 @@ func _ParseBlockState(fileID):
 
 						for p in PHASES_WITH_EVENTS:
 							# Star before regular
-							if(!startActions[p].empty()):
+							if(!startActions[p].is_empty()):
 								var argsStar = [startActions[p], [], fLetterArgsStar]
 								var dStar = [_branchFunctions["F"], argsStar]
 
@@ -1694,7 +1694,7 @@ func _ParseBlockState(fileID):
 									stateActions[p] += [dStar]
 								else:
 									currentSubblock[currentSubblockList][p] += [dStar]
-							if(!regularActions[p].empty()):
+							if(!regularActions[p].is_empty()):
 								var argsReg = [regularActions[p], [], fLetterArgsRegular]
 								var dReg = [_branchFunctions["F"], argsReg]
 
@@ -1702,7 +1702,7 @@ func _ParseBlockState(fileID):
 									stateActions[p] += [dReg]
 								else:
 									currentSubblock[currentSubblockList][p] += [dReg]
-							if(!endActions[p].empty()):
+							if(!endActions[p].is_empty()):
 								var argsEnd = [endActions[p], [], fLetterArgsEnd]
 								var dEnd = [_branchFunctions["F"], argsEnd]
 
@@ -1712,7 +1712,7 @@ func _ParseBlockState(fileID):
 									currentSubblock[currentSubblockList][p] += [dEnd]
 				elif(branch["Letter"] == "E"):
 					var actions = branch["True"]["Manual"]
-					if(actions.empty()):
+					if(actions.is_empty()):
 						continue
 
 					for eventName in branch["LetterArgs"].split(","):
@@ -1763,7 +1763,7 @@ func _ParseBlockState(fileID):
 						var args = [branch["True"][p], branch["False"][p], branch["LetterArgs"]]
 						var d = [branch["Func"], args]
 
-						if(args[0].empty() and args[1].empty()):
+						if(args[0].is_empty() and args[1].is_empty()):
 							continue
 
 						if(currentSubblock == null):
@@ -1932,7 +1932,7 @@ func _ParseBlockState(fileID):
 					if(moduloSepID > 0):
 						var modulo = letterArgs.right(moduloSepID+1)
 						letterArgs = letterArgs.left(moduloSepID)
-						if(modulo.empty()):
+						if(modulo.is_empty()):
 							currentSubblock["S_Modulo"] = -1
 						elif(modulo.is_valid_integer()):
 							currentSubblock["S_Modulo"] = int(modulo)
@@ -2035,7 +2035,7 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 	elif(sep >= 0):
 		variableValue = line.right(sep+1).strip_edges()
 		line = line.left(sep).strip_edges()
-		if(variableValue.empty()):
+		if(variableValue.is_empty()):
 			variableValue = null
 		#	_Error("Variable declaration has an '=' sign but no assignation.")
 		#	return null

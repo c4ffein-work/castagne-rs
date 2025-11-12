@@ -162,7 +162,7 @@ func EngineTick(previousMemory, playerInputs):
 	
 	# Destroy previous entities
 	var entitiesToDestroy = memory.GlobalGet("_EntitiesToDestroy")
-	if(!entitiesToDestroy.empty()):
+	if(!entitiesToDestroy.is_empty()):
 		for eid in entitiesToDestroy:
 			RemoveEntityImmediate(gameStateHandle, eid)
 		gameStateHandle.GlobalSet("_EntitiesToDestroy", [])
@@ -289,7 +289,7 @@ func SeparateAIControlledEntities(memory, eids):
 
 func DoEntityInit(gameStateHandle, listName):
 	var entitiesToInit = gameStateHandle.GlobalGet(listName)
-	if(!entitiesToInit.empty()):
+	if(!entitiesToInit.is_empty()):
 		gameStateHandle.GlobalSet(listName, [])
 		for module in modules:
 			for eid in entitiesToInit:
@@ -657,7 +657,7 @@ var _memories = []
 var MAX_MEMORIES_IN_MEMORY = 16
 var _nextMemoryID = 0
 func CreateMemory(_copyFrom = null):
-	if(_memories.empty()):
+	if(_memories.is_empty()):
 		var newMemory = Node.new()
 		newMemory.set_script(_prefabMemory)
 		newMemory.InitMemory()

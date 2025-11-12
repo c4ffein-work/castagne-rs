@@ -162,7 +162,7 @@ func LoadModulesAndConfig(configFilePath = null, localConfigFilePath = null):
 	var configSkeletonPath = ""
 	if(configData.Has("ConfigSkeleton")):
 		configSkeletonPath = configData.Get("ConfigSkeleton")
-	if(!configSkeletonPath.empty()):
+	if(!configSkeletonPath.is_empty()):
 		configSkeleton = CreateNewEmptyConfigData()
 		if(!configSkeleton.LoadFromConfigFile(configSkeletonPath)):
 			Error("LoadModulesAndConfig: Config skeleton file doesn't exist. Aborting.")
@@ -269,7 +269,7 @@ func LoadSingleModule(modulePath):
 			return
 		module = Node.new()
 		module.set_script(scriptPrefab)
-		var moduleName = modulePath.right(modulePath.find_last("/"))
+		var moduleName = modulePath.right(modulePath.rfind("/"))
 		module.set_name(moduleName.left(moduleName.length()-2))
 	else:
 		Error("LoadSingleModule: Not a valid module: " + str(modulePath))
@@ -418,13 +418,13 @@ func AreArraysEqual(a, b):
 	return true
 
 func SplitStringToArray(stringToSeparate, separator=","):
-	if(stringToSeparate == null or stringToSeparate.empty()):
+	if(stringToSeparate == null or stringToSeparate.is_empty()):
 		return []
 	var a = []
 	var strings = stringToSeparate.split(separator)
 	for s in strings:
 		s = s.strip_edges()
-		if(!s.empty()):
+		if(!s.is_empty()):
 			a.push_back(s)
 	return a
 

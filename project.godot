@@ -16,8 +16,6 @@ config/features=PackedStringArray("4.2")
 
 [autoload]
 
-Castagne="*res://castagne_godot4/engine/CastagneGlobal.gd"
-
 [editor]
 
 export/convert_text_resources_to_binary=false

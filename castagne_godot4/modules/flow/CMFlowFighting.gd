@@ -19,7 +19,7 @@ func ModuleSetup():
 	RegisterConfig("StartingDistance", 20000, {"Description":"The starting distance between the two players."})
 
 func GetBaseBattleInitData(configData):
-	var bid = .GetBaseBattleInitData(configData)
+	var bid = super.GetBaseBattleInitData(configData)
 	
 	for pid in range(configData.Get("AmountOfPlayers")):
 		var p = bid["players"][0].duplicate(true)
@@ -148,7 +148,7 @@ func _EditorCreateFlowWindow_Global(editor, root):
 	mirrorMatch.set_text_alignment(HORIZONTAL_ALIGNMENT_CENTER)
 	mirrorMatch.set_text("Mirror Match")
 	mirrorMatch.set_pressed_no_signal(editor.configData.Get(cdbn+"mirror", false))
-	mirrorMatch.connect("toggled", Callable(self, "_EditorFlowWindow_MirrorMatchToggle").bind( [root, editor.configData.Get("AmountOfPlayers")]
+	mirrorMatch.connect("toggled", Callable(self, "_EditorFlowWindow_MirrorMatchToggle").bind(root, editor.configData.Get("AmountOfPlayers")))
 	_EditorFlowWindow_MirrorMatchToggle(mirrorMatch.is_pressed(), root, editor.configData.Get("AmountOfPlayers"))
 	root.add_child(mirrorMatch)
 
@@ -168,7 +168,7 @@ func _EditorFlowWindow_MirrorMatchToggle_RecursiveDisable(node, isDisabled):
 
 
 func EditorGetCurrentBattleInitData(editor, root):
-	var bid = .EditorGetCurrentBattleInitData(editor, root)
+	var bid = super.EditorGetCurrentBattleInitData(editor, root)
 	var nbPlayers = editor.configData.Get("AmountOfPlayers")
 	var cdbng = localConfigPrefixBase+"Global-"
 	var globalStart = nbPlayers*2

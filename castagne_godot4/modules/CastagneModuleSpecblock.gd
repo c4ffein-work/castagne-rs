@@ -100,7 +100,7 @@ func AddDefine(dName, dValue, displayName = null, data = {}):
 	var catRoot = _definesPerCategory
 	var catPartialName = ""
 	for c in catList:
-		if(!catPartialName.empty()):
+		if(!catPartialName.is_empty()):
 			catPartialName += "/"
 		catPartialName += c
 		if not (catPartialName in catRoot):
@@ -742,7 +742,7 @@ func StructEditorShow(structType = null, structInstance = null):
 
 func StructEditor_Rename(structType, structInstance, renameBox):
 	var newStructName = renameBox.get_text()
-	if(newStructName.empty()):
+	if(newStructName.is_empty()):
 		return
 	
 	newStructName = newStructName.replace(" ", "_")

@@ -596,7 +596,7 @@ func InputPhaseStartEntity(stateHandle):
 	var inputs = stateHandle.EntityGet("_Inputs").duplicate()
 	var facing = stateHandle.EntityGet("_FacingHPhysics")
 	
-	if(inputs.empty()):
+	if(inputs.is_empty()):
 		return
 	
 	for derivedInputName in inputSchema["_InputListByType"][Castagne.GAMEINPUT_TYPES.DERIVED]:
