@@ -105,7 +105,7 @@ func _CreateSpriteAnims(stateHandle):
 			
 			if(newDuration == 0):
 				continue
-			if(newSheet == null or newSheet.empty()):
+			if(newSheet == null or newSheet.is_empty()):
 				newSheet = curSheet
 			curSheet = newSheet
 			
@@ -125,7 +125,7 @@ func ApplyMaterial(stateHandle, spriteShader = null):
 	if(spriteShader == null):
 		spriteShader = (spriteShaderRessourceDefault if is2D else spriteShader3DRessourceDefault)
 		var shaderPath = stateHandle.ConfigData().Get("SpriteShaderPath")
-		if(!shaderPath.empty()):
+		if(!shaderPath.is_empty()):
 			var shaderCustom = Castagne.Loader.Load(shaderPath)
 			if(shaderCustom != null):
 				spriteShader = shaderCustom

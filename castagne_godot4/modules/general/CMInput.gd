@@ -205,7 +205,7 @@ func InputPhase(stateHandle, activeEIDs):
 
 		var inputs = stateHandle.EntityGet("_Inputs")
 		var previousInputsList = stateHandle.EntityGet("_InputsPrevious")
-		if(previousInputsList.empty() or previousInputsList[0].empty()):
+		if(previousInputsList.is_empty() or previousInputsList[0].is_empty()):
 			continue
 
 		for derivedInputName in inputSchema["_InputListByType"][Castagne.GAMEINPUT_TYPES.DERIVED]:
@@ -284,7 +284,7 @@ func FindCorrectInputTransition(stateHandle):
 	var manualTransition = stateHandle.EntityGet("_InputTransitionManual")
 	stateHandle.EntitySet("_InputTransitionManual", null)
 
-	if(inputs.empty() or inputTransitionList.empty()):
+	if(inputs.is_empty() or inputTransitionList.is_empty()):
 		return null
 
 	#var prefix = ""
@@ -309,7 +309,7 @@ func FindCorrectInputTransition(stateHandle):
 			directions += [["1", 50]]
 		directions += [["2", 40]]
 
-	if(directions.empty() or alwaysAllowNeutralV):
+	if(directions.is_empty() or alwaysAllowNeutralV):
 		if(inputs["Forward"]):
 			directions += [["6", 30]]
 		elif(inputs["Back"]):
@@ -540,7 +540,7 @@ func LogDirectionalInputs(stateHandle):
 	var direction = 5
 	var inputLog = stateHandle.EntityGet("_DirectionalInputLog")
 	
-	if inputLog.empty():
+	if inputLog.is_empty():
 		inputLog.resize(buffer)
 		inputLog.fill("5")
 	

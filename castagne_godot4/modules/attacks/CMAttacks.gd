@@ -593,7 +593,7 @@ func InitPhaseStartEntity(stateHandle):
 	var attacks = {null:{}}
 	for stateName in fighterScripts:
 		var fs = fighterScripts[stateName]
-		if(fs["Metadata"]["AttackNotations"].empty() or fs["Metadata"]["Entity"] != entityName or fs["Metadata"]["ParentLevel"] > 0):
+		if(fs["Metadata"]["AttackNotations"].is_empty() or fs["Metadata"]["Entity"] != entityName or fs["Metadata"]["ParentLevel"] > 0):
 			continue
 		var notations = fs["Metadata"]["AttackNotations"]
 		var type = fs["Metadata"]["AttackType"]
@@ -1302,7 +1302,7 @@ func _ADApplyOverride(attackData, newOverride):
 	for fullfield in attackData:
 		if(fullfield.begins_with("_")):
 			continue # Special fields like flags and overrides
-		var sep = fullfield.find_last("-")
+		var sep = fullfield.rfind("-")
 		if(sep == -1):
 			continue # no override here
 		var overridesText = fullfield.left(sep)

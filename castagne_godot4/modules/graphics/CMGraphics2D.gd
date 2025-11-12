@@ -34,7 +34,8 @@ func BattleInit(stateHandle, battleInitData):
 
 func CreateModel(args, stateHandle):
 	ModuleError("CreateModel is not supported for 2D", stateHandle)
-	super.CreateModel(args, stateHandle)
+	# Godot 4: CreateModel doesn't exist in base class
+	#super.CreateModel(args, stateHandle)
 
 
 
@@ -51,7 +52,7 @@ func _InitCamera(_stateHandle, _battleInitData):
 	return cam
 
 func _CreateSprite_Instance(stateHandle):
-	var s2D = Sprite.new()
+	var s2D = Sprite2D.new()
 	var scriptPath = stateHandle.ConfigData().Get("SpriteScriptPath")
 	s2D.set_script(Castagne.Loader.Load(scriptPath))
 	s2D.is2D = true
@@ -102,7 +103,8 @@ func _CreateGraphicsRootNode(engine):
 	engine.add_child(mainRoot)
 	var vpc = prefabVPC.instantiate()
 	mainRoot.add_child(vpc)
-	var vp = Viewport.new()
+	# Godot 4: Viewport is abstract, use SubViewport instead
+	var vp = SubViewport.new()
 	vpc.add_child(vp)
 	
 	viewportContainer = vpc
@@ -111,13 +113,16 @@ func _CreateGraphicsRootNode(engine):
 	mainRoot.set_anchors_and_margins_preset(Control.PRESET_FULL_RECT)
 	vp.set_size(Vector2(engine.configData.Get("2DScreenSizeX"), engine.configData.Get("2DScreenSizeY")))
 	vpc.set_anchors_and_margins_preset(Control.PRESET_FULL_RECT)
-	
-	vp.set_usage(Viewport.USAGE_2D)
-	vp.set_update_mode(Viewport.UPDATE_ALWAYS)
+
+	# Godot 4: These viewport properties have been removed
+	#vp.set_usage(Viewport.USAGE_2D)
+	#vp.set_update_mode(Viewport.UPDATE_ALWAYS)
 	vp.set_handle_input_locally(false)
-	
+
 	if(pixelArtMode):
-		vp.set_usage(Viewport.USAGE_2D_NO_SAMPLING)
+		# Godot 4: USAGE_2D_NO_SAMPLING removed
+		#vp.set_usage(Viewport.USAGE_2D_NO_SAMPLING)
+		pass
 		#vp.get_texture().flags ^= Texture.FLAG_FILTER
 	
 	vpc.get_material().set_shader_param("gameViewport", vp.get_texture())

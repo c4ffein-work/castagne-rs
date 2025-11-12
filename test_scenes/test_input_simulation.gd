@@ -6,52 +6,53 @@ extends SceneTree
 func _init():
 	print("\n=== E2E Test: Input Simulation ===\n")
 
+	# This test works without Castagne (uses mock objects)
 	var character = create_character_with_input()
 
 	# Test basic button inputs
 	print("--- Testing button inputs ---")
 
 	print("\nSimulating: Light Punch button")
-	character.process_input("LP")
+	character.process_input.call("LP")
 	assert(character.current_state == "LightPunch", "Should enter LightPunch state")
 	print("✓ Light Punch input -> LightPunch state")
 
-	character.reset_to_idle()
+	character.reset_to_idle.call()
 
 	print("\nSimulating: Jump button")
-	character.process_input("Jump")
+	character.process_input.call("Jump")
 	assert(character.current_state == "Jump", "Should enter Jump state")
 	print("✓ Jump input -> Jump state")
 
-	character.reset_to_idle()
+	character.reset_to_idle.call()
 
 	# Test motion inputs
 	print("\n--- Testing motion inputs ---")
 
 	print("\nSimulating: Quarter Circle Forward (236) + Punch")
-	character.process_motion(["2", "3", "6"], "P")
+	character.process_motion.call(["2", "3", "6"], "P")
 	assert(character.current_state == "Hadouken", "Should perform Hadouken")
 	print("✓ QCF + P -> Hadouken")
 
-	character.reset_to_idle()
+	character.reset_to_idle.call()
 
 	print("\nSimulating: Dragon Punch motion (623) + Punch")
-	character.process_motion(["6", "2", "3"], "P")
+	character.process_motion.call(["6", "2", "3"], "P")
 	assert(character.current_state == "Shoryuken", "Should perform Shoryuken")
 	print("✓ DP motion -> Shoryuken")
 
-	character.reset_to_idle()
+	character.reset_to_idle.call()
 
 	# Test input buffering
 	print("\n--- Testing input buffer ---")
 
 	print("\nBuffering inputs: 2, 3, 6")
 	for direction in ["2", "3", "6"]:
-		character.add_to_buffer(direction)
+		character.add_to_buffer.call(direction)
 		print("  Buffer: %s" % str(character.input_buffer))
 
 	print("Checking buffer for QCF...")
-	var has_qcf = character.check_buffer_for_motion(["2", "3", "6"])
+	var has_qcf = character.check_buffer_for_motion.call(["2", "3", "6"])
 	assert(has_qcf, "Should detect QCF in buffer")
 	print("✓ Input buffer detects motion correctly")
 
@@ -59,11 +60,11 @@ func _init():
 	print("\n--- Testing charge inputs ---")
 
 	print("\nCharging back (4) for 45 frames...")
-	character.charge_input("4", 45)
+	character.charge_input.call("4", 45)
 	print("Charge time: %d frames" % character.charge_time)
 
 	print("Releasing forward (6) + Punch")
-	character.process_charge_move("6", "P", 45)
+	character.process_charge_move.call("6", "P", 45)
 	assert(character.current_state == "SonicBoom", "Should perform SonicBoom")
 	print("✓ Charge back -> forward + P -> SonicBoom")
 

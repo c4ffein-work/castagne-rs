@@ -510,7 +510,7 @@ func BattleInit(stateHandle, battleInitData):
 	
 	var uiRoot = null
 	var uiRootScenePath = config.Get("UIGlobalRootScene")
-	if(!uiRootScenePath.empty()):
+	if(!uiRootScenePath.is_empty()):
 		var uiRootScenePacked = Castagne.Loader.Load(uiRootScenePath)
 		if(uiRootScenePacked != null):
 			uiRoot = uiRootScenePacked.instantiate()

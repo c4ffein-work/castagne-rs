@@ -15,7 +15,6 @@
 //! - Real gameplay scenarios
 
 use std::process::Command;
-use std::fs;
 use std::path::Path;
 
 #[cfg(test)]
@@ -26,18 +25,35 @@ mod tests {
     // HELPER FUNCTIONS
     // ============================================================================
 
-    fn run_godot_headless_test(test_scene: &str) -> Result<String, String> {
-        // Check if Godot is available
-        let godot_check = Command::new("godot")
-            .arg("--version")
-            .output();
-
-        if godot_check.is_err() {
-            return Err("Godot not found. Run 'make godot-setup' first.".to_string());
+    fn find_godot_binary() -> Option<String> {
+        // Try standard 'godot' command first
+        if Command::new("godot").arg("--version").output().is_ok() {
+            return Some("godot".to_string());
         }
 
+        // Try user home directory installation
+        let home_path = std::env::var("HOME").ok()?;
+        let godot_path = format!("{}/godot/Godot_v4.5-stable_linux.x86_64", home_path);
+        if Path::new(&godot_path).exists() {
+            return Some(godot_path);
+        }
+
+        // Try ~/.local/bin/godot
+        let local_bin_path = format!("{}/.local/bin/godot", home_path);
+        if Path::new(&local_bin_path).exists() {
+            return Some(local_bin_path);
+        }
+
+        None
+    }
+
+    fn run_godot_headless_test(test_scene: &str) -> Result<String, String> {
+        // Check if Godot is available
+        let godot_binary = find_godot_binary()
+            .ok_or_else(|| "Godot not found. Run 'make godot-setup' first.".to_string())?;
+
         // Run Godot in headless mode with the test scene
-        let output = Command::new("godot")
+        let output = Command::new(&godot_binary)
             .arg("--headless")
             .arg("--script")
             .arg(format!("test_scenes/{}", test_scene))
@@ -65,22 +81,19 @@ mod tests {
 
     #[test]
     fn e2e_godot_available() {
-        let output = Command::new("godot")
+        let godot_binary = find_godot_binary()
+            .expect("Godot not found! Run 'make godot-setup' to install Godot 4.5");
+
+        let output = Command::new(&godot_binary)
             .arg("--version")
-            .output();
+            .output()
+            .expect("Failed to execute Godot");
 
-        match output {
-            Ok(output) => {
-                let version = String::from_utf8_lossy(&output.stdout);
-                println!("✓ Godot found: {}", version.trim());
+        let version = String::from_utf8_lossy(&output.stdout);
+        println!("✓ Godot found at {}: {}", godot_binary, version.trim());
 
-                // Verify it's Godot 4.x
-                assert!(version.contains("4."), "Expected Godot 4.x, got: {}", version);
-            }
-            Err(_) => {
-                panic!("Godot not found! Run 'make godot-setup' to install Godot 4.5");
-            }
-        }
+        // Verify it's Godot 4.x
+        assert!(version.contains("4."), "Expected Godot 4.x, got: {}", version);
     }
 
     #[test]
