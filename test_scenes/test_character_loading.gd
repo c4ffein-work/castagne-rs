@@ -1,90 +1,120 @@
 extends SceneTree
 
 # TRUE E2E Test: Character Loading
-# This test loads a character file and verifies it works in Godot
+# This test loads a character file using the REAL Castagne parser
+# and verifies the parsed structure is correct
 
 func _init():
-	print("\n=== E2E Test: Character Loading ===\n")
+	print("\n=== E2E Test: Character Loading (REAL PARSER) ===\n")
 
 func _process(_delta):
-	# Get Castagne autoload
-	var castagne = root.get_node_or_null("/root/Castagne")
-	if not castagne:
-		print("ERROR: Castagne autoload not found")
+	# Load the Castagne parser script
+	var parser_script = load("res://castagne_godot4/engine/CastagneParser.gd")
+	if not parser_script:
+		print("ERROR: Could not load CastagneParser.gd")
 		print("TEST_FAIL")
 		quit()
 		return
 
-	print("✓ Castagne autoload found")
+	print("✓ CastagneParser script loaded")
 
-	# Get the parser from Castagne
-	var parser = castagne.Parser
-	if not parser:
-		print("ERROR: Castagne Parser not available")
+	# Load the config script (parser needs this for modules)
+	var config_script = load("res://castagne_godot4/engine/CastagneConfig.gd")
+	if not config_script:
+		print("ERROR: Could not load CastagneConfig.gd")
 		print("TEST_FAIL")
 		quit()
 		return
 
-	print("✓ CastagneParser loaded successfully")
+	print("✓ CastagneConfig script loaded")
 
-	# Try to load a test character
-	var test_character_path = "res://test_character_complete.casp"
+	# Create parser and config instances
+	var parser = parser_script.new()
+	var config_data = config_script.new()
+
+	print("✓ Parser and Config instances created")
+
+	# Test with the simple test character
+	var test_character_path = "res://test_character.casp"
 	if not FileAccess.file_exists(test_character_path):
-		print("WARNING: Test character not found at: ", test_character_path)
-		print("Using minimal test instead")
-		test_minimal_character_creation(parser)
+		print("ERROR: Test character not found at: ", test_character_path)
+		print("TEST_FAIL")
+		quit()
+		return
+
+	print("\n--- Parsing character file with REAL parser ---")
+	print("File: ", test_character_path)
+
+	# ACTUALLY PARSE THE CHARACTER (not just read the file!)
+	var result = parser.CreateFullCharacter(test_character_path, config_data, true)
+
+	if result == null:
+		print("ERROR: Parser failed to parse character!")
+		print("Parser errors:")
+		if "_errors" in parser:
+			for err in parser._errors:
+				print("  - ", err)
+		print("TEST_FAIL")
+		quit()
+		return
+
+	print("✓ Character parsed successfully!")
+
+	# Verify the parsed structure contains expected data
+	print("\n--- Verifying parsed character structure ---")
+
+	if not "Character" in result:
+		print("ERROR: Missing 'Character' metadata in result")
+		print("TEST_FAIL")
+		quit()
+		return
+
+	print("✓ Character metadata found")
+	var metadata = result["Character"]
+	if "Name" in metadata:
+		print("  Character Name: ", metadata["Name"])
+	if "Author" in metadata:
+		print("  Author: ", metadata["Author"])
+
+	if not "Variables" in result:
+		print("ERROR: Missing 'Variables' in result")
+		print("TEST_FAIL")
+		quit()
+		return
+
+	print("✓ Variables found (", result["Variables"].size(), " variable(s))")
+	# List some variables
+	var var_count = 0
+	for var_name in result["Variables"]:
+		if var_count < 3:  # Show first 3 variables
+			print("  - ", var_name)
+		var_count += 1
+
+	if not "States" in result:
+		print("ERROR: Missing 'States' in result")
+		print("TEST_FAIL")
+		quit()
+		return
+
+	print("✓ States found (", result["States"].size(), " state(s))")
+	# List states
+	var state_count = 0
+	for state_name in result["States"]:
+		if state_count < 3:  # Show first 3 states
+			print("  - ", state_name)
+		state_count += 1
+
+	# Verify the Idle state exists (should be in every character)
+	if "Idle" in result["States"]:
+		print("✓ Found required 'Idle' state")
+		var idle_state = result["States"]["Idle"]
+		if "Init" in idle_state or "Action" in idle_state:
+			print("✓ Idle state has phases (Init/Action)")
 	else:
-		test_full_character_loading(parser, test_character_path)
+		print("WARNING: No 'Idle' state found")
+
+	print("\n✅ Character parsing test PASSED!")
+	print("The parser successfully loaded and parsed a .casp file")
+	print("TEST_PASS")
 
 	quit()
-
-func test_minimal_character_creation(parser):
-	print("\n--- Testing minimal character creation ---")
-
-	# Create a minimal character structure
-	var character_data = {
-		"metadata": {
-			"name": "Test Fighter",
-			"author": "E2E Test"
-		},
-		"variables": {},
-		"states": {}
-	}
-
-	print("✓ Minimal character structure created")
-	print("Character loaded: ", character_data.metadata.name)
-	print("TEST_PASS")
-
-func test_full_character_loading(parser, character_path):
-	print("\n--- Testing full character loading ---")
-	print("Loading character from: ", character_path)
-
-	# Note: The actual parsing would be done by the Castagne engine
-	# For now, we verify the file exists and can be read
-	var file = FileAccess.open(character_path, FileAccess.READ)
-	if not file:
-		print("ERROR: Could not open character file")
-		print("TEST_FAIL")
-		return
-
-	var content = file.get_as_text()
-	file.close()
-
-	if content.length() == 0:
-		print("ERROR: Character file is empty")
-		print("TEST_FAIL")
-		return
-
-	print("✓ Character file loaded successfully")
-	print("File size: ", content.length(), " bytes")
-
-	# Verify file has expected sections
-	if content.contains(":Character:"):
-		print("✓ Found :Character: section")
-	if content.contains(":Variables:"):
-		print("✓ Found :Variables: section")
-	if content.contains(":Idle:") or content.contains(":LightPunch:"):
-		print("✓ Found state definitions")
-
-	print("\nCharacter loaded successfully!")
-	print("TEST_PASS")
