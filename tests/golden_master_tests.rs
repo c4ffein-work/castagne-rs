@@ -4,8 +4,8 @@
 
 //! Golden Master Tests - Compare Rust parser output with Godot 3 parser output
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 
 #[cfg(test)]
 mod tests {
@@ -47,7 +47,10 @@ mod tests {
 
         assert_eq!(expected_name, "Baston Labatte");
         assert_eq!(expected_editorname, "Baston 2D (Example Character)");
-        assert_eq!(expected_skeleton, "res://castagne/examples/fighters/baston/Baston-Model.casp");
+        assert_eq!(
+            expected_skeleton,
+            "res://castagne/examples/fighters/baston/Baston-Model.casp"
+        );
     }
 
     /// Test state count
@@ -62,7 +65,11 @@ mod tests {
         println!("Golden master has {} states", state_count);
 
         // Should have a significant number of states
-        assert!(state_count > 100, "Expected many states, got {}", state_count);
+        assert!(
+            state_count > 100,
+            "Expected many states, got {}",
+            state_count
+        );
 
         // Check for specific states we know should exist
         assert!(states["5H"].is_object(), "State 5H should exist");
@@ -97,7 +104,8 @@ mod tests {
         let golden_json = load_golden_master("golden_masters/Baston-Model.json");
 
         // Check spritesheet data
-        let spritesheet = &golden_json["transformed_data"]["Graphics"]["Spritesheets"]["TemporaryStickman"];
+        let spritesheet =
+            &golden_json["transformed_data"]["Graphics"]["Spritesheets"]["TemporaryStickman"];
 
         let sprites_x = spritesheet["SpritesX"].as_i64().unwrap();
         let sprites_y = spritesheet["SpritesY"].as_i64().unwrap();
@@ -179,7 +187,10 @@ mod tests {
 
         assert_eq!(expected_name, "Baston Labatte");
         assert_eq!(expected_editorname, "Baston Labatte (Custom Character)");
-        assert_eq!(expected_skeleton, "res://castagne/examples/fighters/baston/Baston-Model.casp");
+        assert_eq!(
+            expected_skeleton,
+            "res://castagne/examples/fighters/baston/Baston-Model.casp"
+        );
     }
 
     /// Test TutorialBaston state count
@@ -193,7 +204,11 @@ mod tests {
         println!("TutorialBaston has {} states", state_count);
 
         // Should have a significant number of states
-        assert!(state_count > 100, "Expected many states, got {}", state_count);
+        assert!(
+            state_count > 100,
+            "Expected many states, got {}",
+            state_count
+        );
 
         // Check for common states
         assert!(states["Common"].is_object(), "State Common should exist");
@@ -207,8 +222,14 @@ mod tests {
         let golden_json = load_golden_master("golden_masters/TutorialBaston.json");
 
         let subentities = &golden_json["subentities"];
-        assert!(subentities["Base"].is_object(), "Base subentity should exist");
-        assert!(subentities["Projectile"].is_object(), "Projectile subentity should exist");
+        assert!(
+            subentities["Base"].is_object(),
+            "Base subentity should exist"
+        );
+        assert!(
+            subentities["Projectile"].is_object(),
+            "Projectile subentity should exist"
+        );
 
         println!("✓ TutorialBaston has Base and Projectile subentities");
     }
@@ -222,14 +243,22 @@ mod tests {
         let init_state = &states["Init"];
 
         // Check state has required fields
-        assert!(init_state["Parent"].is_null() || init_state["Parent"].is_string(),
-                "State should have Parent field");
-        assert!(init_state["Type"].is_null() || init_state["Type"].is_string(),
-                "State should have Type field");
-        assert!(init_state["TransitionFlags"].is_array(),
-                "State should have TransitionFlags array");
-        assert!(init_state["Phases"].is_object(),
-                "State should have Phases object");
+        assert!(
+            init_state["Parent"].is_null() || init_state["Parent"].is_string(),
+            "State should have Parent field"
+        );
+        assert!(
+            init_state["Type"].is_null() || init_state["Type"].is_string(),
+            "State should have Type field"
+        );
+        assert!(
+            init_state["TransitionFlags"].is_array(),
+            "State should have TransitionFlags array"
+        );
+        assert!(
+            init_state["Phases"].is_object(),
+            "State should have Phases object"
+        );
 
         println!("✓ State structure validated");
     }
@@ -243,19 +272,37 @@ mod tests {
 
         // Variables should have Name, Value, Type, Subtype, Mutability fields
         for (var_name, var_data) in variables.as_object().unwrap() {
-            assert!(var_data["Name"].is_string() || var_data["Name"].is_null(),
-                    "Variable {} should have Name field", var_name);
-            assert!(var_data["Value"].is_string(),
-                    "Variable {} should have Value field", var_name);
-            assert!(var_data["Type"].is_string(),
-                    "Variable {} should have Type field", var_name);
-            assert!(var_data["Subtype"].is_string(),
-                    "Variable {} should have Subtype field", var_name);
-            assert!(var_data["Mutability"].is_string(),
-                    "Variable {} should have Mutability field", var_name);
+            assert!(
+                var_data["Name"].is_string() || var_data["Name"].is_null(),
+                "Variable {} should have Name field",
+                var_name
+            );
+            assert!(
+                var_data["Value"].is_string(),
+                "Variable {} should have Value field",
+                var_name
+            );
+            assert!(
+                var_data["Type"].is_string(),
+                "Variable {} should have Type field",
+                var_name
+            );
+            assert!(
+                var_data["Subtype"].is_string(),
+                "Variable {} should have Subtype field",
+                var_name
+            );
+            assert!(
+                var_data["Mutability"].is_string(),
+                "Variable {} should have Mutability field",
+                var_name
+            );
         }
 
-        println!("✓ Variable structures validated for {} variables", variables.as_object().unwrap().len());
+        println!(
+            "✓ Variable structures validated for {} variables",
+            variables.as_object().unwrap().len()
+        );
     }
 
     /// Test transformed_data completeness
@@ -267,17 +314,28 @@ mod tests {
 
         // Check for key modules (based on actual Baston-Model.json structure)
         let required_modules = vec![
-            "AttacksTypes", "PhysicsMovement", "Graphics", "Anims",
-            "PhysicsSystem", "AttacksMechanics", "UI"
+            "AttacksTypes",
+            "PhysicsMovement",
+            "Graphics",
+            "Anims",
+            "PhysicsSystem",
+            "AttacksMechanics",
+            "UI",
         ];
 
         for module_name in required_modules {
-            assert!(transformed_data[module_name].is_object(),
-                    "Transformed data should have {} module", module_name);
+            assert!(
+                transformed_data[module_name].is_object(),
+                "Transformed data should have {} module",
+                module_name
+            );
 
             // Each module should have at least a Defines section
-            assert!(transformed_data[module_name]["Defines"].is_object(),
-                    "Module {} should have Defines section", module_name);
+            assert!(
+                transformed_data[module_name]["Defines"].is_object(),
+                "Module {} should have Defines section",
+                module_name
+            );
         }
 
         println!("✓ All required transformed_data modules present");
@@ -291,12 +349,17 @@ mod tests {
         let physics = &golden_json["transformed_data"]["PhysicsMovement"]["Defines"];
 
         // Check for key physics parameters (using actual keys from the golden master)
-        assert!(physics["MOVE_AirActionsMax"].is_i64() || physics["MOVE_AirActionsMax"].is_f64(),
-                "Should have MOVE_AirActionsMax");
+        assert!(
+            physics["MOVE_AirActionsMax"].is_i64() || physics["MOVE_AirActionsMax"].is_f64(),
+            "Should have MOVE_AirActionsMax"
+        );
 
         let define_count = physics.as_object().unwrap().len();
         println!("  PhysicsMovement has {} defines", define_count);
-        assert!(define_count > 10, "PhysicsMovement should have many defines");
+        assert!(
+            define_count > 10,
+            "PhysicsMovement should have many defines"
+        );
 
         println!("✓ Physics module data validated");
     }
@@ -315,11 +378,31 @@ mod tests {
             let golden_json = load_golden_master(file);
 
             // Validate basic structure
-            assert!(golden_json["metadata"].is_object(), "{}: should have metadata", file);
-            assert!(golden_json["variables"].is_object(), "{}: should have variables", file);
-            assert!(golden_json["states"].is_object(), "{}: should have states", file);
-            assert!(golden_json["subentities"].is_object(), "{}: should have subentities", file);
-            assert!(golden_json["transformed_data"].is_object(), "{}: should have transformed_data", file);
+            assert!(
+                golden_json["metadata"].is_object(),
+                "{}: should have metadata",
+                file
+            );
+            assert!(
+                golden_json["variables"].is_object(),
+                "{}: should have variables",
+                file
+            );
+            assert!(
+                golden_json["states"].is_object(),
+                "{}: should have states",
+                file
+            );
+            assert!(
+                golden_json["subentities"].is_object(),
+                "{}: should have subentities",
+                file
+            );
+            assert!(
+                golden_json["transformed_data"].is_object(),
+                "{}: should have transformed_data",
+                file
+            );
 
             // Count and report
             let state_count = golden_json["states"].as_object().unwrap().len();
@@ -335,8 +418,8 @@ mod tests {
 
     // Helper function to load and parse golden master JSON
     fn load_golden_master(path: &str) -> Value {
-        let json_content = fs::read_to_string(path)
-            .expect(&format!("Failed to load golden master: {}", path));
+        let json_content =
+            fs::read_to_string(path).expect(&format!("Failed to load golden master: {}", path));
         serde_json::from_str(&json_content)
             .expect(&format!("Failed to parse golden master JSON: {}", path))
     }

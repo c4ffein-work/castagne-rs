@@ -13,8 +13,8 @@
 //! - Phase complexity metrics
 //! - Phase naming conventions
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 
 #[cfg(test)]
 mod tests {
@@ -40,7 +40,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let mut phase_types: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut phase_types: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(phases) = state_data["Phases"].as_object() {
@@ -67,13 +68,16 @@ mod tests {
         let states = golden["states"].as_object().unwrap();
 
         let standard_phases = vec!["Init", "Action", "Reaction", "Freeze", "Manual", "AI"];
-        let mut phase_presence: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut phase_presence: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(phases) = state_data["Phases"].as_object() {
                 for standard_phase in &standard_phases {
                     if phases.contains_key(*standard_phase) {
-                        *phase_presence.entry(standard_phase.to_string()).or_insert(0) += 1;
+                        *phase_presence
+                            .entry(standard_phase.to_string())
+                            .or_insert(0) += 1;
                     }
                 }
             }
@@ -93,7 +97,16 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let standard_phases = vec!["Init", "Action", "Reaction", "Freeze", "Manual", "AI", "Subentity", "Halt"];
+        let standard_phases = vec![
+            "Init",
+            "Action",
+            "Reaction",
+            "Freeze",
+            "Manual",
+            "AI",
+            "Subentity",
+            "Halt",
+        ];
         let mut custom_phases: std::collections::HashSet<String> = std::collections::HashSet::new();
 
         for (_, state_data) in states {
@@ -135,8 +148,14 @@ mod tests {
         }
 
         println!("✓ Phase coverage:");
-        println!("  States without Phases field: {}", states_without_phases.len());
-        println!("  States with empty Phases: {}", states_with_empty_phases.len());
+        println!(
+            "  States without Phases field: {}",
+            states_without_phases.len()
+        );
+        println!(
+            "  States with empty Phases: {}",
+            states_with_empty_phases.len()
+        );
 
         if !states_with_empty_phases.is_empty() && states_with_empty_phases.len() <= 5 {
             println!("  Examples: {:?}", states_with_empty_phases);
@@ -148,7 +167,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let mut phase_counts: std::collections::HashMap<usize, usize> = std::collections::HashMap::new();
+        let mut phase_counts: std::collections::HashMap<usize, usize> =
+            std::collections::HashMap::new();
         let mut max_phases = 0;
         let mut max_phases_state = String::new();
 
@@ -172,7 +192,10 @@ mod tests {
             println!("  {} phases: {} states", num_phases, state_count);
         }
 
-        println!("  Max phases in single state: {} ({})", max_phases, max_phases_state);
+        println!(
+            "  Max phases in single state: {} ({})",
+            max_phases, max_phases_state
+        );
     }
 
     // ============================================================================
@@ -213,7 +236,10 @@ mod tests {
             let avg = total as f64 / action_counts.len() as f64;
             let max = action_counts.iter().max().unwrap_or(&0);
 
-            println!("  {}: total={}, avg={:.1}, max={}", phase_type, total, avg, max);
+            println!(
+                "  {}: total={}, avg={:.1}, max={}",
+                phase_type, total, avg, max
+            );
         }
     }
 
@@ -222,8 +248,10 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let mut empty_by_phase_type: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
-        let mut total_by_phase_type: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut empty_by_phase_type: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
+        let mut total_by_phase_type: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(phases) = state_data["Phases"].as_object() {
@@ -244,7 +272,10 @@ mod tests {
             let empty = empty_by_phase_type.get(phase_type).unwrap_or(&0);
             let percentage = (*empty as f64 / *total as f64) * 100.0;
             if *empty > 0 {
-                println!("  {}: {}/{} empty ({:.1}%)", phase_type, empty, total, percentage);
+                println!(
+                    "  {}: {}/{} empty ({:.1}%)",
+                    phase_type, empty, total, percentage
+                );
             }
         }
     }
@@ -281,7 +312,11 @@ mod tests {
         };
 
         println!("✓ Init phase usage:");
-        println!("  States with Init phase: {}/{}", states_with_init, states.len());
+        println!(
+            "  States with Init phase: {}/{}",
+            states_with_init,
+            states.len()
+        );
         println!("  Average actions in Init: {:.1}", avg_init_actions);
         println!("  Total Init actions: {}", total_init_actions);
     }
@@ -291,7 +326,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let mut init_functions: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut init_functions: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(phases) = state_data["Phases"].as_object() {
@@ -365,7 +401,8 @@ mod tests {
         let states = golden["states"].as_object().unwrap();
 
         let mut states_with_reaction = 0;
-        let mut reaction_functions: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut reaction_functions: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(phases) = state_data["Phases"].as_object() {
@@ -406,7 +443,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let mut all_phase_names: std::collections::HashSet<String> = std::collections::HashSet::new();
+        let mut all_phase_names: std::collections::HashSet<String> =
+            std::collections::HashSet::new();
         let mut pascal_case = 0;
         let mut camel_case = 0;
         let mut uppercase = 0;
@@ -419,12 +457,18 @@ mod tests {
 
                     // Categorize naming style
                     if phase_name.chars().next().unwrap_or('a').is_uppercase() {
-                        if phase_name.chars().all(|c| c.is_uppercase() || !c.is_alphabetic()) {
+                        if phase_name
+                            .chars()
+                            .all(|c| c.is_uppercase() || !c.is_alphabetic())
+                        {
                             uppercase += 1;
                         } else {
                             pascal_case += 1;
                         }
-                    } else if phase_name.chars().all(|c| c.is_lowercase() || !c.is_alphabetic()) {
+                    } else if phase_name
+                        .chars()
+                        .all(|c| c.is_lowercase() || !c.is_alphabetic())
+                    {
                         lowercase += 1;
                     } else {
                         camel_case += 1;
@@ -450,7 +494,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let mut phase_combinations: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut phase_combinations: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(phases) = state_data["Phases"].as_object() {
@@ -519,7 +564,8 @@ mod tests {
             let golden = load_golden_master(file_path);
             let states = golden["states"].as_object().unwrap();
 
-            let mut phase_types: std::collections::HashSet<String> = std::collections::HashSet::new();
+            let mut phase_types: std::collections::HashSet<String> =
+                std::collections::HashSet::new();
 
             for (_, state_data) in states {
                 if let Some(phases) = state_data["Phases"].as_object() {

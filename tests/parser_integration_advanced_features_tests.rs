@@ -14,8 +14,8 @@
 //! - Metadata edge cases
 //! - Multi-file coordination patterns
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 
 #[cfg(test)]
 mod tests {
@@ -86,9 +86,13 @@ mod tests {
                                 for arg in args {
                                     if let Some(arg_str) = arg.as_str() {
                                         // Look for mathematical or logical operators
-                                        if arg_str.contains('+') || arg_str.contains('-') ||
-                                           arg_str.contains('*') || arg_str.contains('/') ||
-                                           arg_str.contains("&&") || arg_str.contains("||") {
+                                        if arg_str.contains('+')
+                                            || arg_str.contains('-')
+                                            || arg_str.contains('*')
+                                            || arg_str.contains('/')
+                                            || arg_str.contains("&&")
+                                            || arg_str.contains("||")
+                                        {
                                             expression_count += 1;
                                             expression_patterns.insert(arg_str.to_string());
                                         }
@@ -197,7 +201,9 @@ mod tests {
                 // Validate it's a recognized bool format
                 assert!(
                     ["true", "false", "1", "0", "null"].contains(&value.as_str()),
-                    "Variable {} has unrecognized bool format: {}", var_name, value
+                    "Variable {} has unrecognized bool format: {}",
+                    var_name,
+                    value
                 );
 
                 *bool_formats.entry(value).or_insert(0) += 1;
@@ -262,8 +268,12 @@ mod tests {
 
                 if value != "null" {
                     let parts: Vec<&str> = value.split(',').map(|s| s.trim()).collect();
-                    assert_eq!(parts.len(), 2,
-                        "Vec2 {} should have exactly 2 components", var_name);
+                    assert_eq!(
+                        parts.len(),
+                        2,
+                        "Vec2 {} should have exactly 2 components",
+                        var_name
+                    );
 
                     let x = parts[0].parse::<f64>().expect("Vec2 x should be numeric");
                     let y = parts[1].parse::<f64>().expect("Vec2 y should be numeric");
@@ -282,7 +292,10 @@ mod tests {
         println!("✓ Vec2 component validation complete");
         println!("  Total Vec2s: {}", vec2_count);
         println!("  Zero vectors: {}", zero_vectors);
-        println!("  Vectors with negative components: {}", negative_component_vectors);
+        println!(
+            "  Vectors with negative components: {}",
+            negative_component_vectors
+        );
     }
 
     #[test]
@@ -300,15 +313,19 @@ mod tests {
 
                 if value != "null" {
                     let parts: Vec<&str> = value.split(',').map(|s| s.trim()).collect();
-                    assert_eq!(parts.len(), 3,
-                        "Vec3 {} should have exactly 3 components", var_name);
+                    assert_eq!(
+                        parts.len(),
+                        3,
+                        "Vec3 {} should have exactly 3 components",
+                        var_name
+                    );
 
                     let x = parts[0].parse::<f64>().expect("Vec3 x should be numeric");
                     let y = parts[1].parse::<f64>().expect("Vec3 y should be numeric");
                     let z = parts[2].parse::<f64>().expect("Vec3 z should be numeric");
 
                     // Check if it's a unit vector (length ~= 1.0)
-                    let length = (x*x + y*y + z*z).sqrt();
+                    let length = (x * x + y * y + z * z).sqrt();
                     if (length - 1.0).abs() < 0.01 {
                         unit_vectors += 1;
                     }
@@ -394,7 +411,9 @@ mod tests {
                     break;
                 }
 
-                if depth > 20 { break; }
+                if depth > 20 {
+                    break;
+                }
             }
 
             *depth_distribution.entry(depth).or_insert(0) += 1;
@@ -427,9 +446,15 @@ mod tests {
         }
 
         println!("✓ Inheritance override detection validated");
-        println!("  Common states (potential overrides): {}", overridden_states.len());
+        println!(
+            "  Common states (potential overrides): {}",
+            overridden_states.len()
+        );
         if !overridden_states.is_empty() {
-            println!("  Examples: {:?}", overridden_states.iter().take(5).collect::<Vec<_>>());
+            println!(
+                "  Examples: {:?}",
+                overridden_states.iter().take(5).collect::<Vec<_>>()
+            );
         }
     }
 
@@ -461,7 +486,10 @@ mod tests {
                 }
 
                 // Check for special characters
-                if value.chars().any(|c| !c.is_alphanumeric() && c != ' ' && c != '_' && c != '-') {
+                if value
+                    .chars()
+                    .any(|c| !c.is_alphanumeric() && c != ' ' && c != '_' && c != '-')
+                {
                     *string_stats.get_mut("special_chars").unwrap() += 1;
                 }
             }
@@ -481,7 +509,10 @@ mod tests {
         // Check filepath handling
         if let Some(filepath) = metadata["filepath"].as_str() {
             // Validate filepath doesn't have problematic characters
-            assert!(!filepath.contains("\\\\"), "Filepath should use forward slashes");
+            assert!(
+                !filepath.contains("\\\\"),
+                "Filepath should use forward slashes"
+            );
             println!("✓ Filepath: {}", filepath);
         }
 
@@ -526,7 +557,9 @@ mod tests {
             if !metadata["author"].is_null() && metadata["author"].as_str().unwrap_or("") != "" {
                 *field_presence.get_mut("author").unwrap() += 1;
             }
-            if !metadata["description"].is_null() && metadata["description"].as_str().unwrap_or("") != "" {
+            if !metadata["description"].is_null()
+                && metadata["description"].as_str().unwrap_or("") != ""
+            {
                 *field_presence.get_mut("description").unwrap() += 1;
             }
             if !metadata["skeleton"].is_null() {
@@ -571,8 +604,10 @@ mod tests {
         let derived_vars = baston_2d["variables"].as_object().unwrap();
 
         // Child should have at least as many variables as parent
-        assert!(derived_vars.len() >= model_vars.len(),
-            "Child should inherit all parent variables");
+        assert!(
+            derived_vars.len() >= model_vars.len(),
+            "Child should inherit all parent variables"
+        );
 
         // Count how many parent variables exist in child
         let mut inherited_count = 0;
@@ -641,7 +676,8 @@ mod tests {
                     if let Some(actions) = phase_data["Actions"].as_array() {
                         for action in actions {
                             if let Some(func_name) = action["function"].as_str() {
-                                let entry = function_catalog.entry(func_name.to_string()).or_insert(0);
+                                let entry =
+                                    function_catalog.entry(func_name.to_string()).or_insert(0);
                                 *entry += 1;
                             }
                         }

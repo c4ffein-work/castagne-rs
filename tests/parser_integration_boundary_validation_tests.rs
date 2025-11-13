@@ -14,8 +14,8 @@
 //! - State machine validation
 //! - Cross-reference integrity
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 use std::io::Write as IoWrite;
 use tempfile::NamedTempFile;
 
@@ -36,7 +36,8 @@ mod tests {
 
     fn create_temp_casp(content: &str) -> NamedTempFile {
         let mut file = NamedTempFile::new().expect("Failed to create temp file");
-        file.write_all(content.as_bytes()).expect("Failed to write to temp file");
+        file.write_all(content.as_bytes())
+            .expect("Failed to write to temp file");
         file
     }
 
@@ -66,8 +67,14 @@ mod tests {
         println!("  Min int value: {}", min_int);
 
         // Verify we can handle reasonable ranges
-        assert!(max_int < i32::MAX as i64 * 10, "Int values should be reasonable");
-        assert!(min_int > i32::MIN as i64 * 10, "Int values should be reasonable");
+        assert!(
+            max_int < i32::MAX as i64 * 10,
+            "Int values should be reasonable"
+        );
+        assert!(
+            min_int > i32::MIN as i64 * 10,
+            "Int values should be reasonable"
+        );
     }
 
     #[test]
@@ -147,7 +154,10 @@ mod tests {
         // All states should have non-empty names
         for state_name in states.keys() {
             assert!(!state_name.is_empty(), "State names must not be empty");
-            assert!(!state_name.trim().is_empty(), "State names must not be whitespace only");
+            assert!(
+                !state_name.trim().is_empty(),
+                "State names must not be whitespace only"
+            );
         }
 
         println!("✓ Empty state names validated (none found)");
@@ -158,7 +168,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let variables = golden["variables"].as_object().unwrap();
 
-        let mut null_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut null_counts: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, var_data) in variables {
             let var_type = var_data["Type"].as_str().unwrap_or("").to_string();
@@ -199,8 +210,14 @@ mod tests {
         println!("✓ Empty phase arrays validated");
         println!("  Total phases: {}", total_phases);
         println!("  Phases with empty actions: {}", empty_action_count);
-        println!("  Percentage empty: {:.1}%",
-                 if total_phases > 0 { (empty_action_count as f64 / total_phases as f64) * 100.0 } else { 0.0 });
+        println!(
+            "  Percentage empty: {:.1}%",
+            if total_phases > 0 {
+                (empty_action_count as f64 / total_phases as f64) * 100.0
+            } else {
+                0.0
+            }
+        );
     }
 
     #[test]
@@ -219,7 +236,10 @@ mod tests {
             }
         }
 
-        println!("✓ Empty string values validated ({} found)", empty_strings.len());
+        println!(
+            "✓ Empty string values validated ({} found)",
+            empty_strings.len()
+        );
         if !empty_strings.is_empty() && empty_strings.len() <= 5 {
             println!("  Examples: {:?}", empty_strings);
         }
@@ -240,11 +260,18 @@ mod tests {
             let mut chain_length = 0;
 
             while let Some(state_data) = states.get(&current) {
-                assert!(visited.insert(current.clone()),
-                       "Circular parent chain detected starting from: {}", state_name);
+                assert!(
+                    visited.insert(current.clone()),
+                    "Circular parent chain detected starting from: {}",
+                    state_name
+                );
 
                 chain_length += 1;
-                assert!(chain_length < 100, "Parent chain too deep for state: {}", state_name);
+                assert!(
+                    chain_length < 100,
+                    "Parent chain too deep for state: {}",
+                    state_name
+                );
 
                 if let Some(parent) = state_data["Parent"].as_str() {
                     current = parent.to_string();
@@ -262,7 +289,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let mut depth_distribution: std::collections::HashMap<usize, usize> = std::collections::HashMap::new();
+        let mut depth_distribution: std::collections::HashMap<usize, usize> =
+            std::collections::HashMap::new();
         let mut max_depth = 0;
         let mut deepest_state = String::new();
 
@@ -283,7 +311,9 @@ mod tests {
                     break;
                 }
 
-                if depth > 50 { break; } // Safety limit
+                if depth > 50 {
+                    break;
+                } // Safety limit
             }
 
             *depth_distribution.entry(depth).or_insert(0) += 1;
@@ -340,9 +370,15 @@ mod tests {
             }
         }
 
-        println!("✓ Special characters in variable names: {} found", special_char_vars.len());
+        println!(
+            "✓ Special characters in variable names: {} found",
+            special_char_vars.len()
+        );
         if !special_char_vars.is_empty() && special_char_vars.len() <= 5 {
-            println!("  Examples: {:?}", special_char_vars.iter().take(5).collect::<Vec<_>>());
+            println!(
+                "  Examples: {:?}",
+                special_char_vars.iter().take(5).collect::<Vec<_>>()
+            );
         }
     }
 
@@ -353,7 +389,8 @@ mod tests {
 
         let mut longest_string = String::new();
         let mut longest_var = String::new();
-        let mut length_distribution: std::collections::HashMap<&str, usize> = std::collections::HashMap::new();
+        let mut length_distribution: std::collections::HashMap<&str, usize> =
+            std::collections::HashMap::new();
 
         for (var_name, var_data) in variables {
             if var_data["Type"].as_str().unwrap_or("") == "Str" {
@@ -376,7 +413,11 @@ mod tests {
         }
 
         println!("✓ String length extremes:");
-        println!("  Longest: {} ({} chars)", longest_var, longest_string.len());
+        println!(
+            "  Longest: {} ({} chars)",
+            longest_var,
+            longest_string.len()
+        );
         println!("  Distribution:");
         for (category, count) in length_distribution.iter() {
             println!("    {}: {}", category, count);
@@ -472,7 +513,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let mut arg_distribution: std::collections::HashMap<usize, usize> = std::collections::HashMap::new();
+        let mut arg_distribution: std::collections::HashMap<usize, usize> =
+            std::collections::HashMap::new();
         let mut max_args = 0;
         let mut max_args_function = String::new();
 
@@ -528,8 +570,11 @@ mod tests {
             }
         }
 
-        assert!(missing_parents.is_empty(),
-               "States reference non-existent parents: {:?}", missing_parents);
+        assert!(
+            missing_parents.is_empty(),
+            "States reference non-existent parents: {:?}",
+            missing_parents
+        );
 
         println!("✓ All parent references valid");
     }
@@ -552,8 +597,11 @@ mod tests {
             }
         }
 
-        assert!(case_conflicts.is_empty(),
-               "Case-sensitive variable name conflicts: {:?}", case_conflicts);
+        assert!(
+            case_conflicts.is_empty(),
+            "Case-sensitive variable name conflicts: {:?}",
+            case_conflicts
+        );
 
         println!("✓ Variable name consistency validated");
     }
@@ -576,8 +624,11 @@ mod tests {
             }
         }
 
-        assert!(case_conflicts.is_empty(),
-               "Case-sensitive state name conflicts: {:?}", case_conflicts);
+        assert!(
+            case_conflicts.is_empty(),
+            "Case-sensitive state name conflicts: {:?}",
+            case_conflicts
+        );
 
         println!("✓ State name consistency validated");
     }
@@ -600,7 +651,12 @@ mod tests {
                 println!("  {}: {} KB", file_path, size_kb);
 
                 // Files should be reasonable size (not too large)
-                assert!(size_kb < 10_000, "File {} is too large: {} KB", file_path, size_kb);
+                assert!(
+                    size_kb < 10_000,
+                    "File {} is too large: {} KB",
+                    file_path,
+                    size_kb
+                );
             }
         }
 
@@ -621,9 +677,18 @@ mod tests {
         println!("  Modules: {}", modules_count);
 
         // Verify reasonable sizes
-        assert!(states_count > 0 && states_count < 10000, "States count should be reasonable");
-        assert!(vars_count >= 0 && vars_count < 10000, "Variables count should be reasonable");
-        assert!(modules_count > 0 && modules_count < 100, "Modules count should be reasonable");
+        assert!(
+            states_count > 0 && states_count < 10000,
+            "States count should be reasonable"
+        );
+        assert!(
+            vars_count >= 0 && vars_count < 10000,
+            "Variables count should be reasonable"
+        );
+        assert!(
+            modules_count > 0 && modules_count < 100,
+            "Modules count should be reasonable"
+        );
     }
 
     #[test]
@@ -632,18 +697,16 @@ mod tests {
 
         fn max_depth(value: &Value, current: usize) -> usize {
             match value {
-                Value::Object(map) => {
-                    map.values()
-                        .map(|v| max_depth(v, current + 1))
-                        .max()
-                        .unwrap_or(current)
-                }
-                Value::Array(arr) => {
-                    arr.iter()
-                        .map(|v| max_depth(v, current + 1))
-                        .max()
-                        .unwrap_or(current)
-                }
+                Value::Object(map) => map
+                    .values()
+                    .map(|v| max_depth(v, current + 1))
+                    .max()
+                    .unwrap_or(current),
+                Value::Array(arr) => arr
+                    .iter()
+                    .map(|v| max_depth(v, current + 1))
+                    .max()
+                    .unwrap_or(current),
                 _ => current,
             }
         }
@@ -664,9 +727,18 @@ mod tests {
 
         // Check metadata has required fields
         let metadata = &golden["metadata"];
-        assert!(metadata["name"].is_string(), "Missing required metadata.name");
-        assert!(metadata["editorname"].is_string(), "Missing required metadata.editorname");
-        assert!(metadata["filepath"].is_string(), "Missing required metadata.filepath");
+        assert!(
+            metadata["name"].is_string(),
+            "Missing required metadata.name"
+        );
+        assert!(
+            metadata["editorname"].is_string(),
+            "Missing required metadata.editorname"
+        );
+        assert!(
+            metadata["filepath"].is_string(),
+            "Missing required metadata.filepath"
+        );
 
         println!("✓ All required fields present");
     }
@@ -690,12 +762,16 @@ mod tests {
                 "Int" => value.parse::<i64>().is_ok(),
                 "Float" => value.parse::<f64>().is_ok(),
                 "Bool" => ["true", "false", "0", "1"].contains(&value),
-                "Vec2" => value.split(',').count() == 2 &&
-                         value.split(',').all(|s| s.trim().parse::<f64>().is_ok()),
-                "Vec3" => value.split(',').count() == 3 &&
-                         value.split(',').all(|s| s.trim().parse::<f64>().is_ok()),
+                "Vec2" => {
+                    value.split(',').count() == 2
+                        && value.split(',').all(|s| s.trim().parse::<f64>().is_ok())
+                }
+                "Vec3" => {
+                    value.split(',').count() == 3
+                        && value.split(',').all(|s| s.trim().parse::<f64>().is_ok())
+                }
                 "Str" | "" => true, // String can be anything
-                _ => true, // Unknown types are accepted
+                _ => true,          // Unknown types are accepted
             };
 
             if !valid {
@@ -704,7 +780,10 @@ mod tests {
         }
 
         if !type_mismatches.is_empty() && type_mismatches.len() <= 5 {
-            println!("  Note: Found {} potential type mismatches (may be valid):", type_mismatches.len());
+            println!(
+                "  Note: Found {} potential type mismatches (may be valid):",
+                type_mismatches.len()
+            );
             for mismatch in type_mismatches.iter().take(5) {
                 println!("    {}", mismatch);
             }

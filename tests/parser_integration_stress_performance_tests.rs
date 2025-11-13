@@ -13,8 +13,8 @@
 //! - Memory efficiency validation
 //! - Parser state consistency
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 use std::io::Write as IoWrite;
 use tempfile::NamedTempFile;
 
@@ -35,7 +35,8 @@ mod tests {
 
     fn create_temp_casp(content: &str) -> NamedTempFile {
         let mut file = NamedTempFile::new().expect("Failed to create temp file");
-        file.write_all(content.as_bytes()).expect("Failed to write to temp file");
+        file.write_all(content.as_bytes())
+            .expect("Failed to write to temp file");
         file
     }
 
@@ -69,7 +70,10 @@ mod tests {
 
         // Verify parser can handle states with many phases
         let max_phases = phase_counts.first().map(|&(_, count)| count).unwrap_or(0);
-        assert!(max_phases < 1000, "Parser should handle up to 1000 phases per state");
+        assert!(
+            max_phases < 1000,
+            "Parser should handle up to 1000 phases per state"
+        );
     }
 
     #[test]
@@ -110,7 +114,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let variables = golden["variables"].as_object().unwrap();
 
-        let mut type_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut type_counts: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, var_data) in variables {
             let var_type = var_data["Type"].as_str().unwrap_or("Unknown").to_string();
@@ -125,7 +130,10 @@ mod tests {
         }
 
         // Verify parser can handle many variables
-        assert!(variables.len() < 100000, "Parser should handle up to 100k variables");
+        assert!(
+            variables.len() < 100000,
+            "Parser should handle up to 100k variables"
+        );
     }
 
     #[test]
@@ -172,13 +180,28 @@ mod tests {
                 let golden = load_golden_master(file_path);
 
                 // Verify basic structure
-                assert!(golden["metadata"].is_object(), "Missing metadata in {}", file_path);
-                assert!(golden["states"].is_object(), "Missing states in {}", file_path);
-                assert!(golden["variables"].is_object(), "Missing variables in {}", file_path);
+                assert!(
+                    golden["metadata"].is_object(),
+                    "Missing metadata in {}",
+                    file_path
+                );
+                assert!(
+                    golden["states"].is_object(),
+                    "Missing states in {}",
+                    file_path
+                );
+                assert!(
+                    golden["variables"].is_object(),
+                    "Missing variables in {}",
+                    file_path
+                );
             }
         }
 
-        println!("✓ Multiple file loads successful ({} files × 5 iterations)", files.len());
+        println!(
+            "✓ Multiple file loads successful ({} files × 5 iterations)",
+            files.len()
+        );
     }
 
     #[test]
@@ -190,8 +213,15 @@ mod tests {
         let json1 = serde_json::to_string(&golden1).unwrap();
         let json2 = serde_json::to_string(&golden2).unwrap();
 
-        assert_eq!(json1.len(), json2.len(), "Repeated parsing should give same length");
-        assert_eq!(json1, json2, "Repeated parsing should give identical results");
+        assert_eq!(
+            json1.len(),
+            json2.len(),
+            "Repeated parsing should give same length"
+        );
+        assert_eq!(
+            json1, json2,
+            "Repeated parsing should give identical results"
+        );
 
         println!("✓ JSON parsing consistency verified");
     }
@@ -239,7 +269,8 @@ mod tests {
         let states = golden["states"].as_object().unwrap();
 
         let mut function_names = std::collections::HashSet::new();
-        let mut function_frequency: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut function_frequency: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(phases) = state_data["Phases"].as_object() {
@@ -303,7 +334,10 @@ mod tests {
         println!("  Total arguments: {}", total_args);
         println!("  Complex actions (3+ args): {}", complex_actions);
         if total_actions > 0 {
-            println!("  Average args per action: {:.2}", total_args as f64 / total_actions as f64);
+            println!(
+                "  Average args per action: {:.2}",
+                total_args as f64 / total_actions as f64
+            );
         }
     }
 
@@ -317,12 +351,8 @@ mod tests {
 
         fn measure_depth(value: &Value) -> usize {
             match value {
-                Value::Object(map) => {
-                    1 + map.values().map(measure_depth).max().unwrap_or(0)
-                }
-                Value::Array(arr) => {
-                    1 + arr.iter().map(measure_depth).max().unwrap_or(0)
-                }
+                Value::Object(map) => 1 + map.values().map(measure_depth).max().unwrap_or(0),
+                Value::Array(arr) => 1 + arr.iter().map(measure_depth).max().unwrap_or(0),
                 _ => 1,
             }
         }
@@ -365,7 +395,9 @@ mod tests {
                     break;
                 }
 
-                if chain.len() > 100 { break; } // Safety limit
+                if chain.len() > 100 {
+                    break;
+                } // Safety limit
             }
 
             if chain.len() > 1 {
@@ -410,8 +442,14 @@ mod tests {
         println!("✓ String memory analysis:");
         println!("  String variables: {}", string_count);
         println!("  Total string data: {} bytes", total_string_size);
-        println!("  Average string size: {:.1} bytes",
-                 if string_count > 0 { total_string_size as f64 / string_count as f64 } else { 0.0 });
+        println!(
+            "  Average string size: {:.1} bytes",
+            if string_count > 0 {
+                total_string_size as f64 / string_count as f64
+            } else {
+                0.0
+            }
+        );
     }
 
     #[test]
@@ -432,7 +470,10 @@ mod tests {
             println!("  {}:", file_path);
             println!("    Compact: {} bytes", compact.len());
             println!("    Pretty: {} bytes", pretty.len());
-            println!("    Ratio: {:.1}x", pretty.len() as f64 / compact.len() as f64);
+            println!(
+                "    Ratio: {:.1}x",
+                pretty.len() as f64 / compact.len() as f64
+            );
         }
     }
 
@@ -467,8 +508,11 @@ mod tests {
             }
         }
 
-        assert!(invalid_states.is_empty(),
-               "Found invalid states: {:?}", invalid_states);
+        assert!(
+            invalid_states.is_empty(),
+            "Found invalid states: {:?}",
+            invalid_states
+        );
 
         println!("✓ All {} states have valid structure", states.len());
     }
@@ -499,8 +543,11 @@ mod tests {
             }
         }
 
-        assert!(invalid_vars.is_empty(),
-               "Found invalid variables: {:?}", invalid_vars);
+        assert!(
+            invalid_vars.is_empty(),
+            "Found invalid variables: {:?}",
+            invalid_vars
+        );
 
         println!("✓ All {} variables have valid structure", variables.len());
     }
@@ -521,25 +568,25 @@ mod tests {
                             total_actions += 1;
 
                             if !action.is_object() {
-                                invalid_actions.push(
-                                    format!("{}.{} action {}: not an object",
-                                           state_name, phase_name, i)
-                                );
+                                invalid_actions.push(format!(
+                                    "{}.{} action {}: not an object",
+                                    state_name, phase_name, i
+                                ));
                                 continue;
                             }
 
                             if !action.get("function").is_some() {
-                                invalid_actions.push(
-                                    format!("{}.{} action {}: missing function",
-                                           state_name, phase_name, i)
-                                );
+                                invalid_actions.push(format!(
+                                    "{}.{} action {}: missing function",
+                                    state_name, phase_name, i
+                                ));
                             }
 
                             if !action.get("args").is_some() {
-                                invalid_actions.push(
-                                    format!("{}.{} action {}: missing args",
-                                           state_name, phase_name, i)
-                                );
+                                invalid_actions.push(format!(
+                                    "{}.{} action {}: missing args",
+                                    state_name, phase_name, i
+                                ));
                             }
                         }
                     }
@@ -547,8 +594,11 @@ mod tests {
             }
         }
 
-        assert!(invalid_actions.is_empty(),
-               "Found invalid actions: {:?}", invalid_actions);
+        assert!(
+            invalid_actions.is_empty(),
+            "Found invalid actions: {:?}",
+            invalid_actions
+        );
 
         println!("✓ All {} actions have valid structure", total_actions);
     }
@@ -580,13 +630,17 @@ mod tests {
             total_variables += variables;
             total_modules += modules;
 
-            println!("  {}: {} states, {} vars, {} modules",
-                     file_path, states, variables, modules);
+            println!(
+                "  {}: {} states, {} vars, {} modules",
+                file_path, states, variables, modules
+            );
         }
 
         println!("✓ All golden masters parseable");
-        println!("  Total: {} states, {} variables, {} modules",
-                 total_states, total_variables, total_modules);
+        println!(
+            "  Total: {} states, {} variables, {} modules",
+            total_states, total_variables, total_modules
+        );
     }
 
     #[test]
@@ -601,8 +655,7 @@ mod tests {
         for file_path in &files {
             let golden = load_golden_master(file_path);
             let variables = golden["variables"].as_object().unwrap();
-            let var_names: std::collections::HashSet<String> =
-                variables.keys().cloned().collect();
+            let var_names: std::collections::HashSet<String> = variables.keys().cloned().collect();
             all_vars.push(var_names);
         }
 

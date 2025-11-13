@@ -13,8 +13,8 @@
 //! - State transition patterns
 //! - Frame data and timing
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 
 #[cfg(test)]
 mod tests {
@@ -129,8 +129,10 @@ mod tests {
         }
 
         println!("✓ Basic attacks analyzed");
-        println!("  Punches: {}, Kicks: {}, Generic attacks: {}",
-                 punch_count, kick_count, attack_count);
+        println!(
+            "  Punches: {}, Kicks: {}, Generic attacks: {}",
+            punch_count, kick_count, attack_count
+        );
     }
 
     #[test]
@@ -147,14 +149,18 @@ mod tests {
             if name_lower.contains("light") || name_lower.contains("weak") {
                 light_attacks += 1;
             }
-            if name_lower.contains("heavy") || name_lower.contains("strong") ||
-               name_lower.contains("hard") {
+            if name_lower.contains("heavy")
+                || name_lower.contains("strong")
+                || name_lower.contains("hard")
+            {
                 heavy_attacks += 1;
             }
         }
 
-        println!("✓ Attack strength variants: Light={}, Heavy={}",
-                 light_attacks, heavy_attacks);
+        println!(
+            "✓ Attack strength variants: Light={}, Heavy={}",
+            light_attacks, heavy_attacks
+        );
     }
 
     #[test]
@@ -167,8 +173,10 @@ mod tests {
 
         for state_name in states.keys() {
             let name_lower = state_name.to_lowercase();
-            if name_lower.contains("special") || name_lower.contains("super") ||
-               name_lower.contains("ultimate") {
+            if name_lower.contains("special")
+                || name_lower.contains("super")
+                || name_lower.contains("ultimate")
+            {
                 special_count += 1;
             }
         }
@@ -204,7 +212,10 @@ mod tests {
         }
 
         println!("✓ Hit reaction states analyzed");
-        println!("  Hit: {}, Hurt: {}, Stun: {}", hit_states, hurt_states, hitstun_states);
+        println!(
+            "  Hit: {}, Hurt: {}, Stun: {}",
+            hit_states, hurt_states, hitstun_states
+        );
     }
 
     #[test]
@@ -226,7 +237,10 @@ mod tests {
             }
         }
 
-        println!("✓ Hitstun variables: {}, Frame variables: {}", stun_vars, frame_vars);
+        println!(
+            "✓ Hitstun variables: {}, Frame variables: {}",
+            stun_vars, frame_vars
+        );
     }
 
     #[test]
@@ -248,8 +262,10 @@ mod tests {
             }
         }
 
-        println!("✓ Knockdown/wakeup states: Knockdown={}, Wakeup={}",
-                 knockdown_count, wakeup_count);
+        println!(
+            "✓ Knockdown/wakeup states: Knockdown={}, Wakeup={}",
+            knockdown_count, wakeup_count
+        );
     }
 
     // ============================================================================
@@ -275,7 +291,10 @@ mod tests {
             }
         }
 
-        println!("✓ Defensive states: Block={}, Guard={}", block_states, guard_states);
+        println!(
+            "✓ Defensive states: Block={}, Guard={}",
+            block_states, guard_states
+        );
     }
 
     #[test]
@@ -288,8 +307,10 @@ mod tests {
 
         for (var_name, _) in variables {
             let name_lower = var_name.to_lowercase();
-            if name_lower.contains("block") || name_lower.contains("guard") ||
-               name_lower.contains("defend") {
+            if name_lower.contains("block")
+                || name_lower.contains("guard")
+                || name_lower.contains("defend")
+            {
                 block_vars += 1;
             }
         }
@@ -323,8 +344,10 @@ mod tests {
         }
 
         println!("✓ State phase distribution:");
-        println!("  With phases: {}, Without phases: {}",
-                 states_with_phases, states_without_phases);
+        println!(
+            "  With phases: {}, Without phases: {}",
+            states_with_phases, states_without_phases
+        );
     }
 
     #[test]
@@ -343,7 +366,10 @@ mod tests {
             }
         }
 
-        println!("✓ Common phase names analyzed ({} unique)", phase_name_counts.len());
+        println!(
+            "✓ Common phase names analyzed ({} unique)",
+            phase_name_counts.len()
+        );
 
         // Show top 5 most common
         let mut sorted: Vec<_> = phase_name_counts.iter().collect();
@@ -374,8 +400,10 @@ mod tests {
             }
         }
 
-        println!("✓ State hierarchy: {} root states, {} child states",
-                 root_states, child_states);
+        println!(
+            "✓ State hierarchy: {} root states, {} child states",
+            root_states, child_states
+        );
     }
 
     // ============================================================================
@@ -392,8 +420,10 @@ mod tests {
 
         for (state_name, _) in states {
             let name_lower = state_name.to_lowercase();
-            if name_lower.contains("combo") || name_lower.contains("chain") ||
-               name_lower.contains("multi") {
+            if name_lower.contains("combo")
+                || name_lower.contains("chain")
+                || name_lower.contains("multi")
+            {
                 combo_states += 1;
             }
         }
@@ -415,14 +445,18 @@ mod tests {
             if name_lower.contains("combo") {
                 combo_vars += 1;
             }
-            if name_lower.contains("hitcount") || name_lower.contains("hit_count") ||
-               name_lower.contains("hits") {
+            if name_lower.contains("hitcount")
+                || name_lower.contains("hit_count")
+                || name_lower.contains("hits")
+            {
                 hit_count_vars += 1;
             }
         }
 
-        println!("✓ Combo tracking: Combo vars={}, Hit count vars={}",
-                 combo_vars, hit_count_vars);
+        println!(
+            "✓ Combo tracking: Combo vars={}, Hit count vars={}",
+            combo_vars, hit_count_vars
+        );
     }
 
     // ============================================================================
@@ -440,8 +474,10 @@ mod tests {
 
         for (var_name, _) in variables {
             let name_lower = var_name.to_lowercase();
-            if name_lower.contains("health") || name_lower.contains("hp") ||
-               name_lower.contains("life") {
+            if name_lower.contains("health")
+                || name_lower.contains("hp")
+                || name_lower.contains("life")
+            {
                 health_vars += 1;
             }
             if name_lower.contains("damage") || name_lower.contains("dmg") {
@@ -449,8 +485,10 @@ mod tests {
             }
         }
 
-        println!("✓ Health system: Health vars={}, Damage vars={}",
-                 health_vars, damage_vars);
+        println!(
+            "✓ Health system: Health vars={}, Damage vars={}",
+            health_vars, damage_vars
+        );
     }
 
     #[test]
@@ -463,8 +501,11 @@ mod tests {
 
         for (var_name, _) in variables {
             let name_lower = var_name.to_lowercase();
-            if name_lower.contains("meter") || name_lower.contains("gauge") ||
-               name_lower.contains("resource") || name_lower.contains("energy") {
+            if name_lower.contains("meter")
+                || name_lower.contains("gauge")
+                || name_lower.contains("resource")
+                || name_lower.contains("energy")
+            {
                 meter_vars += 1;
             }
         }
@@ -488,8 +529,10 @@ mod tests {
 
         for (var_name, var_data) in variables {
             let name_lower = var_name.to_lowercase();
-            if name_lower.contains("pos") || name_lower.contains("position") ||
-               name_lower.contains("location") {
+            if name_lower.contains("pos")
+                || name_lower.contains("position")
+                || name_lower.contains("location")
+            {
                 position_vars += 1;
             }
 
@@ -501,8 +544,10 @@ mod tests {
             }
         }
 
-        println!("✓ Position system: {} position vars, {} Vec2, {} Vec3",
-                 position_vars, vec2_count, vec3_count);
+        println!(
+            "✓ Position system: {} position vars, {} Vec2, {} Vec3",
+            position_vars, vec2_count, vec3_count
+        );
     }
 
     #[test]
@@ -524,8 +569,10 @@ mod tests {
             }
         }
 
-        println!("✓ Collision system: Hitboxes={}, Hurtboxes={}",
-                 hitbox_vars, hurtbox_vars);
+        println!(
+            "✓ Collision system: Hitboxes={}, Hurtboxes={}",
+            hitbox_vars, hurtbox_vars
+        );
     }
 
     // ============================================================================
@@ -551,8 +598,10 @@ mod tests {
             }
         }
 
-        println!("✓ Input system: Input vars={}, Button vars={}",
-                 input_vars, button_vars);
+        println!(
+            "✓ Input system: Input vars={}, Button vars={}",
+            input_vars, button_vars
+        );
     }
 
     // ============================================================================
@@ -573,14 +622,18 @@ mod tests {
             if name_lower.contains("frame") {
                 frame_vars += 1;
             }
-            if name_lower.contains("time") || name_lower.contains("duration") ||
-               name_lower.contains("timer") {
+            if name_lower.contains("time")
+                || name_lower.contains("duration")
+                || name_lower.contains("timer")
+            {
                 timing_vars += 1;
             }
         }
 
-        println!("✓ Timing system: Frame vars={}, Timing vars={}",
-                 frame_vars, timing_vars);
+        println!(
+            "✓ Timing system: Frame vars={}, Timing vars={}",
+            frame_vars, timing_vars
+        );
     }
 
     #[test]
@@ -602,8 +655,10 @@ mod tests {
             }
         }
 
-        println!("✓ Animation system: Anim vars={}, Sprite vars={}",
-                 anim_vars, sprite_vars);
+        println!(
+            "✓ Animation system: Anim vars={}, Sprite vars={}",
+            anim_vars, sprite_vars
+        );
     }
 
     // ============================================================================
@@ -630,11 +685,16 @@ mod tests {
 
         for (state_name, _) in states {
             let name_lower = state_name.to_lowercase();
-            if name_lower.contains("walk") || name_lower.contains("jump") ||
-               name_lower.contains("crouch") || name_lower.contains("stand") {
+            if name_lower.contains("walk")
+                || name_lower.contains("jump")
+                || name_lower.contains("crouch")
+                || name_lower.contains("stand")
+            {
                 movement_states += 1;
-            } else if name_lower.contains("attack") || name_lower.contains("punch") ||
-                      name_lower.contains("kick") {
+            } else if name_lower.contains("attack")
+                || name_lower.contains("punch")
+                || name_lower.contains("kick")
+            {
                 attack_states += 1;
             } else if name_lower.contains("hit") || name_lower.contains("hurt") {
                 hit_states += 1;

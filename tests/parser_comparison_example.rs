@@ -12,8 +12,8 @@
 
 #[cfg(test)]
 mod parser_comparison {
-    use std::fs;
     use serde_json::Value;
+    use std::fs;
 
     /// Example: Compare Rust parser metadata against golden master
     #[test]
@@ -146,8 +146,8 @@ mod parser_comparison {
 
     // Helper function to load golden master JSON
     fn load_golden_master(path: &str) -> Value {
-        let json_content = fs::read_to_string(path)
-            .expect(&format!("Failed to load golden master: {}", path));
+        let json_content =
+            fs::read_to_string(path).expect(&format!("Failed to load golden master: {}", path));
         serde_json::from_str(&json_content)
             .expect(&format!("Failed to parse golden master JSON: {}", path))
     }
@@ -169,12 +169,24 @@ mod parser_comparison {
         }
 
         // Variables
-        println!("\nVARIABLES: {} total", golden_json["variables"].as_object().unwrap().len());
+        println!(
+            "\nVARIABLES: {} total",
+            golden_json["variables"].as_object().unwrap().len()
+        );
 
         // States
-        println!("STATES: {} total", golden_json["states"].as_object().unwrap().len());
-        println!("  Sample states: {:?}",
-            golden_json["states"].as_object().unwrap().keys().take(10).collect::<Vec<_>>()
+        println!(
+            "STATES: {} total",
+            golden_json["states"].as_object().unwrap().len()
+        );
+        println!(
+            "  Sample states: {:?}",
+            golden_json["states"]
+                .as_object()
+                .unwrap()
+                .keys()
+                .take(10)
+                .collect::<Vec<_>>()
         );
 
         // Transformed Data

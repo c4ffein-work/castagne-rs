@@ -13,8 +13,8 @@
 //! - Real-world fighting game patterns
 //! - Advanced transformation validations
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 use std::io::Write as IoWrite;
 use tempfile::NamedTempFile;
 
@@ -35,7 +35,8 @@ mod tests {
 
     fn create_temp_casp(content: &str) -> NamedTempFile {
         let mut file = NamedTempFile::new().expect("Failed to create temp file");
-        file.write_all(content.as_bytes()).expect("Failed to write to temp file");
+        file.write_all(content.as_bytes())
+            .expect("Failed to write to temp file");
         file
     }
 
@@ -65,7 +66,10 @@ mod tests {
             }
         }
 
-        println!("✓ Float variables validated ({} floats, {} valid)", float_count, valid_floats);
+        println!(
+            "✓ Float variables validated ({} floats, {} valid)",
+            float_count, valid_floats
+        );
     }
 
     #[test]
@@ -85,7 +89,10 @@ mod tests {
             }
         }
 
-        println!("✓ Float precision validated ({} high precision)", high_precision_floats);
+        println!(
+            "✓ Float precision validated ({} high precision)",
+            high_precision_floats
+        );
     }
 
     // ============================================================================
@@ -107,12 +114,15 @@ mod tests {
 
                 if value != "null" {
                     let parts: Vec<&str> = value.split(',').map(|s| s.trim()).collect();
-                    assert_eq!(parts.len(), 3,
-                        "Vec3 {} should have 3 components", var_name);
+                    assert_eq!(parts.len(), 3, "Vec3 {} should have 3 components", var_name);
 
                     for part in parts {
-                        assert!(part.parse::<f64>().is_ok(),
-                            "Vec3 {} component should be numeric: {}", var_name, part);
+                        assert!(
+                            part.parse::<f64>().is_ok(),
+                            "Vec3 {} component should be numeric: {}",
+                            var_name,
+                            part
+                        );
                     }
                 }
             }
@@ -145,7 +155,10 @@ mod tests {
 
         // Note: Some golden masters may have empty Phases objects
         // This is valid - phases may be populated at runtime
-        println!("✓ Phase types validated ({} unique types)", phase_types.len());
+        println!(
+            "✓ Phase types validated ({} unique types)",
+            phase_types.len()
+        );
         println!("  (Note: Empty phases are valid in some character files)");
     }
 
@@ -197,10 +210,14 @@ Set(Damage, Max(MinDamage, Min(MaxDamage, BaseDamage)))
         let content = fs::read_to_string(file.path()).expect("Should read file");
 
         // Validate nested function patterns
-        assert!(content.contains("Add(") && content.contains("Mul("),
-            "Should have nested arithmetic functions");
-        assert!(content.contains("Max(") && content.contains("Min("),
-            "Should have nested comparison functions");
+        assert!(
+            content.contains("Add(") && content.contains("Mul("),
+            "Should have nested arithmetic functions"
+        );
+        assert!(
+            content.contains("Max(") && content.contains("Min("),
+            "Should have nested comparison functions"
+        );
 
         println!("✓ Nested function calls validated");
     }
@@ -227,7 +244,10 @@ EndIf
         assert!(content.contains("&&"), "Should have AND operators");
         assert!(content.contains("||"), "Should have OR operators");
         assert!(content.contains("!"), "Should have NOT operators");
-        assert!(content.contains("*"), "Should have multiplication in conditions");
+        assert!(
+            content.contains("*"),
+            "Should have multiplication in conditions"
+        );
 
         println!("✓ Complex conditionals validated");
     }
@@ -242,24 +262,34 @@ EndIf
         let transformed = golden["transformed_data"].as_object().unwrap();
 
         // Check for comprehensive module coverage
-        let expected_modules = vec![
-            "Graphics", "Anims", "PhysicsMovement", "AttacksMechanics"
-        ];
+        let expected_modules = vec!["Graphics", "Anims", "PhysicsMovement", "AttacksMechanics"];
 
         for module in &expected_modules {
-            assert!(transformed.contains_key(*module),
-                "Should have {} module", module);
+            assert!(
+                transformed.contains_key(*module),
+                "Should have {} module",
+                module
+            );
         }
 
         // Verify each module has proper structure
         for (module_name, module_data) in transformed {
-            assert!(module_data.is_object(),
-                "Module {} should be object", module_name);
-            assert!(module_data["Defines"].is_object(),
-                "Module {} should have Defines", module_name);
+            assert!(
+                module_data.is_object(),
+                "Module {} should be object",
+                module_name
+            );
+            assert!(
+                module_data["Defines"].is_object(),
+                "Module {} should have Defines",
+                module_name
+            );
         }
 
-        println!("✓ Module coverage validated ({} modules)", transformed.len());
+        println!(
+            "✓ Module coverage validated ({} modules)",
+            transformed.len()
+        );
     }
 
     #[test]
@@ -309,7 +339,9 @@ EndIf
                     break;
                 }
 
-                if depth > 50 { break; } // Safety limit
+                if depth > 50 {
+                    break;
+                } // Safety limit
             }
 
             if depth > max_inheritance_depth {
@@ -347,9 +379,18 @@ EndIf
         println!("  States: {}", state_count);
         println!("  Phases: {}", phase_count);
         println!("  Actions: {}", action_count);
-        println!("  Avg phases/state: {:.2}", phase_count as f64 / state_count as f64);
-        println!("  Avg actions/phase: {:.2}",
-                if phase_count > 0 { action_count as f64 / phase_count as f64 } else { 0.0 });
+        println!(
+            "  Avg phases/state: {:.2}",
+            phase_count as f64 / state_count as f64
+        );
+        println!(
+            "  Avg actions/phase: {:.2}",
+            if phase_count > 0 {
+                action_count as f64 / phase_count as f64
+            } else {
+                0.0
+            }
+        );
     }
 
     // ============================================================================
@@ -368,8 +409,11 @@ EndIf
         for state_name in states.keys() {
             let name_lower = state_name.to_lowercase();
 
-            if name_lower.contains("attack") || name_lower.contains("punch") ||
-               name_lower.contains("kick") || name_lower.contains("tech") {
+            if name_lower.contains("attack")
+                || name_lower.contains("punch")
+                || name_lower.contains("kick")
+                || name_lower.contains("tech")
+            {
                 attack_states.push(state_name.clone());
             }
 
@@ -388,7 +432,10 @@ EndIf
         println!("  Super moves: {}", super_states.len());
 
         if !attack_states.is_empty() {
-            println!("  Example attacks: {:?}", attack_states.iter().take(3).collect::<Vec<_>>());
+            println!(
+                "  Example attacks: {:?}",
+                attack_states.iter().take(3).collect::<Vec<_>>()
+            );
         }
     }
 
@@ -402,17 +449,27 @@ EndIf
         for state_name in states.keys() {
             let name_lower = state_name.to_lowercase();
 
-            if name_lower.contains("walk") || name_lower.contains("run") ||
-               name_lower.contains("dash") || name_lower.contains("jump") ||
-               name_lower.contains("crouch") || name_lower.contains("idle") ||
-               name_lower.contains("stand") {
+            if name_lower.contains("walk")
+                || name_lower.contains("run")
+                || name_lower.contains("dash")
+                || name_lower.contains("jump")
+                || name_lower.contains("crouch")
+                || name_lower.contains("idle")
+                || name_lower.contains("stand")
+            {
                 movement_states.push(state_name.clone());
             }
         }
 
         assert!(!movement_states.is_empty(), "Should have movement states");
-        println!("✓ Movement states validated ({} states)", movement_states.len());
-        println!("  Examples: {:?}", movement_states.iter().take(5).collect::<Vec<_>>());
+        println!(
+            "✓ Movement states validated ({} states)",
+            movement_states.len()
+        );
+        println!(
+            "  Examples: {:?}",
+            movement_states.iter().take(5).collect::<Vec<_>>()
+        );
     }
 
     #[test]
@@ -425,16 +482,26 @@ EndIf
         for state_name in states.keys() {
             let name_lower = state_name.to_lowercase();
 
-            if name_lower.contains("block") || name_lower.contains("guard") ||
-               name_lower.contains("parry") || name_lower.contains("dodge") ||
-               name_lower.contains("evade") || name_lower.contains("counter") {
+            if name_lower.contains("block")
+                || name_lower.contains("guard")
+                || name_lower.contains("parry")
+                || name_lower.contains("dodge")
+                || name_lower.contains("evade")
+                || name_lower.contains("counter")
+            {
                 defensive_states.push(state_name.clone());
             }
         }
 
-        println!("✓ Defensive states validated ({} states)", defensive_states.len());
+        println!(
+            "✓ Defensive states validated ({} states)",
+            defensive_states.len()
+        );
         if !defensive_states.is_empty() {
-            println!("  Examples: {:?}", defensive_states.iter().take(3).collect::<Vec<_>>());
+            println!(
+                "  Examples: {:?}",
+                defensive_states.iter().take(3).collect::<Vec<_>>()
+            );
         }
     }
 
@@ -448,16 +515,25 @@ EndIf
         for state_name in states.keys() {
             let name_lower = state_name.to_lowercase();
 
-            if name_lower.contains("hit") || name_lower.contains("hurt") ||
-               name_lower.contains("stun") || name_lower.contains("knockdown") ||
-               name_lower.contains("launch") {
+            if name_lower.contains("hit")
+                || name_lower.contains("hurt")
+                || name_lower.contains("stun")
+                || name_lower.contains("knockdown")
+                || name_lower.contains("launch")
+            {
                 hit_states.push(state_name.clone());
             }
         }
 
-        println!("✓ Hit reaction states validated ({} states)", hit_states.len());
+        println!(
+            "✓ Hit reaction states validated ({} states)",
+            hit_states.len()
+        );
         if !hit_states.is_empty() {
-            println!("  Examples: {:?}", hit_states.iter().take(3).collect::<Vec<_>>());
+            println!(
+                "  Examples: {:?}",
+                hit_states.iter().take(3).collect::<Vec<_>>()
+            );
         }
     }
 
@@ -476,8 +552,11 @@ EndIf
             println!("  Animation entries: {}", anims.len());
 
             for (anim_name, anim_data) in anims {
-                assert!(anim_data.is_object() || anim_data.is_null(),
-                    "Animation {} should be object or null", anim_name);
+                assert!(
+                    anim_data.is_object() || anim_data.is_null(),
+                    "Animation {} should be object or null",
+                    anim_name
+                );
             }
         }
 
@@ -496,17 +575,32 @@ EndIf
                 let pixel_size = sheet_data["PixelSize"].as_i64().unwrap_or(0);
 
                 // Validate reasonable dimensions
-                assert!(sprites_x > 0 && sprites_x <= 100,
-                    "Spritesheet {} SpritesX should be 1-100", sheet_name);
-                assert!(sprites_y > 0 && sprites_y <= 100,
-                    "Spritesheet {} SpritesY should be 1-100", sheet_name);
+                assert!(
+                    sprites_x > 0 && sprites_x <= 100,
+                    "Spritesheet {} SpritesX should be 1-100",
+                    sheet_name
+                );
+                assert!(
+                    sprites_y > 0 && sprites_y <= 100,
+                    "Spritesheet {} SpritesY should be 1-100",
+                    sheet_name
+                );
                 // PixelSize can be quite large (e.g., 100000 for texture size)
-                assert!(pixel_size > 0 && pixel_size <= 1000000,
-                    "Spritesheet {} PixelSize should be 1-1000000", sheet_name);
+                assert!(
+                    pixel_size > 0 && pixel_size <= 1000000,
+                    "Spritesheet {} PixelSize should be 1-1000000",
+                    sheet_name
+                );
 
-                println!("  Spritesheet {}: {}x{} @ {}px", sheet_name, sprites_x, sprites_y, pixel_size);
+                println!(
+                    "  Spritesheet {}: {}x{} @ {}px",
+                    sheet_name, sprites_x, sprites_y, pixel_size
+                );
             }
-            println!("✓ Spritesheet dimensions validated ({} sheets)", spritesheets.len());
+            println!(
+                "✓ Spritesheet dimensions validated ({} sheets)",
+                spritesheets.len()
+            );
         } else {
             println!("⚠ No spritesheets found (this is valid)");
         }
@@ -620,8 +714,7 @@ EndIf
             let golden = load_golden_master(file_path);
             let variables = golden["variables"].as_object().unwrap();
 
-            let var_names: std::collections::HashSet<String> =
-                variables.keys().cloned().collect();
+            let var_names: std::collections::HashSet<String> = variables.keys().cloned().collect();
 
             if first_file {
                 common_variables = var_names.clone();
@@ -655,10 +748,18 @@ EndIf
 
             // Basic consistency checks
             for (state_name, state_data) in states {
-                assert!(state_data.is_object(),
-                    "{}: State {} should be object", file_path, state_name);
-                assert!(state_data["Phases"].is_object(),
-                    "{}: State {} should have Phases", file_path, state_name);
+                assert!(
+                    state_data.is_object(),
+                    "{}: State {} should be object",
+                    file_path,
+                    state_name
+                );
+                assert!(
+                    state_data["Phases"].is_object(),
+                    "{}: State {} should have Phases",
+                    file_path,
+                    state_name
+                );
             }
         }
 
@@ -686,12 +787,21 @@ EndIf
             let metadata = &golden["metadata"];
 
             // Required fields
-            assert!(metadata["name"].is_string(),
-                "{} should have name", file_path);
-            assert!(metadata["editorname"].is_string(),
-                "{} should have editorname", file_path);
-            assert!(metadata["filepath"].is_string(),
-                "{} should have filepath", file_path);
+            assert!(
+                metadata["name"].is_string(),
+                "{} should have name",
+                file_path
+            );
+            assert!(
+                metadata["editorname"].is_string(),
+                "{} should have editorname",
+                file_path
+            );
+            assert!(
+                metadata["filepath"].is_string(),
+                "{} should have filepath",
+                file_path
+            );
 
             // Optional fields - just check they exist
             let _ = metadata.get("author");

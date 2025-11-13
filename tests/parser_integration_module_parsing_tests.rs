@@ -25,8 +25,7 @@ mod tests {
     // ============================================================================
 
     fn load_module_file(path: &str) -> String {
-        fs::read_to_string(path)
-            .unwrap_or_else(|_| panic!("Failed to load module file: {}", path))
+        fs::read_to_string(path).unwrap_or_else(|_| panic!("Failed to load module file: {}", path))
     }
 
     fn get_module_files() -> Vec<String> {
@@ -51,8 +50,11 @@ mod tests {
         println!("✓ Checking module files exist:");
 
         for module_path in &modules {
-            assert!(Path::new(module_path).exists(),
-                   "Module file should exist: {}", module_path);
+            assert!(
+                Path::new(module_path).exists(),
+                "Module file should exist: {}",
+                module_path
+            );
             println!("  ✓ {}", module_path);
         }
 
@@ -67,7 +69,11 @@ mod tests {
 
         for module_path in &modules {
             let content = load_module_file(module_path);
-            assert!(!content.is_empty(), "Module file should not be empty: {}", module_path);
+            assert!(
+                !content.is_empty(),
+                "Module file should not be empty: {}",
+                module_path
+            );
 
             let line_count = content.lines().count();
             println!("  {} ({} lines)", module_path, line_count);
@@ -86,8 +92,15 @@ mod tests {
             let content = load_module_file(module_path);
 
             let has_character_marker = content.contains(":Character:");
-            println!("  {}: {}", module_path,
-                    if has_character_marker { "has :Character:" } else { "no :Character:" });
+            println!(
+                "  {}: {}",
+                module_path,
+                if has_character_marker {
+                    "has :Character:"
+                } else {
+                    "no :Character:"
+                }
+            );
         }
     }
 
@@ -111,8 +124,10 @@ mod tests {
             println!("  {} ({} states)", module_path, state_definitions.len());
 
             if !state_definitions.is_empty() {
-                println!("    First few states: {:?}",
-                        &state_definitions[..state_definitions.len().min(5)]);
+                println!(
+                    "    First few states: {:?}",
+                    &state_definitions[..state_definitions.len().min(5)]
+                );
             }
         }
     }
@@ -178,8 +193,10 @@ mod tests {
             }
 
             println!("  {}:", module_path);
-            println!("    int: {}, str: {}, bool: {}, other: {}",
-                    int_count, str_count, bool_count, other_count);
+            println!(
+                "    int: {}, str: {}, bool: {}, other: {}",
+                int_count, str_count, bool_count, other_count
+            );
         }
     }
 
@@ -192,11 +209,13 @@ mod tests {
         for module_path in &modules {
             let content = load_module_file(module_path);
 
-            let def_count = content.lines()
+            let def_count = content
+                .lines()
                 .filter(|line| line.trim().starts_with("def "))
                 .count();
 
-            let var_count = content.lines()
+            let var_count = content
+                .lines()
                 .filter(|line| line.trim().starts_with("var "))
                 .count();
 
@@ -214,8 +233,16 @@ mod tests {
 
         println!("✓ Checking common function calls:");
 
-        let common_functions = vec!["Call", "CallAfter", "Flag", "Unflag",
-                                     "FlagNext", "UnflagNext", "Set", "Add"];
+        let common_functions = vec![
+            "Call",
+            "CallAfter",
+            "Flag",
+            "Unflag",
+            "FlagNext",
+            "UnflagNext",
+            "Set",
+            "Add",
+        ];
 
         for module_path in &modules {
             let content = load_module_file(module_path);
@@ -223,12 +250,13 @@ mod tests {
             println!("  {}:", module_path);
 
             for func in &common_functions {
-                let count = content.lines()
+                let count = content
+                    .lines()
                     .filter(|line| {
                         let trimmed = line.trim();
-                        trimmed.starts_with(func) &&
-                        (trimmed.chars().nth(func.len()) == Some('(') ||
-                         trimmed.chars().nth(func.len()) == Some(':'))
+                        trimmed.starts_with(func)
+                            && (trimmed.chars().nth(func.len()) == Some('(')
+                                || trimmed.chars().nth(func.len()) == Some(':'))
                     })
                     .count();
 
@@ -279,11 +307,13 @@ mod tests {
         for module_path in &modules {
             let content = load_module_file(module_path);
 
-            let comment_lines = content.lines()
+            let comment_lines = content
+                .lines()
                 .filter(|line| line.trim().starts_with('#'))
                 .count();
 
-            let doc_comments = content.lines()
+            let doc_comments = content
+                .lines()
                 .filter(|line| line.trim().starts_with("##"))
                 .count();
 
@@ -313,8 +343,10 @@ mod tests {
             let has_mpl = content.contains("Mozilla Public License");
             let has_mpl_link = content.contains("https://mozilla.org/MPL/2.0/");
 
-            println!("  {}: MPL={}, MPL link={}",
-                    module_path, has_mpl, has_mpl_link);
+            println!(
+                "  {}: MPL={}, MPL link={}",
+                module_path, has_mpl, has_mpl_link
+            );
         }
     }
 
@@ -331,20 +363,25 @@ mod tests {
         for module_path in &modules {
             let content = load_module_file(module_path);
 
-            let e_blocks = content.lines()
+            let e_blocks = content
+                .lines()
                 .filter(|line| line.trim().starts_with('E'))
                 .count();
 
-            let l_blocks = content.lines()
+            let l_blocks = content
+                .lines()
                 .filter(|line| line.trim().starts_with('L'))
                 .count();
 
-            let endif_count = content.lines()
+            let endif_count = content
+                .lines()
                 .filter(|line| line.trim() == "endif")
                 .count();
 
-            println!("  {}: E={}, L={}, endif={}",
-                    module_path, e_blocks, l_blocks, endif_count);
+            println!(
+                "  {}: E={}, L={}, endif={}",
+                module_path, e_blocks, l_blocks, endif_count
+            );
         }
     }
 
@@ -369,7 +406,12 @@ mod tests {
                 let has_tabs = line.starts_with('\t');
                 let has_spaces = line.starts_with(' ');
 
-                if has_tabs && line.chars().take_while(|c| *c == '\t' || *c == ' ').any(|c| c == ' ') {
+                if has_tabs
+                    && line
+                        .chars()
+                        .take_while(|c| *c == '\t' || *c == ' ')
+                        .any(|c| c == ' ')
+                {
                     mixed_lines += 1;
                 } else if has_tabs {
                     tab_lines += 1;
@@ -379,8 +421,10 @@ mod tests {
             }
 
             println!("  {}:", module_path);
-            println!("    Tabs: {}, Spaces: {}, Mixed: {}",
-                    tab_lines, space_lines, mixed_lines);
+            println!(
+                "    Tabs: {}, Spaces: {}, Mixed: {}",
+                tab_lines, space_lines, mixed_lines
+            );
         }
     }
 
@@ -396,23 +440,32 @@ mod tests {
         println!("✓ Core module specific checks:");
 
         // Core module should have Common state
-        assert!(content.contains(":Common:"),
-               "Core module should define :Common: state");
+        assert!(
+            content.contains(":Common:"),
+            "Core module should define :Common: state"
+        );
         println!("  ✓ Has :Common: state");
 
         // Core module should have ResetHandling
-        assert!(content.contains(":ResetHandling:"),
-               "Core module should define :ResetHandling: state");
+        assert!(
+            content.contains(":ResetHandling:"),
+            "Core module should define :ResetHandling: state"
+        );
         println!("  ✓ Has :ResetHandling: state");
 
         // Core module should have CommonAfter
-        assert!(content.contains(":CommonAfter:"),
-               "Core module should define :CommonAfter: state");
+        assert!(
+            content.contains(":CommonAfter:"),
+            "Core module should define :CommonAfter: state"
+        );
         println!("  ✓ Has :CommonAfter: state");
 
         // Should have base state marker
         let has_base_state = content.contains("_BaseState()");
-        println!("  {} _BaseState() call", if has_base_state { "✓ Has" } else { "  No" });
+        println!(
+            "  {} _BaseState() call",
+            if has_base_state { "✓ Has" } else { "  No" }
+        );
     }
 
     #[test]
@@ -505,10 +558,10 @@ mod tests {
                 .lines()
                 .filter(|line| {
                     let trimmed = line.trim();
-                    trimmed.starts_with(':') &&
-                    trimmed.ends_with(':') &&
-                    trimmed != ":Character:" &&
-                    !trimmed.contains("Variables")
+                    trimmed.starts_with(':')
+                        && trimmed.ends_with(':')
+                        && trimmed != ":Character:"
+                        && !trimmed.contains("Variables")
                 })
                 .count();
 
@@ -536,11 +589,16 @@ mod tests {
             let has_base_prefix = filename.starts_with("Base-");
             let has_casp_extension = filename.ends_with(".casp");
 
-            println!("  {}: Base prefix={}, .casp extension={}",
-                    filename, has_base_prefix, has_casp_extension);
+            println!(
+                "  {}: Base prefix={}, .casp extension={}",
+                filename, has_base_prefix, has_casp_extension
+            );
 
-            assert!(has_casp_extension,
-                   "Module file should have .casp extension: {}", module_path);
+            assert!(
+                has_casp_extension,
+                "Module file should have .casp extension: {}",
+                module_path
+            );
         }
     }
 
@@ -564,9 +622,12 @@ mod tests {
                 "unknown"
             };
 
-            println!("  {}: in modules dir={}, category={}",
-                    path.file_name().unwrap().to_str().unwrap(),
-                    is_in_modules, category);
+            println!(
+                "  {}: in modules dir={}, category={}",
+                path.file_name().unwrap().to_str().unwrap(),
+                is_in_modules,
+                category
+            );
         }
     }
 

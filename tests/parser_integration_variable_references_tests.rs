@@ -14,8 +14,8 @@
 //! - Variable references in code
 //! - Variable usage patterns
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 
 #[cfg(test)]
 mod tests {
@@ -33,8 +33,7 @@ mod tests {
     }
 
     fn load_module_file(path: &str) -> String {
-        fs::read_to_string(path)
-            .unwrap_or_else(|_| panic!("Failed to load module file: {}", path))
+        fs::read_to_string(path).unwrap_or_else(|_| panic!("Failed to load module file: {}", path))
     }
 
     fn get_golden_files() -> Vec<&'static str> {
@@ -58,8 +57,11 @@ mod tests {
         for file_path in &files {
             let golden = load_golden_master(file_path);
 
-            assert!(golden["variables"].is_object(),
-                   "{}: variables should be object", file_path);
+            assert!(
+                golden["variables"].is_object(),
+                "{}: variables should be object",
+                file_path
+            );
 
             let variables = golden["variables"].as_object().unwrap();
             println!("  {}: {} variables", file_path, variables.len());
@@ -86,13 +88,20 @@ mod tests {
                 let var_obj = var_data.as_object().unwrap();
 
                 for field in &required_fields {
-                    assert!(var_obj.contains_key(*field),
-                           "{}: Variable '{}' missing field '{}'",
-                           file_path, var_name, field);
+                    assert!(
+                        var_obj.contains_key(*field),
+                        "{}: Variable '{}' missing field '{}'",
+                        file_path,
+                        var_name,
+                        field
+                    );
                 }
             }
 
-            println!("    ✓ All {} variables have required fields", variables.len());
+            println!(
+                "    ✓ All {} variables have required fields",
+                variables.len()
+            );
         }
 
         println!("✓ All variables have required fields");
@@ -142,7 +151,10 @@ mod tests {
             let subentities = golden["subentities"].as_object().unwrap();
 
             println!("  {}:", file_path);
-            println!("    Subentities: {:?}", subentities.keys().collect::<Vec<_>>());
+            println!(
+                "    Subentities: {:?}",
+                subentities.keys().collect::<Vec<_>>()
+            );
             println!("    Variables: {:?}", variables.keys().collect::<Vec<_>>());
 
             // Check if any variable names match subentity names
@@ -308,8 +320,8 @@ mod tests {
             .lines()
             .filter(|line| {
                 let trimmed = line.trim();
-                (trimmed.starts_with("var ") || trimmed.starts_with("def ")) &&
-                trimmed.contains("int(")
+                (trimmed.starts_with("var ") || trimmed.starts_with("def "))
+                    && trimmed.contains("int(")
             })
             .collect();
 
@@ -348,8 +360,8 @@ mod tests {
             .lines()
             .filter(|line| {
                 let trimmed = line.trim();
-                (trimmed.starts_with("var ") || trimmed.starts_with("def ")) &&
-                trimmed.contains("str(")
+                (trimmed.starts_with("var ") || trimmed.starts_with("def "))
+                    && trimmed.contains("str(")
             })
             .collect();
 
@@ -373,8 +385,8 @@ mod tests {
             .lines()
             .filter(|line| {
                 let trimmed = line.trim();
-                (trimmed.starts_with("var ") || trimmed.starts_with("def ")) &&
-                trimmed.contains("bool(")
+                (trimmed.starts_with("var ") || trimmed.starts_with("def "))
+                    && trimmed.contains("bool(")
             })
             .collect();
 
@@ -402,15 +414,18 @@ mod tests {
         println!("✓ Analyzing variable references:");
 
         // Look for common variable reference patterns
-        let set_calls = content.lines()
+        let set_calls = content
+            .lines()
             .filter(|line| line.trim().starts_with("Set("))
             .count();
 
-        let add_calls = content.lines()
+        let add_calls = content
+            .lines()
             .filter(|line| line.trim().starts_with("Add("))
             .count();
 
-        let get_calls = content.lines()
+        let get_calls = content
+            .lines()
             .filter(|line| line.trim().starts_with("Get("))
             .count();
 
@@ -421,7 +436,8 @@ mod tests {
         // Show examples
         if set_calls > 0 {
             println!("  First Set() calls:");
-            for line in content.lines()
+            for line in content
+                .lines()
                 .filter(|line| line.trim().starts_with("Set("))
                 .take(3)
             {
@@ -437,7 +453,8 @@ mod tests {
 
         println!("✓ Analyzing register variables (CAST_REG_*):");
 
-        let register_refs = content.lines()
+        let register_refs = content
+            .lines()
             .filter(|line| line.contains("CAST_REG_"))
             .count();
 
@@ -470,14 +487,18 @@ mod tests {
             .filter(|line| line.contains("CORE_InitialState"))
             .collect();
 
-        println!("  Lines referencing CORE_InitialState: {}", initial_state_lines.len());
+        println!(
+            "  Lines referencing CORE_InitialState: {}",
+            initial_state_lines.len()
+        );
 
         for line in &initial_state_lines {
             println!("    {}", line.trim());
         }
 
         // Check if it's defined
-        let has_def = initial_state_lines.iter()
+        let has_def = initial_state_lines
+            .iter()
             .any(|line| line.trim().starts_with("def CORE_InitialState"));
 
         assert!(has_def, "CORE_InitialState should be defined with 'def'");
@@ -501,11 +522,13 @@ mod tests {
         for module_path in &modules {
             let content = load_module_file(module_path);
 
-            let var_count = content.lines()
+            let var_count = content
+                .lines()
                 .filter(|line| line.trim().starts_with("var "))
                 .count();
 
-            let def_count = content.lines()
+            let def_count = content
+                .lines()
                 .filter(|line| line.trim().starts_with("def "))
                 .count();
 
@@ -520,7 +543,10 @@ mod tests {
         let modules = vec![
             ("Core", "castagne_godot4/modules/core/Base-Core.casp"),
             ("AI", "castagne_godot4/modules/general/Base-AI.casp"),
-            ("Attacks", "castagne_godot4/modules/attacks/Base-Attacks.casp"),
+            (
+                "Attacks",
+                "castagne_godot4/modules/attacks/Base-Attacks.casp",
+            ),
         ];
 
         println!("✓ Variable prefix pattern analysis:");
@@ -530,16 +556,20 @@ mod tests {
 
             // Count variables with module-specific prefix
             let module_prefix_upper = module_name.to_uppercase();
-            let prefixed_vars = content.lines()
+            let prefixed_vars = content
+                .lines()
                 .filter(|line| {
                     let trimmed = line.trim();
-                    (trimmed.starts_with("var ") || trimmed.starts_with("def ")) &&
-                    trimmed.contains(&format!("_{}_", module_prefix_upper))
+                    (trimmed.starts_with("var ") || trimmed.starts_with("def "))
+                        && trimmed.contains(&format!("_{}_", module_prefix_upper))
                 })
                 .count();
 
             println!("  {} module:", module_name);
-            println!("    Variables with {}_* prefix: {}", module_prefix_upper, prefixed_vars);
+            println!(
+                "    Variables with {}_* prefix: {}",
+                module_prefix_upper, prefixed_vars
+            );
         }
     }
 
@@ -558,8 +588,8 @@ mod tests {
             .lines()
             .filter(|line| {
                 let trimmed = line.trim();
-                (trimmed.starts_with("var ") || trimmed.starts_with("def ")) &&
-                trimmed.contains(" = ")
+                (trimmed.starts_with("var ") || trimmed.starts_with("def "))
+                    && trimmed.contains(" = ")
             })
             .collect();
 
@@ -573,8 +603,9 @@ mod tests {
             if let Some(equals_pos) = var_line.find(" = ") {
                 let value_part = &var_line[equals_pos + 3..].trim();
 
-                if value_part.chars().next().unwrap_or(' ').is_numeric() ||
-                   value_part.starts_with('-') {
+                if value_part.chars().next().unwrap_or(' ').is_numeric()
+                    || value_part.starts_with('-')
+                {
                     numeric_values += 1;
                 } else {
                     string_values += 1;
@@ -608,8 +639,11 @@ mod tests {
             }
         }
 
-        println!("  Golden master variables with empty Value: {}/{}",
-                empty_value_count, variables.len());
+        println!(
+            "  Golden master variables with empty Value: {}/{}",
+            empty_value_count,
+            variables.len()
+        );
     }
 
     // ============================================================================

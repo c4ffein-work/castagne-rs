@@ -14,8 +14,8 @@
 //! - Frame data and hitbox validation
 //! - Real gameplay scenarios
 
-use std::process::Command;
 use std::path::Path;
+use std::process::Command;
 
 #[cfg(test)]
 mod tests {
@@ -65,7 +65,10 @@ mod tests {
         let stderr = String::from_utf8_lossy(&output.stderr).to_string();
 
         if !output.status.success() {
-            return Err(format!("Godot test failed:\nSTDOUT: {}\nSTDERR: {}", stdout, stderr));
+            return Err(format!(
+                "Godot test failed:\nSTDOUT: {}\nSTDERR: {}",
+                stdout, stderr
+            ));
         }
 
         Ok(stdout)
@@ -93,14 +96,20 @@ mod tests {
         println!("✓ Godot found at {}: {}", godot_binary, version.trim());
 
         // Verify it's Godot 4.x
-        assert!(version.contains("4."), "Expected Godot 4.x, got: {}", version);
+        assert!(
+            version.contains("4."),
+            "Expected Godot 4.x, got: {}",
+            version
+        );
     }
 
     #[test]
     fn e2e_test_infrastructure_exists() {
         // Check if test_scenes directory exists
-        assert!(Path::new("test_scenes").exists(),
-            "test_scenes/ directory should exist");
+        assert!(
+            Path::new("test_scenes").exists(),
+            "test_scenes/ directory should exist"
+        );
 
         println!("✓ E2E test infrastructure is set up");
     }
@@ -121,8 +130,11 @@ mod tests {
         match result {
             Ok(output) => {
                 // Check for success markers in output
-                assert!(output.contains("TEST_PASS") || output.contains("Character loaded"),
-                    "Character loading test should pass. Output: {}", output);
+                assert!(
+                    output.contains("TEST_PASS") || output.contains("Character loaded"),
+                    "Character loading test should pass. Output: {}",
+                    output
+                );
                 println!("✓ Character loads successfully in Godot");
             }
             Err(e) => {
@@ -142,8 +154,11 @@ mod tests {
 
         match result {
             Ok(output) => {
-                assert!(output.contains("TEST_PASS") || output.contains("Rust parser"),
-                    "Rust parser integration should work. Output: {}", output);
+                assert!(
+                    output.contains("TEST_PASS") || output.contains("Rust parser"),
+                    "Rust parser integration should work. Output: {}",
+                    output
+                );
                 println!("✓ Rust parser integrates with Godot successfully");
             }
             Err(e) => {
@@ -168,8 +183,11 @@ mod tests {
         match result {
             Ok(output) => {
                 // Verify state transitions work
-                assert!(output.contains("Idle -> LightPunch") || output.contains("State transition"),
-                    "Should transition from Idle to LightPunch. Output: {}", output);
+                assert!(
+                    output.contains("Idle -> LightPunch") || output.contains("State transition"),
+                    "Should transition from Idle to LightPunch. Output: {}",
+                    output
+                );
                 println!("✓ State transitions work correctly");
             }
             Err(e) => {
@@ -190,8 +208,11 @@ mod tests {
         match result {
             Ok(output) => {
                 // Verify simulated inputs trigger correct actions
-                assert!(output.contains("Input processed") || output.contains("TEST_PASS"),
-                    "Input simulation should work. Output: {}", output);
+                assert!(
+                    output.contains("Input processed") || output.contains("TEST_PASS"),
+                    "Input simulation should work. Output: {}",
+                    output
+                );
                 println!("✓ Input simulation works correctly");
             }
             Err(e) => {
@@ -216,10 +237,16 @@ mod tests {
         match result {
             Ok(output) => {
                 // Verify both characters can interact
-                assert!(output.contains("P1:") && output.contains("P2:"),
-                    "Should have two players. Output: {}", output);
-                assert!(output.contains("Health") || output.contains("Damage"),
-                    "Should track health/damage. Output: {}", output);
+                assert!(
+                    output.contains("P1:") && output.contains("P2:"),
+                    "Should have two players. Output: {}",
+                    output
+                );
+                assert!(
+                    output.contains("Health") || output.contains("Damage"),
+                    "Should track health/damage. Output: {}",
+                    output
+                );
                 println!("✓ Two-character combat works");
             }
             Err(e) => {
@@ -240,8 +267,11 @@ mod tests {
         match result {
             Ok(output) => {
                 // Verify combo system works
-                assert!(output.contains("Combo") || output.contains("Damage:"),
-                    "Should process combo damage. Output: {}", output);
+                assert!(
+                    output.contains("Combo") || output.contains("Damage:"),
+                    "Should process combo damage. Output: {}",
+                    output
+                );
                 println!("✓ Combo damage calculation works");
             }
             Err(e) => {
@@ -262,9 +292,13 @@ mod tests {
         match result {
             Ok(output) => {
                 // Verify special moves execute correctly
-                assert!(output.contains("Hadouken") || output.contains("Shoryuken") ||
-                        output.contains("Special move"),
-                    "Should execute special moves. Output: {}", output);
+                assert!(
+                    output.contains("Hadouken")
+                        || output.contains("Shoryuken")
+                        || output.contains("Special move"),
+                    "Should execute special moves. Output: {}",
+                    output
+                );
                 println!("✓ Special move execution works");
             }
             Err(e) => {
@@ -289,9 +323,13 @@ mod tests {
         match result {
             Ok(output) => {
                 // Verify frame data is accurate
-                assert!(output.contains("Startup:") || output.contains("Active:") ||
-                        output.contains("Recovery:"),
-                    "Should track frame data. Output: {}", output);
+                assert!(
+                    output.contains("Startup:")
+                        || output.contains("Active:")
+                        || output.contains("Recovery:"),
+                    "Should track frame data. Output: {}",
+                    output
+                );
                 println!("✓ Frame data tracking works");
             }
             Err(e) => {
@@ -312,8 +350,11 @@ mod tests {
         match result {
             Ok(output) => {
                 // Verify hitbox collision works
-                assert!(output.contains("Hit detected") || output.contains("Hitbox"),
-                    "Should detect hitbox collisions. Output: {}", output);
+                assert!(
+                    output.contains("Hit detected") || output.contains("Hitbox"),
+                    "Should detect hitbox collisions. Output: {}",
+                    output
+                );
                 println!("✓ Hitbox collision detection works");
             }
             Err(e) => {
@@ -338,8 +379,11 @@ mod tests {
         match result {
             Ok(output) => {
                 // Verify meter builds correctly
-                assert!(output.contains("Meter:") || output.contains("Super"),
-                    "Should track meter building. Output: {}", output);
+                assert!(
+                    output.contains("Meter:") || output.contains("Super"),
+                    "Should track meter building. Output: {}",
+                    output
+                );
                 println!("✓ Meter system works");
             }
             Err(e) => {
@@ -364,8 +408,11 @@ mod tests {
         match result {
             Ok(output) => {
                 // Verify full match plays out correctly
-                assert!(output.contains("Winner:") || output.contains("Match complete"),
-                    "Should complete a full match. Output: {}", output);
+                assert!(
+                    output.contains("Winner:") || output.contains("Match complete"),
+                    "Should complete a full match. Output: {}",
+                    output
+                );
                 println!("✓ Full match simulation works");
             }
             Err(e) => {

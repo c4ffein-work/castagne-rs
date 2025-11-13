@@ -28,7 +28,8 @@ mod tests {
 
     fn create_temp_casp(content: &str) -> NamedTempFile {
         let mut file = NamedTempFile::new().expect("Failed to create temp file");
-        file.write_all(content.as_bytes()).expect("Failed to write to temp file");
+        file.write_all(content.as_bytes())
+            .expect("Failed to write to temp file");
         file
     }
 
@@ -199,29 +200,53 @@ CheckRecovery()
         let mut parser = CastagneParser::new();
         let character = parser.create_full_character(file.path().to_str().unwrap());
 
-        assert!(character.is_some(), "Should parse complete Street Fighter character");
+        assert!(
+            character.is_some(),
+            "Should parse complete Street Fighter character"
+        );
         let character = character.unwrap();
 
         // Validate character structure
         assert_eq!(character.metadata.name, "StreetFighterCharacter");
 
         // Variables should include Health, Meter, MaxMeter, ComboCounter, Position, Velocity, Grounded, Crouching, Blocking
-        assert!(character.variables.len() > 0,
-            "Should have variables, got {}", character.variables.len());
-        assert!(character.variables.contains_key("Health"), "Should have Health variable");
-        assert!(character.variables.contains_key("Meter"), "Should have Meter variable");
+        assert!(
+            character.variables.len() > 0,
+            "Should have variables, got {}",
+            character.variables.len()
+        );
+        assert!(
+            character.variables.contains_key("Health"),
+            "Should have Health variable"
+        );
+        assert!(
+            character.variables.contains_key("Meter"),
+            "Should have Meter variable"
+        );
 
         // States should include all the fighting game states
-        assert!(character.states.len() > 0,
-            "Should have states, got {}", character.states.len());
+        assert!(
+            character.states.len() > 0,
+            "Should have states, got {}",
+            character.states.len()
+        );
 
         // Validate specific moves exist
-        assert!(character.states.contains_key("Hadouken"), "Should have special moves");
+        assert!(
+            character.states.contains_key("Hadouken"),
+            "Should have special moves"
+        );
         assert!(character.states.contains_key("Shoryuken"), "Should have DP");
-        assert!(character.states.contains_key("Super1"), "Should have super moves");
+        assert!(
+            character.states.contains_key("Super1"),
+            "Should have super moves"
+        );
 
-        println!("✓ Complete Street Fighter style character validated ({} states, {} variables)",
-            character.states.len(), character.variables.len());
+        println!(
+            "✓ Complete Street Fighter style character validated ({} states, {} variables)",
+            character.states.len(),
+            character.variables.len()
+        );
     }
 
     #[test]
@@ -333,11 +358,23 @@ PushOpponent()
         assert!(character.is_some(), "Should parse anime fighter character");
         let character = character.unwrap();
 
-        assert!(character.states.len() >= 20, "Should have anime fighter moveset");
-        assert!(character.variables.contains_key("BurstAvailable"), "Should have burst system");
-        assert!(character.states.contains_key("RomanCancel"), "Should have RC system");
+        assert!(
+            character.states.len() >= 20,
+            "Should have anime fighter moveset"
+        );
+        assert!(
+            character.variables.contains_key("BurstAvailable"),
+            "Should have burst system"
+        );
+        assert!(
+            character.states.contains_key("RomanCancel"),
+            "Should have RC system"
+        );
 
-        println!("✓ Anime fighter style character validated ({} states)", character.states.len());
+        println!(
+            "✓ Anime fighter style character validated ({} states)",
+            character.states.len()
+        );
     }
 
     // ============================================================================
@@ -419,11 +456,23 @@ SetOnBlock(-3)
         assert!(character.is_some(), "Should parse detailed frame data");
         let character = character.unwrap();
 
-        assert!(character.variables.len() >= 13, "Should have frame data variables");
-        assert!(character.states.contains_key("ReversalDP"), "Should have invul moves");
-        assert!(character.states.contains_key("ArmorMove"), "Should have armor moves");
+        assert!(
+            character.variables.len() >= 13,
+            "Should have frame data variables"
+        );
+        assert!(
+            character.states.contains_key("ReversalDP"),
+            "Should have invul moves"
+        );
+        assert!(
+            character.states.contains_key("ArmorMove"),
+            "Should have armor moves"
+        );
 
-        println!("✓ Detailed frame data validated ({} frame data variables)", character.variables.len());
+        println!(
+            "✓ Detailed frame data validated ({} frame data variables)",
+            character.variables.len()
+        );
     }
 
     // ============================================================================
@@ -525,12 +574,27 @@ EndIf
         assert!(character.is_some(), "Should parse hitbox system");
         let character = character.unwrap();
 
-        assert!(character.variables.len() >= 11, "Should have hitbox variables");
-        assert!(character.states.contains_key("LowKick"), "Should have low attacks");
-        assert!(character.states.contains_key("OverheadAttack"), "Should have overhead attacks");
-        assert!(character.states.contains_key("ThrowAttempt"), "Should have throw system");
+        assert!(
+            character.variables.len() >= 11,
+            "Should have hitbox variables"
+        );
+        assert!(
+            character.states.contains_key("LowKick"),
+            "Should have low attacks"
+        );
+        assert!(
+            character.states.contains_key("OverheadAttack"),
+            "Should have overhead attacks"
+        );
+        assert!(
+            character.states.contains_key("ThrowAttempt"),
+            "Should have throw system"
+        );
 
-        println!("✓ Hitbox system validated ({} states)", character.states.len());
+        println!(
+            "✓ Hitbox system validated ({} states)",
+            character.states.len()
+        );
     }
 
     // ============================================================================
@@ -608,11 +672,23 @@ EndIf
         assert!(character.is_some(), "Should parse meter management system");
         let character = character.unwrap();
 
-        assert!(character.variables.len() >= 11, "Should have meter variables");
-        assert!(character.states.contains_key("EXSpecial"), "Should have EX moves");
-        assert!(character.states.contains_key("Install"), "Should have install system");
+        assert!(
+            character.variables.len() >= 11,
+            "Should have meter variables"
+        );
+        assert!(
+            character.states.contains_key("EXSpecial"),
+            "Should have EX moves"
+        );
+        assert!(
+            character.states.contains_key("Install"),
+            "Should have install system"
+        );
 
-        println!("✓ Meter management validated ({} variables)", character.variables.len());
+        println!(
+            "✓ Meter management validated ({} variables)",
+            character.variables.len()
+        );
     }
 
     // ============================================================================
@@ -684,12 +760,27 @@ EndIf
         assert!(character.is_some(), "Should parse input buffer system");
         let character = character.unwrap();
 
-        assert!(character.variables.len() >= 8, "Should have buffer variables");
-        assert!(character.states.contains_key("CheckQuarterCircle"), "Should have QCF detection");
-        assert!(character.states.contains_key("CheckDragonPunch"), "Should have DP detection");
-        assert!(character.states.contains_key("CheckChargeMoves"), "Should have charge detection");
+        assert!(
+            character.variables.len() >= 8,
+            "Should have buffer variables"
+        );
+        assert!(
+            character.states.contains_key("CheckQuarterCircle"),
+            "Should have QCF detection"
+        );
+        assert!(
+            character.states.contains_key("CheckDragonPunch"),
+            "Should have DP detection"
+        );
+        assert!(
+            character.states.contains_key("CheckChargeMoves"),
+            "Should have charge detection"
+        );
 
-        println!("✓ Input buffer system validated ({} states)", character.states.len());
+        println!(
+            "✓ Input buffer system validated ({} states)",
+            character.states.len()
+        );
     }
 
     // ============================================================================
@@ -759,10 +850,19 @@ ReturnToNeutral()
         assert!(character.is_some(), "Should parse cancel system");
         let character = character.unwrap();
 
-        assert!(character.variables.len() >= 7, "Should have cancel variables");
-        assert!(character.states.contains_key("RomanCancel"), "Should have RC system");
+        assert!(
+            character.variables.len() >= 7,
+            "Should have cancel variables"
+        );
+        assert!(
+            character.states.contains_key("RomanCancel"),
+            "Should have RC system"
+        );
 
-        println!("✓ Cancel system validated ({} cancel states)", character.states.len());
+        println!(
+            "✓ Cancel system validated ({} cancel states)",
+            character.states.len()
+        );
     }
 
     // ============================================================================
@@ -852,12 +952,27 @@ CheckHit()
         assert!(character.is_some(), "Should parse defensive mechanics");
         let character = character.unwrap();
 
-        assert!(character.variables.len() >= 9, "Should have defensive variables");
-        assert!(character.states.contains_key("Parry"), "Should have parry system");
-        assert!(character.states.contains_key("GuardCrush"), "Should have guard crush");
-        assert!(character.states.contains_key("PushBlock"), "Should have push block");
+        assert!(
+            character.variables.len() >= 9,
+            "Should have defensive variables"
+        );
+        assert!(
+            character.states.contains_key("Parry"),
+            "Should have parry system"
+        );
+        assert!(
+            character.states.contains_key("GuardCrush"),
+            "Should have guard crush"
+        );
+        assert!(
+            character.states.contains_key("PushBlock"),
+            "Should have push block"
+        );
 
-        println!("✓ Defensive mechanics validated ({} states)", character.states.len());
+        println!(
+            "✓ Defensive mechanics validated ({} states)",
+            character.states.len()
+        );
     }
 
     // ============================================================================

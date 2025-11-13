@@ -14,8 +14,8 @@
 //! - Argument type inference
 //! - Complex expression arguments
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 
 #[cfg(test)]
 mod tests {
@@ -42,7 +42,8 @@ mod tests {
         let states = golden["states"].as_object().unwrap();
 
         let mut function_names = std::collections::HashSet::new();
-        let mut name_patterns: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut name_patterns: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(phases) = state_data["Phases"].as_object() {
@@ -53,13 +54,14 @@ mod tests {
                                 function_names.insert(func_name.to_string());
 
                                 // Categorize naming patterns
-                                let pattern = if func_name.chars().next().unwrap_or('a').is_uppercase() {
-                                    "PascalCase"
-                                } else if func_name.contains("_") {
-                                    "snake_case"
-                                } else {
-                                    "camelCase"
-                                };
+                                let pattern =
+                                    if func_name.chars().next().unwrap_or('a').is_uppercase() {
+                                        "PascalCase"
+                                    } else if func_name.contains("_") {
+                                        "snake_case"
+                                    } else {
+                                        "camelCase"
+                                    };
 
                                 *name_patterns.entry(pattern.to_string()).or_insert(0) += 1;
                             }
@@ -82,7 +84,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let mut function_catalog: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut function_catalog: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(phases) = state_data["Phases"].as_object() {
@@ -98,7 +101,10 @@ mod tests {
             }
         }
 
-        println!("✓ Function catalog ({} unique functions):", function_catalog.len());
+        println!(
+            "✓ Function catalog ({} unique functions):",
+            function_catalog.len()
+        );
 
         let mut sorted: Vec<_> = function_catalog.iter().collect();
         sorted.sort_by_key(|&(_, count)| std::cmp::Reverse(*count));
@@ -186,12 +192,19 @@ mod tests {
                                         total_args += 1;
 
                                         // Classify argument type
-                                        if arg_str.parse::<i64>().is_ok() || arg_str.parse::<f64>().is_ok() {
+                                        if arg_str.parse::<i64>().is_ok()
+                                            || arg_str.parse::<f64>().is_ok()
+                                        {
                                             numeric_args += 1;
-                                        } else if arg_str.starts_with('"') || arg_str.starts_with('\'') {
+                                        } else if arg_str.starts_with('"')
+                                            || arg_str.starts_with('\'')
+                                        {
                                             string_args += 1;
-                                        } else if arg_str.contains('(') || arg_str.contains('+') ||
-                                                  arg_str.contains('-') || arg_str.contains('*') {
+                                        } else if arg_str.contains('(')
+                                            || arg_str.contains('+')
+                                            || arg_str.contains('-')
+                                            || arg_str.contains('*')
+                                        {
                                             expression_args += 1;
                                         } else {
                                             identifier_args += 1;
@@ -207,10 +220,26 @@ mod tests {
 
         println!("✓ Argument type patterns:");
         println!("  Total arguments: {}", total_args);
-        println!("  Numeric literals: {} ({:.1}%)", numeric_args, (numeric_args as f64 / total_args as f64) * 100.0);
-        println!("  String literals: {} ({:.1}%)", string_args, (string_args as f64 / total_args as f64) * 100.0);
-        println!("  Identifiers: {} ({:.1}%)", identifier_args, (identifier_args as f64 / total_args as f64) * 100.0);
-        println!("  Expressions: {} ({:.1}%)", expression_args, (expression_args as f64 / total_args as f64) * 100.0);
+        println!(
+            "  Numeric literals: {} ({:.1}%)",
+            numeric_args,
+            (numeric_args as f64 / total_args as f64) * 100.0
+        );
+        println!(
+            "  String literals: {} ({:.1}%)",
+            string_args,
+            (string_args as f64 / total_args as f64) * 100.0
+        );
+        println!(
+            "  Identifiers: {} ({:.1}%)",
+            identifier_args,
+            (identifier_args as f64 / total_args as f64) * 100.0
+        );
+        println!(
+            "  Expressions: {} ({:.1}%)",
+            expression_args,
+            (expression_args as f64 / total_args as f64) * 100.0
+        );
     }
 
     #[test]
@@ -242,7 +271,10 @@ mod tests {
 
         println!("✓ String literal arguments: {}", string_args.len());
         if !string_args.is_empty() {
-            println!("  Examples: {:?}", string_args.iter().take(5).collect::<Vec<_>>());
+            println!(
+                "  Examples: {:?}",
+                string_args.iter().take(5).collect::<Vec<_>>()
+            );
         }
     }
 
@@ -339,12 +371,17 @@ mod tests {
                             if let Some(args) = action["args"].as_array() {
                                 for arg in args {
                                     if let Some(arg_str) = arg.as_str() {
-                                        let has_arithmetic = arg_str.contains('+') || arg_str.contains('-') ||
-                                                           arg_str.contains('*') || arg_str.contains('/');
-                                        let has_comparison = arg_str.contains('<') || arg_str.contains('>') ||
-                                                           arg_str.contains("==") || arg_str.contains("!=");
-                                        let has_logical = arg_str.contains("&&") || arg_str.contains("||") ||
-                                                        arg_str.contains('!');
+                                        let has_arithmetic = arg_str.contains('+')
+                                            || arg_str.contains('-')
+                                            || arg_str.contains('*')
+                                            || arg_str.contains('/');
+                                        let has_comparison = arg_str.contains('<')
+                                            || arg_str.contains('>')
+                                            || arg_str.contains("==")
+                                            || arg_str.contains("!=");
+                                        let has_logical = arg_str.contains("&&")
+                                            || arg_str.contains("||")
+                                            || arg_str.contains('!');
 
                                         if has_logical {
                                             logical_args += 1;
@@ -381,7 +418,8 @@ mod tests {
         let states = golden["states"].as_object().unwrap();
 
         let var_keywords = ["Set", "Add", "Sub", "Mul", "Div", "Increment", "Decrement"];
-        let mut var_functions: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut var_functions: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(phases) = state_data["Phases"].as_object() {
@@ -391,7 +429,8 @@ mod tests {
                             if let Some(func_name) = action["function"].as_str() {
                                 for keyword in &var_keywords {
                                     if func_name.contains(keyword) {
-                                        *var_functions.entry(func_name.to_string()).or_insert(0) += 1;
+                                        *var_functions.entry(func_name.to_string()).or_insert(0) +=
+                                            1;
                                         break;
                                     }
                                 }
@@ -417,7 +456,8 @@ mod tests {
         let states = golden["states"].as_object().unwrap();
 
         let state_keywords = ["ChangeState", "State", "Goto", "Jump", "Return"];
-        let mut state_functions: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut state_functions: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(phases) = state_data["Phases"].as_object() {
@@ -427,7 +467,9 @@ mod tests {
                             if let Some(func_name) = action["function"].as_str() {
                                 for keyword in &state_keywords {
                                     if func_name.contains(keyword) {
-                                        *state_functions.entry(func_name.to_string()).or_insert(0) += 1;
+                                        *state_functions
+                                            .entry(func_name.to_string())
+                                            .or_insert(0) += 1;
                                         break;
                                     }
                                 }
@@ -450,7 +492,8 @@ mod tests {
         let states = golden["states"].as_object().unwrap();
 
         let conditional_keywords = ["If", "Else", "EndIf", "Switch", "Case", "When"];
-        let mut conditional_functions: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut conditional_functions: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(phases) = state_data["Phases"].as_object() {
@@ -460,7 +503,9 @@ mod tests {
                             if let Some(func_name) = action["function"].as_str() {
                                 for keyword in &conditional_keywords {
                                     if func_name == *keyword || func_name.starts_with(keyword) {
-                                        *conditional_functions.entry(func_name.to_string()).or_insert(0) += 1;
+                                        *conditional_functions
+                                            .entry(func_name.to_string())
+                                            .or_insert(0) += 1;
                                         break;
                                     }
                                 }
@@ -515,7 +560,10 @@ mod tests {
         let states_with_actions = state_action_counts.len();
 
         if states_with_actions > 0 {
-            println!("  Average actions per state: {:.1}", total_actions as f64 / states_with_actions as f64);
+            println!(
+                "  Average actions per state: {:.1}",
+                total_actions as f64 / states_with_actions as f64
+            );
         }
     }
 
@@ -572,8 +620,10 @@ mod tests {
                         for (i, action) in actions.iter().enumerate() {
                             // Check args is an array
                             if !action["args"].is_array() {
-                                invalid_args.push(format!("{}.{} action {}: args is not array",
-                                                         state_name, phase_name, i));
+                                invalid_args.push(format!(
+                                    "{}.{} action {}: args is not array",
+                                    state_name, phase_name, i
+                                ));
                             }
                         }
                     }
@@ -581,7 +631,11 @@ mod tests {
             }
         }
 
-        assert!(invalid_args.is_empty(), "Invalid argument structures: {:?}", invalid_args);
+        assert!(
+            invalid_args.is_empty(),
+            "Invalid argument structures: {:?}",
+            invalid_args
+        );
         println!("✓ All action argument structures valid");
     }
 
@@ -590,7 +644,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let mut zero_arg_functions: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut zero_arg_functions: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(phases) = state_data["Phases"].as_object() {
@@ -600,7 +655,9 @@ mod tests {
                             if let Some(args) = action["args"].as_array() {
                                 if args.is_empty() {
                                     if let Some(func_name) = action["function"].as_str() {
-                                        *zero_arg_functions.entry(func_name.to_string()).or_insert(0) += 1;
+                                        *zero_arg_functions
+                                            .entry(func_name.to_string())
+                                            .or_insert(0) += 1;
                                     }
                                 }
                             }
