@@ -53,7 +53,7 @@ var versionInfo
 
 func _ready():
 	Log("Castagne Startup")
-	
+
 	LoadVersionInfo()
 	
 	baseConfigData = LoadModulesAndConfig()

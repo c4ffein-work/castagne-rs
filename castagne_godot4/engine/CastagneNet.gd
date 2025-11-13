@@ -91,9 +91,12 @@ func StartLogging():
 # --------------------------------------
 
 func _ready():
-	var _r = get_tree().connect("network_peer_connected", Callable(self, "_on_network_peer_connected"))
-	_r = get_tree().connect("network_peer_disconnected", Callable(self, "_on_network_peer_disconnected"))
-	_r = get_tree().connect("server_disconnected", Callable(self, "_on_server_disconnected"))
+	# Godot 4: multiplayer signals moved to multiplayer object
+	var multiplayer_api = get_tree().get_multiplayer()
+	if multiplayer_api:
+		var _r = multiplayer_api.connect("peer_connected", Callable(self, "_on_network_peer_connected"))
+		_r = multiplayer_api.connect("peer_disconnected", Callable(self, "_on_network_peer_disconnected"))
+		_r = multiplayer_api.connect("server_disconnected", Callable(self, "_on_server_disconnected"))
 	return
 	#SyncManager.connect("sync_started", Callable(self, "_on_SyncManager_sync_started"))
 	#SyncManager.connect("sync_stopped", Callable(self, "_on_SyncManager_sync_stopped"))
