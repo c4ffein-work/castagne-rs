@@ -14,8 +14,8 @@
 //! - Animation-state relationships
 //! - Visual data consistency
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 
 #[cfg(test)]
 mod tests {
@@ -41,8 +41,10 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-2D.json");
         let transformed = golden["transformed_data"].as_object().unwrap();
 
-        assert!(transformed.contains_key("Graphics"),
-               "2D character should have Graphics module");
+        assert!(
+            transformed.contains_key("Graphics"),
+            "2D character should have Graphics module"
+        );
 
         let graphics = &transformed["Graphics"];
         assert!(graphics.is_object(), "Graphics should be an object");
@@ -96,9 +98,15 @@ mod tests {
             }
         }
 
-        println!("✓ States with animation hints: {}", states_with_anim_hints.len());
+        println!(
+            "✓ States with animation hints: {}",
+            states_with_anim_hints.len()
+        );
         if !states_with_anim_hints.is_empty() {
-            println!("  Examples: {:?}", states_with_anim_hints.iter().take(5).collect::<Vec<_>>());
+            println!(
+                "  Examples: {:?}",
+                states_with_anim_hints.iter().take(5).collect::<Vec<_>>()
+            );
         }
     }
 
@@ -114,14 +122,23 @@ mod tests {
                 let sprites_y = sheet_data["SpritesY"].as_i64().unwrap_or(0);
                 let total_sprites = sprites_x * sprites_y;
 
-                assert!(total_sprites > 0 && total_sprites <= 10000,
-                       "Spritesheet {} has invalid sprite count: {}", sheet_name, total_sprites);
+                assert!(
+                    total_sprites > 0 && total_sprites <= 10000,
+                    "Spritesheet {} has invalid sprite count: {}",
+                    sheet_name,
+                    total_sprites
+                );
 
-                println!("  Spritesheet {}: {}x{} = {} sprites",
-                        sheet_name, sprites_x, sprites_y, total_sprites);
+                println!(
+                    "  Spritesheet {}: {}x{} = {} sprites",
+                    sheet_name, sprites_x, sprites_y, total_sprites
+                );
             }
 
-            println!("✓ Sprite data validated ({} spritesheets)", spritesheets.len());
+            println!(
+                "✓ Sprite data validated ({} spritesheets)",
+                spritesheets.len()
+            );
         }
     }
 
@@ -179,11 +196,16 @@ mod tests {
     fn e2e_subentity_section_presence() {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
 
-        assert!(golden.get("subentities").is_some(),
-               "Golden master should have subentities section");
+        assert!(
+            golden.get("subentities").is_some(),
+            "Golden master should have subentities section"
+        );
 
         let subentities = golden["subentities"].as_object().unwrap();
-        println!("✓ Subentities section present: {} subentities", subentities.len());
+        println!(
+            "✓ Subentities section present: {} subentities",
+            subentities.len()
+        );
     }
 
     #[test]
@@ -193,8 +215,11 @@ mod tests {
 
         for (subentity_name, subentity_data) in subentities {
             // Each subentity should have metadata-like structure
-            assert!(subentity_data.is_object(),
-                   "Subentity {} should be an object", subentity_name);
+            assert!(
+                subentity_data.is_object(),
+                "Subentity {} should be an object",
+                subentity_name
+            );
 
             // Common metadata fields
             if subentity_data.get("name").is_some() {
@@ -227,7 +252,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let subentities = golden["subentities"].as_object().unwrap();
 
-        let mut name_patterns: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut name_patterns: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for subentity_name in subentities.keys() {
             // Categorize naming patterns
@@ -302,10 +328,16 @@ mod tests {
 
         println!("✓ Empty type correlation:");
         println!("  Variables with empty type: {}", empty_type_vars.len());
-        println!("  Of those, are subentities: {}", empty_type_subentities.len());
+        println!(
+            "  Of those, are subentities: {}",
+            empty_type_subentities.len()
+        );
 
         if !empty_type_subentities.is_empty() {
-            println!("  Examples: {:?}", empty_type_subentities.iter().take(3).collect::<Vec<_>>());
+            println!(
+                "  Examples: {:?}",
+                empty_type_subentities.iter().take(3).collect::<Vec<_>>()
+            );
         }
     }
 
@@ -335,7 +367,8 @@ mod tests {
 
             for (pattern, _) in &expected_patterns {
                 if name_lower.contains(pattern) {
-                    found_patterns.entry(pattern.to_string())
+                    found_patterns
+                        .entry(pattern.to_string())
                         .or_insert_with(Vec::new)
                         .push(state_name.clone());
                 }
@@ -365,9 +398,15 @@ mod tests {
             }
         }
 
-        println!("✓ Frame data related variables: {}", frame_related_vars.len());
+        println!(
+            "✓ Frame data related variables: {}",
+            frame_related_vars.len()
+        );
         if !frame_related_vars.is_empty() {
-            println!("  Examples: {:?}", frame_related_vars.iter().take(5).collect::<Vec<_>>());
+            println!(
+                "  Examples: {:?}",
+                frame_related_vars.iter().take(5).collect::<Vec<_>>()
+            );
         }
     }
 
@@ -381,7 +420,8 @@ mod tests {
         let graphics = &golden["transformed_data"]["Graphics"];
 
         if let Some(spritesheets) = graphics["Spritesheets"].as_object() {
-            let mut pixel_sizes: std::collections::HashMap<i64, usize> = std::collections::HashMap::new();
+            let mut pixel_sizes: std::collections::HashMap<i64, usize> =
+                std::collections::HashMap::new();
 
             for (_, sheet_data) in spritesheets {
                 let pixel_size = sheet_data["PixelSize"].as_i64().unwrap_or(0);
@@ -419,8 +459,10 @@ mod tests {
             println!("✓ Spritesheet coverage:");
             println!("  Total sprite slots: {}", total_sprite_slots);
             println!("  Spritesheets: {}", spritesheets.len());
-            println!("  Average slots per sheet: {:.1}",
-                    total_sprite_slots as f64 / spritesheets.len() as f64);
+            println!(
+                "  Average slots per sheet: {:.1}",
+                total_sprite_slots as f64 / spritesheets.len() as f64
+            );
         }
     }
 
@@ -445,8 +487,10 @@ mod tests {
 
         // Typically there are multiple palettes per character (color variations)
         if palette_count > 0 && spritesheet_count > 0 {
-            println!("  Palette to spritesheet ratio: {:.2}",
-                    palette_count as f64 / spritesheet_count as f64);
+            println!(
+                "  Palette to spritesheet ratio: {:.2}",
+                palette_count as f64 / spritesheet_count as f64
+            );
         }
     }
 
@@ -524,10 +568,18 @@ mod tests {
         let model = load_golden_master("golden_masters/Baston-Model.json");
         let derived = load_golden_master("golden_masters/Baston-2D.json");
 
-        let model_subs: std::collections::HashSet<String> =
-            model["subentities"].as_object().unwrap().keys().cloned().collect();
-        let derived_subs: std::collections::HashSet<String> =
-            derived["subentities"].as_object().unwrap().keys().cloned().collect();
+        let model_subs: std::collections::HashSet<String> = model["subentities"]
+            .as_object()
+            .unwrap()
+            .keys()
+            .cloned()
+            .collect();
+        let derived_subs: std::collections::HashSet<String> = derived["subentities"]
+            .as_object()
+            .unwrap()
+            .keys()
+            .cloned()
+            .collect();
 
         let common: std::collections::HashSet<_> =
             model_subs.intersection(&derived_subs).cloned().collect();

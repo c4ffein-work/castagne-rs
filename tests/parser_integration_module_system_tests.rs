@@ -11,8 +11,8 @@
 //! - Graphics, Physics, Attacks, and Audio modules
 //! - Module interaction patterns
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 
 #[cfg(test)]
 mod tests {
@@ -51,8 +51,10 @@ mod tests {
             assert!(has_defines, "Graphics module should have Defines section");
 
             println!("✓ Graphics module structure validated");
-            println!("  Defines: {}, Spritesheets: {}, Palettes: {}",
-                     has_defines, has_spritesheets, has_palettes);
+            println!(
+                "  Defines: {}, Spritesheets: {}, Palettes: {}",
+                has_defines, has_spritesheets, has_palettes
+            );
         } else {
             println!("⚠ Graphics module not found (may not be in golden master)");
         }
@@ -68,10 +70,16 @@ mod tests {
 
                 for (sheet_name, sheet_data) in spritesheets {
                     // Validate required fields
-                    assert!(sheet_data["SpritesX"].is_number(),
-                        "Spritesheet {} missing SpritesX", sheet_name);
-                    assert!(sheet_data["SpritesY"].is_number(),
-                        "Spritesheet {} missing SpritesY", sheet_name);
+                    assert!(
+                        sheet_data["SpritesX"].is_number(),
+                        "Spritesheet {} missing SpritesX",
+                        sheet_name
+                    );
+                    assert!(
+                        sheet_data["SpritesY"].is_number(),
+                        "Spritesheet {} missing SpritesY",
+                        sheet_name
+                    );
 
                     let sprites_x = sheet_data["SpritesX"].as_u64().unwrap_or(0);
                     let sprites_y = sheet_data["SpritesY"].as_u64().unwrap_or(0);
@@ -79,7 +87,11 @@ mod tests {
                 }
 
                 println!("✓ Graphics spritesheets validated");
-                println!("  Total sheets: {}, Total sprite slots: {}", spritesheets.len(), total_sprites);
+                println!(
+                    "  Total sheets: {}, Total sprite slots: {}",
+                    spritesheets.len(),
+                    total_sprites
+                );
             }
         }
     }
@@ -92,15 +104,24 @@ mod tests {
             if let Some(palettes) = graphics["Palettes"].as_object() {
                 for (pal_id, pal_data) in palettes {
                     // Each palette must have DisplayName
-                    assert!(pal_data["DisplayName"].is_string(),
-                        "Palette {} missing DisplayName", pal_id);
+                    assert!(
+                        pal_data["DisplayName"].is_string(),
+                        "Palette {} missing DisplayName",
+                        pal_id
+                    );
 
                     let display_name = pal_data["DisplayName"].as_str().unwrap();
-                    assert!(!display_name.is_empty(),
-                        "Palette {} has empty DisplayName", pal_id);
+                    assert!(
+                        !display_name.is_empty(),
+                        "Palette {} has empty DisplayName",
+                        pal_id
+                    );
                 }
 
-                println!("✓ Graphics palettes validated ({} palettes)", palettes.len());
+                println!(
+                    "✓ Graphics palettes validated ({} palettes)",
+                    palettes.len()
+                );
             }
         }
     }
@@ -155,8 +176,11 @@ mod tests {
 
         for (var_name, _) in variables {
             let name_lower = var_name.to_lowercase();
-            if name_lower.contains("physics") || name_lower.contains("velocity") ||
-               name_lower.contains("position") || name_lower.contains("gravity") {
+            if name_lower.contains("physics")
+                || name_lower.contains("velocity")
+                || name_lower.contains("position")
+                || name_lower.contains("gravity")
+            {
                 physics_vars += 1;
             }
             if name_lower.contains("move") || name_lower.contains("speed") {
@@ -165,7 +189,10 @@ mod tests {
         }
 
         println!("✓ Physics variables analyzed");
-        println!("  Physics-related: {}, Movement-related: {}", physics_vars, movement_vars);
+        println!(
+            "  Physics-related: {}, Movement-related: {}",
+            physics_vars, movement_vars
+        );
     }
 
     // ============================================================================
@@ -197,8 +224,11 @@ mod tests {
 
         for (state_name, _) in states {
             let name_lower = state_name.to_lowercase();
-            if name_lower.contains("attack") || name_lower.starts_with("atk") ||
-               name_lower.contains("punch") || name_lower.contains("kick") {
+            if name_lower.contains("attack")
+                || name_lower.starts_with("atk")
+                || name_lower.contains("punch")
+                || name_lower.contains("kick")
+            {
                 attack_states += 1;
             }
             if name_lower.contains("hit") || name_lower.contains("hurt") {
@@ -207,7 +237,10 @@ mod tests {
         }
 
         println!("✓ Attack states analyzed");
-        println!("  Attack states: {}, Hit states: {}", attack_states, hit_states);
+        println!(
+            "  Attack states: {}, Hit states: {}",
+            attack_states, hit_states
+        );
     }
 
     #[test]
@@ -221,8 +254,10 @@ mod tests {
 
         for (var_name, _) in variables {
             let name_lower = var_name.to_lowercase();
-            if name_lower.contains("damage") || name_lower.contains("power") ||
-               name_lower.contains("strength") {
+            if name_lower.contains("damage")
+                || name_lower.contains("power")
+                || name_lower.contains("strength")
+            {
                 damage_vars += 1;
             }
             if name_lower.contains("hitbox") || name_lower.contains("hurtbox") {
@@ -231,7 +266,10 @@ mod tests {
         }
 
         println!("✓ Attack variables analyzed");
-        println!("  Damage-related: {}, Hitbox-related: {}", damage_vars, hitbox_vars);
+        println!(
+            "  Damage-related: {}, Hitbox-related: {}",
+            damage_vars, hitbox_vars
+        );
     }
 
     // ============================================================================
@@ -289,7 +327,10 @@ mod tests {
             println!("⚠ Modules without Defines: {:?}", modules_without_defines);
         }
 
-        println!("✓ Module defines checked ({} total modules)", transformed.len());
+        println!(
+            "✓ Module defines checked ({} total modules)",
+            transformed.len()
+        );
     }
 
     #[test]
@@ -308,7 +349,10 @@ mod tests {
         }
 
         println!("✓ Module defines key patterns analyzed");
-        println!("  Unique define keys across all modules: {}", all_define_keys.len());
+        println!(
+            "  Unique define keys across all modules: {}",
+            all_define_keys.len()
+        );
     }
 
     // ============================================================================
@@ -320,7 +364,10 @@ mod tests {
         match load_base_module("core/Base-Core.casp") {
             Ok(content) => {
                 assert!(!content.is_empty(), "Base-Core.casp should not be empty");
-                println!("✓ Base-Core.casp exists and readable ({} bytes)", content.len());
+                println!(
+                    "✓ Base-Core.casp exists and readable ({} bytes)",
+                    content.len()
+                );
             }
             Err(_) => {
                 println!("⚠ Base-Core.casp not found (may not be included in test environment)");
@@ -332,8 +379,14 @@ mod tests {
     fn e2e_module_base_graphics_exists() {
         match load_base_module("graphics/Base-Graphics.casp") {
             Ok(content) => {
-                assert!(!content.is_empty(), "Base-Graphics.casp should not be empty");
-                println!("✓ Base-Graphics.casp exists and readable ({} bytes)", content.len());
+                assert!(
+                    !content.is_empty(),
+                    "Base-Graphics.casp should not be empty"
+                );
+                println!(
+                    "✓ Base-Graphics.casp exists and readable ({} bytes)",
+                    content.len()
+                );
             }
             Err(_) => {
                 println!("⚠ Base-Graphics.casp not found");
@@ -345,8 +398,14 @@ mod tests {
     fn e2e_module_base_physics_exists() {
         match load_base_module("physics/Base-Physics2D.casp") {
             Ok(content) => {
-                assert!(!content.is_empty(), "Base-Physics2D.casp should not be empty");
-                println!("✓ Base-Physics2D.casp exists and readable ({} bytes)", content.len());
+                assert!(
+                    !content.is_empty(),
+                    "Base-Physics2D.casp should not be empty"
+                );
+                println!(
+                    "✓ Base-Physics2D.casp exists and readable ({} bytes)",
+                    content.len()
+                );
             }
             Err(_) => {
                 println!("⚠ Base-Physics2D.casp not found");
@@ -359,7 +418,10 @@ mod tests {
         match load_base_module("attacks/Base-Attacks.casp") {
             Ok(content) => {
                 assert!(!content.is_empty(), "Base-Attacks.casp should not be empty");
-                println!("✓ Base-Attacks.casp exists and readable ({} bytes)", content.len());
+                println!(
+                    "✓ Base-Attacks.casp exists and readable ({} bytes)",
+                    content.len()
+                );
             }
             Err(_) => {
                 println!("⚠ Base-Attacks.casp not found");
@@ -372,7 +434,10 @@ mod tests {
         match load_base_module("general/Base-Audio.casp") {
             Ok(content) => {
                 assert!(!content.is_empty(), "Base-Audio.casp should not be empty");
-                println!("✓ Base-Audio.casp exists and readable ({} bytes)", content.len());
+                println!(
+                    "✓ Base-Audio.casp exists and readable ({} bytes)",
+                    content.len()
+                );
             }
             Err(_) => {
                 println!("⚠ Base-Audio.casp not found");
@@ -385,7 +450,10 @@ mod tests {
         match load_base_module("general/Base-AI.casp") {
             Ok(content) => {
                 assert!(!content.is_empty(), "Base-AI.casp should not be empty");
-                println!("✓ Base-AI.casp exists and readable ({} bytes)", content.len());
+                println!(
+                    "✓ Base-AI.casp exists and readable ({} bytes)",
+                    content.len()
+                );
             }
             Err(_) => {
                 println!("⚠ Base-AI.casp not found");
@@ -397,8 +465,14 @@ mod tests {
     fn e2e_module_base_training_exists() {
         match load_base_module("general/Base-Training.casp") {
             Ok(content) => {
-                assert!(!content.is_empty(), "Base-Training.casp should not be empty");
-                println!("✓ Base-Training.casp exists and readable ({} bytes)", content.len());
+                assert!(
+                    !content.is_empty(),
+                    "Base-Training.casp should not be empty"
+                );
+                println!(
+                    "✓ Base-Training.casp exists and readable ({} bytes)",
+                    content.len()
+                );
             }
             Err(_) => {
                 println!("⚠ Base-Training.casp not found");
@@ -417,11 +491,17 @@ mod tests {
 
         // All modules should have consistent structure
         for (module_name, module_data) in transformed {
-            assert!(module_data.is_object(),
-                "Module {} should be an object", module_name);
+            assert!(
+                module_data.is_object(),
+                "Module {} should be an object",
+                module_name
+            );
         }
 
-        println!("✓ Cross-module consistency validated ({} modules)", transformed.len());
+        println!(
+            "✓ Cross-module consistency validated ({} modules)",
+            transformed.len()
+        );
     }
 
     #[test]
@@ -429,13 +509,18 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
 
         // transformed_data should exist and be an object
-        assert!(golden["transformed_data"].is_object(),
-            "transformed_data should be an object");
+        assert!(
+            golden["transformed_data"].is_object(),
+            "transformed_data should be an object"
+        );
 
         let modules = golden["transformed_data"].as_object().unwrap();
         assert!(modules.len() > 0, "Should have at least one module");
 
-        println!("✓ Transformed data completeness validated ({} modules)", modules.len());
+        println!(
+            "✓ Transformed data completeness validated ({} modules)",
+            modules.len()
+        );
     }
 
     // ============================================================================

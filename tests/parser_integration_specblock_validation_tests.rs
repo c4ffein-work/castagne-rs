@@ -14,8 +14,8 @@
 //! - Specblock inheritance
 //! - Complex specblock patterns
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 use std::io::Write as IoWrite;
 use tempfile::NamedTempFile;
 
@@ -36,7 +36,8 @@ mod tests {
 
     fn create_temp_casp(content: &str) -> NamedTempFile {
         let mut file = NamedTempFile::new().expect("Failed to create temp file");
-        file.write_all(content.as_bytes()).expect("Failed to write to temp file");
+        file.write_all(content.as_bytes())
+            .expect("Failed to write to temp file");
         file
     }
 
@@ -53,8 +54,10 @@ mod tests {
         let has_transformed = golden.get("transformed_data").is_some();
 
         // At minimum, one should exist
-        assert!(has_specblocks || has_transformed,
-               "Golden master should have specblocks or transformed_data");
+        assert!(
+            has_specblocks || has_transformed,
+            "Golden master should have specblocks or transformed_data"
+        );
 
         println!("✓ Specblock/transformed data structures present");
     }
@@ -66,17 +69,26 @@ mod tests {
 
         for (module_name, module_data) in transformed {
             // Each module should be an object
-            assert!(module_data.is_object(),
-                   "Module {} should be an object", module_name);
+            assert!(
+                module_data.is_object(),
+                "Module {} should be an object",
+                module_name
+            );
 
             // Modules typically have Defines section
             if module_data.get("Defines").is_some() {
-                assert!(module_data["Defines"].is_object(),
-                       "Module {} Defines should be object", module_name);
+                assert!(
+                    module_data["Defines"].is_object(),
+                    "Module {} Defines should be object",
+                    module_name
+                );
             }
         }
 
-        println!("✓ Transformed data structure validated ({} modules)", transformed.len());
+        println!(
+            "✓ Transformed data structure validated ({} modules)",
+            transformed.len()
+        );
     }
 
     #[test]
@@ -85,7 +97,8 @@ mod tests {
         let transformed = golden["transformed_data"].as_object().unwrap();
 
         let mut total_defines = 0;
-        let mut key_patterns: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut key_patterns: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (module_name, module_data) in transformed {
             if let Some(defines) = module_data["Defines"].as_object() {
@@ -97,7 +110,10 @@ mod tests {
                         "underscore_separated"
                     } else if define_key.chars().any(|c| c.is_uppercase()) {
                         "CamelCase"
-                    } else if define_key.chars().all(|c| c.is_lowercase() || c.is_numeric()) {
+                    } else if define_key
+                        .chars()
+                        .all(|c| c.is_lowercase() || c.is_numeric())
+                    {
                         "lowercase"
                     } else {
                         "mixed"
@@ -122,7 +138,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let transformed = golden["transformed_data"].as_object().unwrap();
 
-        let mut value_types: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut value_types: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, module_data) in transformed {
             if let Some(defines) = module_data["Defines"].as_object() {
@@ -265,24 +282,41 @@ mod tests {
         if let Some(spritesheets) = graphics["Spritesheets"].as_object() {
             for (sheet_name, sheet_data) in spritesheets {
                 // Validate required fields
-                assert!(sheet_data.get("SpritesX").is_some(),
-                       "Spritesheet {} missing SpritesX", sheet_name);
-                assert!(sheet_data.get("SpritesY").is_some(),
-                       "Spritesheet {} missing SpritesY", sheet_name);
+                assert!(
+                    sheet_data.get("SpritesX").is_some(),
+                    "Spritesheet {} missing SpritesX",
+                    sheet_name
+                );
+                assert!(
+                    sheet_data.get("SpritesY").is_some(),
+                    "Spritesheet {} missing SpritesY",
+                    sheet_name
+                );
 
                 // Validate numeric types
                 if let Some(x) = sheet_data["SpritesX"].as_i64() {
-                    assert!(x > 0 && x <= 1000,
-                           "Spritesheet {} SpritesX out of range: {}", sheet_name, x);
+                    assert!(
+                        x > 0 && x <= 1000,
+                        "Spritesheet {} SpritesX out of range: {}",
+                        sheet_name,
+                        x
+                    );
                 }
 
                 if let Some(y) = sheet_data["SpritesY"].as_i64() {
-                    assert!(y > 0 && y <= 1000,
-                           "Spritesheet {} SpritesY out of range: {}", sheet_name, y);
+                    assert!(
+                        y > 0 && y <= 1000,
+                        "Spritesheet {} SpritesY out of range: {}",
+                        sheet_name,
+                        y
+                    );
                 }
             }
 
-            println!("✓ Graphics spritesheets validated ({} sheets)", spritesheets.len());
+            println!(
+                "✓ Graphics spritesheets validated ({} sheets)",
+                spritesheets.len()
+            );
         } else {
             println!("⚠ No spritesheets in graphics module");
         }
@@ -294,7 +328,8 @@ mod tests {
         let graphics = &golden["transformed_data"]["Graphics"];
 
         if let Some(palettes) = graphics["Palettes"].as_object() {
-            let mut palette_types: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+            let mut palette_types: std::collections::HashMap<String, usize> =
+                std::collections::HashMap::new();
 
             for (palette_id, palette_data) in palettes {
                 // Count palette types by structure
@@ -313,11 +348,17 @@ mod tests {
                 *palette_types.entry(palette_type.to_string()).or_insert(0) += 1;
 
                 // Validate DisplayName
-                assert!(palette_data.get("DisplayName").is_some(),
-                       "Palette {} missing DisplayName", palette_id);
+                assert!(
+                    palette_data.get("DisplayName").is_some(),
+                    "Palette {} missing DisplayName",
+                    palette_id
+                );
             }
 
-            println!("✓ Graphics palettes validated ({} palettes)", palettes.len());
+            println!(
+                "✓ Graphics palettes validated ({} palettes)",
+                palettes.len()
+            );
             println!("  Palette types:");
             for (ptype, count) in palette_types.iter() {
                 println!("    {}: {}", ptype, count);
@@ -340,8 +381,11 @@ mod tests {
 
                 // Anims can be objects or null
                 if !anim_data.is_null() {
-                    assert!(anim_data.is_object(),
-                           "Animation {} should be object or null", anim_name);
+                    assert!(
+                        anim_data.is_object(),
+                        "Animation {} should be object or null",
+                        anim_name
+                    );
                 }
             }
 
@@ -379,7 +423,10 @@ mod tests {
                 }
 
                 if !found_keywords.is_empty() {
-                    println!("  Physics-related defines: {:?}", found_keywords.iter().take(5).collect::<Vec<_>>());
+                    println!(
+                        "  Physics-related defines: {:?}",
+                        found_keywords.iter().take(5).collect::<Vec<_>>()
+                    );
                 }
             }
         } else {
@@ -415,7 +462,10 @@ mod tests {
                 }
 
                 if !found_keywords.is_empty() {
-                    println!("  Attack-related defines: {:?}", found_keywords.iter().take(5).collect::<Vec<_>>());
+                    println!(
+                        "  Attack-related defines: {:?}",
+                        found_keywords.iter().take(5).collect::<Vec<_>>()
+                    );
                 }
             }
         } else {
@@ -445,7 +495,10 @@ mod tests {
 
         println!("✓ Module defines coverage:");
         println!("  Modules with defines: {}", modules_with_defines);
-        println!("  Modules without defines: {}", modules_without_defines.len());
+        println!(
+            "  Modules without defines: {}",
+            modules_without_defines.len()
+        );
 
         if !modules_without_defines.is_empty() && modules_without_defines.len() <= 5 {
             println!("  Modules without defines: {:?}", modules_without_defines);
@@ -457,8 +510,10 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let transformed = golden["transformed_data"].as_object().unwrap();
 
-        let mut all_define_keys: std::collections::HashSet<String> = std::collections::HashSet::new();
-        let mut module_key_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut all_define_keys: std::collections::HashSet<String> =
+            std::collections::HashSet::new();
+        let mut module_key_counts: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (module_name, module_data) in transformed {
             if let Some(defines) = module_data["Defines"].as_object() {
@@ -495,12 +550,8 @@ mod tests {
 
         fn measure_depth(value: &Value) -> usize {
             match value {
-                Value::Object(map) => {
-                    1 + map.values().map(measure_depth).max().unwrap_or(0)
-                }
-                Value::Array(arr) => {
-                    1 + arr.iter().map(measure_depth).max().unwrap_or(0)
-                }
+                Value::Object(map) => 1 + map.values().map(measure_depth).max().unwrap_or(0),
+                Value::Array(arr) => 1 + arr.iter().map(measure_depth).max().unwrap_or(0),
                 _ => 1,
             }
         }
@@ -545,8 +596,11 @@ mod tests {
         }
 
         if file_modules.len() >= 2 {
-            let common: std::collections::HashSet<_> =
-                file_modules[0].1.intersection(&file_modules[1].1).cloned().collect();
+            let common: std::collections::HashSet<_> = file_modules[0]
+                .1
+                .intersection(&file_modules[1].1)
+                .cloned()
+                .collect();
 
             println!("✓ Specblock consistency across files:");
             println!("  File 1 modules: {}", file_modules[0].1.len());

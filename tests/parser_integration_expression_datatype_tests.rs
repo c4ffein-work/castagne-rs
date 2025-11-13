@@ -14,8 +14,8 @@
 //! - String escaping and special characters
 //! - Vector component parsing
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 
 #[cfg(test)]
 mod tests {
@@ -79,7 +79,10 @@ mod tests {
 
         println!("✓ Negative integers: {}", negative_ints.len());
         if !negative_ints.is_empty() {
-            println!("  Examples: {:?}", negative_ints.iter().take(3).collect::<Vec<_>>());
+            println!(
+                "  Examples: {:?}",
+                negative_ints.iter().take(3).collect::<Vec<_>>()
+            );
         }
     }
 
@@ -111,7 +114,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let variables = golden["variables"].as_object().unwrap();
 
-        let mut range_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut range_counts: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, var_data) in variables {
             if var_data["Type"].as_str().unwrap_or("") == "Int" {
@@ -144,7 +148,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let variables = golden["variables"].as_object().unwrap();
 
-        let mut float_precisions: std::collections::HashMap<usize, usize> = std::collections::HashMap::new();
+        let mut float_precisions: std::collections::HashMap<usize, usize> =
+            std::collections::HashMap::new();
 
         for (_, var_data) in variables {
             if var_data["Type"].as_str().unwrap_or("") == "Float" {
@@ -184,7 +189,10 @@ mod tests {
 
         println!("✓ Scientific notation floats: {}", scientific_floats.len());
         if !scientific_floats.is_empty() {
-            println!("  Examples: {:?}", scientific_floats.iter().take(3).collect::<Vec<_>>());
+            println!(
+                "  Examples: {:?}",
+                scientific_floats.iter().take(3).collect::<Vec<_>>()
+            );
         } else {
             println!("  (None found - all standard notation)");
         }
@@ -227,7 +235,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let variables = golden["variables"].as_object().unwrap();
 
-        let mut bool_formats: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut bool_formats: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, var_data) in variables {
             if var_data["Type"].as_str().unwrap_or("") == "Bool" {
@@ -243,8 +252,11 @@ mod tests {
 
         // Validate only expected formats
         for format in bool_formats.keys() {
-            assert!(["true", "false", "null", "0", "1"].contains(&format.as_str()),
-                   "Unexpected boolean format: {}", format);
+            assert!(
+                ["true", "false", "null", "0", "1"].contains(&format.as_str()),
+                "Unexpected boolean format: {}",
+                format
+            );
         }
     }
 
@@ -275,7 +287,10 @@ mod tests {
 
         let total = true_count + false_count + null_count;
         if total > 0 {
-            println!("  True percentage: {:.1}%", (true_count as f64 / total as f64) * 100.0);
+            println!(
+                "  True percentage: {:.1}%",
+                (true_count as f64 / total as f64) * 100.0
+            );
         }
     }
 
@@ -300,12 +315,18 @@ mod tests {
                     let parts: Vec<&str> = value.split(',').map(|s| s.trim()).collect();
 
                     if parts.len() != 2 {
-                        invalid_vec2.push(format!("{}: wrong component count ({})", var_name, parts.len()));
+                        invalid_vec2.push(format!(
+                            "{}: wrong component count ({})",
+                            var_name,
+                            parts.len()
+                        ));
                     } else {
                         for (i, part) in parts.iter().enumerate() {
                             if part.parse::<f64>().is_err() {
-                                invalid_vec2.push(format!("{}: component {} invalid ({})",
-                                                         var_name, i, part));
+                                invalid_vec2.push(format!(
+                                    "{}: component {} invalid ({})",
+                                    var_name, i, part
+                                ));
                             }
                         }
                     }
@@ -313,7 +334,11 @@ mod tests {
             }
         }
 
-        assert!(invalid_vec2.is_empty(), "Invalid Vec2 values: {:?}", invalid_vec2);
+        assert!(
+            invalid_vec2.is_empty(),
+            "Invalid Vec2 values: {:?}",
+            invalid_vec2
+        );
         println!("✓ Vec2 component validation: {} Vec2 variables", vec2_count);
     }
 
@@ -334,12 +359,18 @@ mod tests {
                     let parts: Vec<&str> = value.split(',').map(|s| s.trim()).collect();
 
                     if parts.len() != 3 {
-                        invalid_vec3.push(format!("{}: wrong component count ({})", var_name, parts.len()));
+                        invalid_vec3.push(format!(
+                            "{}: wrong component count ({})",
+                            var_name,
+                            parts.len()
+                        ));
                     } else {
                         for (i, part) in parts.iter().enumerate() {
                             if part.parse::<f64>().is_err() {
-                                invalid_vec3.push(format!("{}: component {} invalid ({})",
-                                                         var_name, i, part));
+                                invalid_vec3.push(format!(
+                                    "{}: component {} invalid ({})",
+                                    var_name, i, part
+                                ));
                             }
                         }
                     }
@@ -347,7 +378,11 @@ mod tests {
             }
         }
 
-        assert!(invalid_vec3.is_empty(), "Invalid Vec3 values: {:?}", invalid_vec3);
+        assert!(
+            invalid_vec3.is_empty(),
+            "Invalid Vec3 values: {:?}",
+            invalid_vec3
+        );
         println!("✓ Vec3 component validation: {} Vec3 variables", vec3_count);
     }
 
@@ -364,7 +399,8 @@ mod tests {
             let value = var_data["Value"].as_str().unwrap();
 
             if value != "null" {
-                let is_zero = value.split(',')
+                let is_zero = value
+                    .split(',')
                     .map(|s| s.trim().parse::<f64>().unwrap_or(1.0))
                     .all(|v| v == 0.0);
 
@@ -525,7 +561,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let variables = golden["variables"].as_object().unwrap();
 
-        let mut type_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut type_counts: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, var_data) in variables {
             let var_type = var_data["Type"].as_str().unwrap_or("").to_string();
@@ -554,8 +591,10 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let variables = golden["variables"].as_object().unwrap();
 
-        let mut mutability_by_type: std::collections::HashMap<String, std::collections::HashMap<String, usize>> =
-            std::collections::HashMap::new();
+        let mut mutability_by_type: std::collections::HashMap<
+            String,
+            std::collections::HashMap<String, usize>,
+        > = std::collections::HashMap::new();
 
         for (_, var_data) in variables {
             let var_type = var_data["Type"].as_str().unwrap_or("").to_string();
@@ -585,8 +624,10 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let variables = golden["variables"].as_object().unwrap();
 
-        let mut null_by_type: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
-        let mut total_by_type: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut null_by_type: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
+        let mut total_by_type: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, var_data) in variables {
             let var_type = var_data["Type"].as_str().unwrap_or("").to_string();
@@ -604,7 +645,10 @@ mod tests {
         for (var_type, total) in total_by_type.iter() {
             let null_count = null_by_type.get(var_type).unwrap_or(&0);
             let percentage = (*null_count as f64 / *total as f64) * 100.0;
-            println!("  {}: {}/{} ({:.1}%)", var_type, null_count, total, percentage);
+            println!(
+                "  {}: {}/{} ({:.1}%)",
+                var_type, null_count, total, percentage
+            );
         }
     }
 
@@ -625,7 +669,8 @@ mod tests {
             let golden = load_golden_master(file_path);
             let variables = golden["variables"].as_object().unwrap();
 
-            let mut type_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+            let mut type_counts: std::collections::HashMap<String, usize> =
+                std::collections::HashMap::new();
 
             for (_, var_data) in variables {
                 let var_type = var_data["Type"].as_str().unwrap_or("").to_string();

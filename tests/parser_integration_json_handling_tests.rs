@@ -15,8 +15,8 @@
 //! - Numeric value ranges
 //! - String field validation
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 
 #[cfg(test)]
 mod tests {
@@ -57,8 +57,11 @@ mod tests {
 
             let parse_result: Result<Value, _> = serde_json::from_str(&json_content);
 
-            assert!(parse_result.is_ok(),
-                   "JSON file should be valid: {}", file_path);
+            assert!(
+                parse_result.is_ok(),
+                "JSON file should be valid: {}",
+                file_path
+            );
 
             println!("  ✓ {} is valid JSON", file_path);
         }
@@ -76,8 +79,11 @@ mod tests {
             let json_content = fs::read_to_string(file_path)
                 .unwrap_or_else(|_| panic!("Failed to read file: {}", file_path));
 
-            assert!(!json_content.is_empty(),
-                   "JSON file should not be empty: {}", file_path);
+            assert!(
+                !json_content.is_empty(),
+                "JSON file should not be empty: {}",
+                file_path
+            );
 
             let size_kb = json_content.len() as f64 / 1024.0;
             println!("  {} ({:.1} KB)", file_path, size_kb);
@@ -101,8 +107,11 @@ mod tests {
         for file_path in &files {
             let golden = load_golden_master(file_path);
 
-            assert!(golden.is_object(),
-                   "{}: Root should be an object", file_path);
+            assert!(
+                golden.is_object(),
+                "{}: Root should be an object",
+                file_path
+            );
 
             let obj = golden.as_object().unwrap();
 
@@ -110,8 +119,12 @@ mod tests {
             println!("    Total top-level fields: {}", obj.len());
 
             for field in &required_fields {
-                assert!(obj.contains_key(*field),
-                       "{}: Missing required field '{}'", file_path, field);
+                assert!(
+                    obj.contains_key(*field),
+                    "{}: Missing required field '{}'",
+                    file_path,
+                    field
+                );
                 println!("    ✓ Has '{}'", field);
             }
         }
@@ -131,23 +144,35 @@ mod tests {
             println!("  {}:", file_path);
 
             // metadata should be an object
-            assert!(golden["metadata"].is_object(),
-                   "{}: metadata should be object", file_path);
+            assert!(
+                golden["metadata"].is_object(),
+                "{}: metadata should be object",
+                file_path
+            );
             println!("    ✓ metadata is object");
 
             // states should be an object
-            assert!(golden["states"].is_object(),
-                   "{}: states should be object", file_path);
+            assert!(
+                golden["states"].is_object(),
+                "{}: states should be object",
+                file_path
+            );
             println!("    ✓ states is object");
 
             // subentities should be an object
-            assert!(golden["subentities"].is_object(),
-                   "{}: subentities should be object", file_path);
+            assert!(
+                golden["subentities"].is_object(),
+                "{}: subentities should be object",
+                file_path
+            );
             println!("    ✓ subentities is object");
 
             // variables should be an object
-            assert!(golden["variables"].is_object(),
-                   "{}: variables should be object", file_path);
+            assert!(
+                golden["variables"].is_object(),
+                "{}: variables should be object",
+                file_path
+            );
             println!("    ✓ variables is object");
         }
 
@@ -173,8 +198,12 @@ mod tests {
 
             // Check first state structure
             if let Some((state_name, state_data)) = states.iter().next() {
-                assert!(state_data.is_object(),
-                       "{}: State '{}' should be object", file_path, state_name);
+                assert!(
+                    state_data.is_object(),
+                    "{}: State '{}' should be object",
+                    file_path,
+                    state_name
+                );
 
                 let state_obj = state_data.as_object().unwrap();
 
@@ -182,9 +211,13 @@ mod tests {
                 let expected_fields = vec!["Parent", "Type", "TransitionFlags", "Phases"];
 
                 for field in &expected_fields {
-                    assert!(state_obj.contains_key(*field),
-                           "{}: State '{}' missing field '{}'",
-                           file_path, state_name, field);
+                    assert!(
+                        state_obj.contains_key(*field),
+                        "{}: State '{}' missing field '{}'",
+                        file_path,
+                        state_name,
+                        field
+                    );
                 }
 
                 println!("    First state '{}' has all expected fields", state_name);
@@ -214,25 +247,37 @@ mod tests {
 
                 // Parent can be null or string
                 let parent = &state_obj["Parent"];
-                assert!(parent.is_null() || parent.is_string(),
-                       "{}: State '{}' Parent should be null or string",
-                       file_path, state_name);
+                assert!(
+                    parent.is_null() || parent.is_string(),
+                    "{}: State '{}' Parent should be null or string",
+                    file_path,
+                    state_name
+                );
 
                 // Type can be null or string
                 let state_type = &state_obj["Type"];
-                assert!(state_type.is_null() || state_type.is_string(),
-                       "{}: State '{}' Type should be null or string",
-                       file_path, state_name);
+                assert!(
+                    state_type.is_null() || state_type.is_string(),
+                    "{}: State '{}' Type should be null or string",
+                    file_path,
+                    state_name
+                );
 
                 // TransitionFlags should be array
-                assert!(state_obj["TransitionFlags"].is_array(),
-                       "{}: State '{}' TransitionFlags should be array",
-                       file_path, state_name);
+                assert!(
+                    state_obj["TransitionFlags"].is_array(),
+                    "{}: State '{}' TransitionFlags should be array",
+                    file_path,
+                    state_name
+                );
 
                 // Phases should be object
-                assert!(state_obj["Phases"].is_object(),
-                       "{}: State '{}' Phases should be object",
-                       file_path, state_name);
+                assert!(
+                    state_obj["Phases"].is_object(),
+                    "{}: State '{}' Phases should be object",
+                    file_path,
+                    state_name
+                );
 
                 checked += 1;
             }
@@ -293,8 +338,12 @@ mod tests {
 
             // Check first variable structure
             if let Some((var_name, var_data)) = variables.iter().next() {
-                assert!(var_data.is_object(),
-                       "{}: Variable '{}' should be object", file_path, var_name);
+                assert!(
+                    var_data.is_object(),
+                    "{}: Variable '{}' should be object",
+                    file_path,
+                    var_name
+                );
 
                 let var_obj = var_data.as_object().unwrap();
 
@@ -302,9 +351,13 @@ mod tests {
                 let expected_fields = vec!["Name", "Value", "Type", "Subtype", "Mutability"];
 
                 for field in &expected_fields {
-                    assert!(var_obj.contains_key(*field),
-                           "{}: Variable '{}' missing field '{}'",
-                           file_path, var_name, field);
+                    assert!(
+                        var_obj.contains_key(*field),
+                        "{}: Variable '{}' missing field '{}'",
+                        file_path,
+                        var_name,
+                        field
+                    );
                 }
 
                 println!("    Variable '{}' has all expected fields", var_name);
@@ -334,29 +387,44 @@ mod tests {
 
                 // Name can be null or string
                 let name = &var_obj["Name"];
-                assert!(name.is_null() || name.is_string(),
-                       "{}: Variable '{}' Name should be null or string",
-                       file_path, var_name);
+                assert!(
+                    name.is_null() || name.is_string(),
+                    "{}: Variable '{}' Name should be null or string",
+                    file_path,
+                    var_name
+                );
 
                 // Value should be string
-                assert!(var_obj["Value"].is_string(),
-                       "{}: Variable '{}' Value should be string",
-                       file_path, var_name);
+                assert!(
+                    var_obj["Value"].is_string(),
+                    "{}: Variable '{}' Value should be string",
+                    file_path,
+                    var_name
+                );
 
                 // Type should be string
-                assert!(var_obj["Type"].is_string(),
-                       "{}: Variable '{}' Type should be string",
-                       file_path, var_name);
+                assert!(
+                    var_obj["Type"].is_string(),
+                    "{}: Variable '{}' Type should be string",
+                    file_path,
+                    var_name
+                );
 
                 // Subtype should be string
-                assert!(var_obj["Subtype"].is_string(),
-                       "{}: Variable '{}' Subtype should be string",
-                       file_path, var_name);
+                assert!(
+                    var_obj["Subtype"].is_string(),
+                    "{}: Variable '{}' Subtype should be string",
+                    file_path,
+                    var_name
+                );
 
                 // Mutability should be string
-                assert!(var_obj["Mutability"].is_string(),
-                       "{}: Variable '{}' Mutability should be string",
-                       file_path, var_name);
+                assert!(
+                    var_obj["Mutability"].is_string(),
+                    "{}: Variable '{}' Mutability should be string",
+                    file_path,
+                    var_name
+                );
 
                 checked += 1;
             }
@@ -401,9 +469,12 @@ mod tests {
             println!("  {}:", file_path);
 
             for (subentity_name, subentity_data) in subentities.iter() {
-                assert!(subentity_data.is_object(),
-                       "{}: Subentity '{}' should be object",
-                       file_path, subentity_name);
+                assert!(
+                    subentity_data.is_object(),
+                    "{}: Subentity '{}' should be object",
+                    file_path,
+                    subentity_name
+                );
 
                 println!("    ✓ Subentity '{}' is object", subentity_name);
             }
@@ -424,12 +495,18 @@ mod tests {
             let golden = load_golden_master(file_path);
 
             if let Some(transformed) = golden.get("transformed_data") {
-                assert!(transformed.is_object(),
-                       "{}: transformed_data should be object", file_path);
+                assert!(
+                    transformed.is_object(),
+                    "{}: transformed_data should be object",
+                    file_path
+                );
 
                 let obj = transformed.as_object().unwrap();
-                println!("  {} has transformed_data ({} top-level keys)",
-                        file_path, obj.len());
+                println!(
+                    "  {} has transformed_data ({} top-level keys)",
+                    file_path,
+                    obj.len()
+                );
 
                 // List some keys
                 let keys: Vec<&String> = obj.keys().take(5).collect();
@@ -461,8 +538,7 @@ mod tests {
                             break;
                         }
 
-                        assert!(value.is_number(),
-                               "Define '{}' should be number", key);
+                        assert!(value.is_number(), "Define '{}' should be number", key);
 
                         println!("    {} = {}", key, value);
                         checked += 1;
@@ -503,8 +579,16 @@ mod tests {
             }
 
             println!("  {}:", file_path);
-            println!("    States with null Parent: {}/{}", null_parent_count, states.len());
-            println!("    States with null Type: {}/{}", null_type_count, states.len());
+            println!(
+                "    States with null Parent: {}/{}",
+                null_parent_count,
+                states.len()
+            );
+            println!(
+                "    States with null Type: {}/{}",
+                null_type_count,
+                states.len()
+            );
 
             // Check nulls in variables
             let variables = golden["variables"].as_object().unwrap();
@@ -517,7 +601,11 @@ mod tests {
                 }
             }
 
-            println!("    Variables with null Name: {}/{}", null_name_count, variables.len());
+            println!(
+                "    Variables with null Name: {}/{}",
+                null_name_count,
+                variables.len()
+            );
         }
     }
 
@@ -552,10 +640,17 @@ mod tests {
             }
 
             if all_consistent {
-                println!("    ✓ All {} states have consistent structure", states.len());
+                println!(
+                    "    ✓ All {} states have consistent structure",
+                    states.len()
+                );
             }
 
-            assert!(all_consistent, "{}: States should have consistent structure", file_path);
+            assert!(
+                all_consistent,
+                "{}: States should have consistent structure",
+                file_path
+            );
         }
     }
 
@@ -586,10 +681,17 @@ mod tests {
             }
 
             if all_consistent {
-                println!("    ✓ All {} variables have consistent structure", variables.len());
+                println!(
+                    "    ✓ All {} variables have consistent structure",
+                    variables.len()
+                );
             }
 
-            assert!(all_consistent, "{}: Variables should have consistent structure", file_path);
+            assert!(
+                all_consistent,
+                "{}: Variables should have consistent structure",
+                file_path
+            );
         }
     }
 

@@ -27,7 +27,8 @@ mod tests {
 
     fn create_temp_casp(content: &str) -> NamedTempFile {
         let mut file = NamedTempFile::new().expect("Failed to create temp file");
-        file.write_all(content.as_bytes()).expect("Failed to write to temp file");
+        file.write_all(content.as_bytes())
+            .expect("Failed to write to temp file");
         file
     }
 
@@ -55,9 +56,18 @@ var LargeNegative(Int): -1000000000
         assert!(character.is_some(), "Should parse extreme int values");
         let character = character.unwrap();
 
-        assert!(character.variables.contains_key("MaxInt"), "Should have MaxInt");
-        assert!(character.variables.contains_key("MinInt"), "Should have MinInt");
-        assert!(character.variables.contains_key("LargePositive"), "Should have LargePositive");
+        assert!(
+            character.variables.contains_key("MaxInt"),
+            "Should have MaxInt"
+        );
+        assert!(
+            character.variables.contains_key("MinInt"),
+            "Should have MinInt"
+        );
+        assert!(
+            character.variables.contains_key("LargePositive"),
+            "Should have LargePositive"
+        );
 
         println!("✓ Extreme int values validated (5 variables)");
     }
@@ -83,9 +93,16 @@ var Pi(Float): 3.14159265359
         assert!(character.is_some(), "Should parse special float values");
         let character = character.unwrap();
 
-        assert!(character.variables.contains_key("VerySmall"), "Should have VerySmall");
+        assert!(
+            character.variables.contains_key("VerySmall"),
+            "Should have VerySmall"
+        );
         assert!(character.variables.contains_key("Pi"), "Should have Pi");
-        assert_eq!(character.variables.len(), 6, "Should have 6 float variables");
+        assert_eq!(
+            character.variables.len(),
+            6,
+            "Should have 6 float variables"
+        );
 
         println!("✓ Special float values validated (6 variables)");
     }
@@ -111,8 +128,14 @@ var LargeVec(Vec3): 999.999, 888.888, 777.777
         assert!(character.is_some(), "Should parse vector extreme values");
         let character = character.unwrap();
 
-        assert!(character.variables.contains_key("MaxCoords"), "Should have MaxCoords");
-        assert!(character.variables.contains_key("LargeVec"), "Should have LargeVec");
+        assert!(
+            character.variables.contains_key("MaxCoords"),
+            "Should have MaxCoords"
+        );
+        assert!(
+            character.variables.contains_key("LargeVec"),
+            "Should have LargeVec"
+        );
 
         println!("✓ Vector extreme values validated (6 variables)");
     }
@@ -150,11 +173,20 @@ Level5Init()
         let mut parser = CastagneParser::new();
         let character = parser.create_full_character(file.path().to_str().unwrap());
 
-        assert!(character.is_some(), "Should parse deep inheritance (6 levels)");
+        assert!(
+            character.is_some(),
+            "Should parse deep inheritance (6 levels)"
+        );
         let character = character.unwrap();
 
-        assert!(character.states.contains_key("Level0"), "Should have Level0");
-        assert!(character.states.contains_key("Level5"), "Should have Level5");
+        assert!(
+            character.states.contains_key("Level0"),
+            "Should have Level0"
+        );
+        assert!(
+            character.states.contains_key("Level5"),
+            "Should have Level5"
+        );
         assert_eq!(character.states.len(), 6, "Should have 6 states");
 
         println!("✓ Deep state inheritance validated (6 levels)");
@@ -196,10 +228,16 @@ End()
         let character = character.unwrap();
 
         let complex_state = &character.states["ComplexState"];
-        assert!(complex_state.actions.len() >= 8,
-            "Should have at least 8 phases, got {}", complex_state.actions.len());
+        assert!(
+            complex_state.actions.len() >= 8,
+            "Should have at least 8 phases, got {}",
+            complex_state.actions.len()
+        );
 
-        println!("✓ Many phases per state validated ({} phases)", complex_state.actions.len());
+        println!(
+            "✓ Many phases per state validated ({} phases)",
+            complex_state.actions.len()
+        );
     }
 
     #[test]
@@ -230,12 +268,21 @@ EndIf
         let mut parser = CastagneParser::new();
         let character = parser.create_full_character(file.path().to_str().unwrap());
 
-        assert!(character.is_some(), "Should parse deeply nested conditionals");
+        assert!(
+            character.is_some(),
+            "Should parse deeply nested conditionals"
+        );
         let character = character.unwrap();
 
         let test_state = &character.states["Test"];
-        assert!(test_state.actions.contains_key("Action"), "Should have Action phase");
-        assert!(test_state.actions["Action"].len() > 0, "Should have actions");
+        assert!(
+            test_state.actions.contains_key("Action"),
+            "Should have Action phase"
+        );
+        assert!(
+            test_state.actions["Action"].len() > 0,
+            "Should have actions"
+        );
 
         println!("✓ Deeply nested conditionals validated (5 levels)");
     }
@@ -260,10 +307,16 @@ EndIf
         assert!(character.is_some(), "Should parse 100 variables");
         let character = character.unwrap();
 
-        assert!(character.variables.len() >= 100,
-            "Should have at least 100 variables, got {}", character.variables.len());
+        assert!(
+            character.variables.len() >= 100,
+            "Should have at least 100 variables, got {}",
+            character.variables.len()
+        );
 
-        println!("✓ Many variables validated ({} variables)", character.variables.len());
+        println!(
+            "✓ Many variables validated ({} variables)",
+            character.variables.len()
+        );
     }
 
     #[test]
@@ -282,10 +335,16 @@ EndIf
         assert!(character.is_some(), "Should parse 50 states");
         let character = character.unwrap();
 
-        assert!(character.states.len() >= 50,
-            "Should have at least 50 states, got {}", character.states.len());
+        assert!(
+            character.states.len() >= 50,
+            "Should have at least 50 states, got {}",
+            character.states.len()
+        );
 
-        println!("✓ Many states validated ({} states)", character.states.len());
+        println!(
+            "✓ Many states validated ({} states)",
+            character.states.len()
+        );
     }
 
     #[test]
@@ -307,10 +366,16 @@ EndIf
         let test_state = &character.states["TestState"];
         let init_actions = &test_state.actions["Init"];
 
-        assert!(init_actions.len() >= 200,
-            "Should have at least 200 actions, got {}", init_actions.len());
+        assert!(
+            init_actions.len() >= 200,
+            "Should have at least 200 actions, got {}",
+            init_actions.len()
+        );
 
-        println!("✓ Many actions per phase validated ({} actions)", init_actions.len());
+        println!(
+            "✓ Many actions per phase validated ({} actions)",
+            init_actions.len()
+        );
     }
 
     // ============================================================================
@@ -320,13 +385,16 @@ EndIf
     #[test]
     fn e2e_edge_long_strings() {
         let long_string = "A".repeat(1000);
-        let casp_content = format!(r#"
+        let casp_content = format!(
+            r#"
 :Character:
 Name: Test
 :Variables:
 var LongString(Str): "{}"
 var NormalString(Str): "Short"
-"#, long_string);
+"#,
+            long_string
+        );
 
         let file = create_temp_casp(&casp_content);
         let mut parser = CastagneParser::new();
@@ -335,12 +403,18 @@ var NormalString(Str): "Short"
         assert!(character.is_some(), "Should parse long strings");
         let character = character.unwrap();
 
-        assert!(character.variables.contains_key("LongString"), "Should have LongString");
+        assert!(
+            character.variables.contains_key("LongString"),
+            "Should have LongString"
+        );
 
         let long_str = &character.variables["LongString"];
         assert!(long_str.value.len() > 500, "String should be long");
 
-        println!("✓ Long strings validated (length: {})", long_str.value.len());
+        println!(
+            "✓ Long strings validated (length: {})",
+            long_str.value.len()
+        );
     }
 
     #[test]
@@ -360,12 +434,24 @@ var Mixed(Str): "Mixed: !@# 123 ABC あいう"
         let mut parser = CastagneParser::new();
         let character = parser.create_full_character(file.path().to_str().unwrap());
 
-        assert!(character.is_some(), "Should parse strings with special chars");
+        assert!(
+            character.is_some(),
+            "Should parse strings with special chars"
+        );
         let character = character.unwrap();
 
-        assert!(character.variables.contains_key("SpecialChars"), "Should have SpecialChars");
-        assert!(character.variables.contains_key("Quotes"), "Should have Quotes");
-        assert!(character.variables.contains_key("Mixed"), "Should have Mixed");
+        assert!(
+            character.variables.contains_key("SpecialChars"),
+            "Should have SpecialChars"
+        );
+        assert!(
+            character.variables.contains_key("Quotes"),
+            "Should have Quotes"
+        );
+        assert!(
+            character.variables.contains_key("Mixed"),
+            "Should have Mixed"
+        );
 
         println!("✓ Strings with special chars validated (5 variables)");
     }
@@ -389,12 +475,24 @@ var Russian(Str): "Привет мир"
         let mut parser = CastagneParser::new();
         let character = parser.create_full_character(file.path().to_str().unwrap());
 
-        assert!(character.is_some(), "Should parse Unicode and emoji strings");
+        assert!(
+            character.is_some(),
+            "Should parse Unicode and emoji strings"
+        );
         let character = character.unwrap();
 
-        assert!(character.variables.contains_key("Japanese"), "Should have Japanese");
-        assert!(character.variables.contains_key("Emoji"), "Should have Emoji");
-        assert!(character.variables.contains_key("Arabic"), "Should have Arabic");
+        assert!(
+            character.variables.contains_key("Japanese"),
+            "Should have Japanese"
+        );
+        assert!(
+            character.variables.contains_key("Emoji"),
+            "Should have Emoji"
+        );
+        assert!(
+            character.variables.contains_key("Arabic"),
+            "Should have Arabic"
+        );
 
         println!("✓ Unicode and emoji strings validated (7 variables)");
     }
@@ -430,32 +528,47 @@ MixedArgs("string", 123, true, 45.67)
         let test_state = &character.states["TestState"];
         let actions = &test_state.actions["Action"];
 
-        assert!(actions.len() >= 5, "Should have at least 5 actions with complex args");
+        assert!(
+            actions.len() >= 5,
+            "Should have at least 5 actions with complex args"
+        );
 
-        println!("✓ Complex action arguments validated ({} actions)", actions.len());
+        println!(
+            "✓ Complex action arguments validated ({} actions)",
+            actions.len()
+        );
     }
 
     #[test]
     fn e2e_edge_actions_with_very_long_args() {
         let long_arg = "LongValue".repeat(50);
-        let casp_content = format!(r#"
+        let casp_content = format!(
+            r#"
 :Character:
 Name: Test
 :TestState:
 ---Action:
 LongArgAction("{}")
 MultipleArgs("arg1", "arg2", "arg3", "arg4", "arg5", "arg6", "arg7", "arg8", "arg9", "arg10")
-"#, long_arg);
+"#,
+            long_arg
+        );
 
         let file = create_temp_casp(&casp_content);
         let mut parser = CastagneParser::new();
         let character = parser.create_full_character(file.path().to_str().unwrap());
 
-        assert!(character.is_some(), "Should parse actions with very long arguments");
+        assert!(
+            character.is_some(),
+            "Should parse actions with very long arguments"
+        );
         let character = character.unwrap();
 
         let test_state = &character.states["TestState"];
-        assert!(test_state.actions.contains_key("Action"), "Should have Action phase");
+        assert!(
+            test_state.actions.contains_key("Action"),
+            "Should have Action phase"
+        );
 
         println!("✓ Actions with very long arguments validated");
     }
@@ -493,12 +606,24 @@ Action()
         let mut parser = CastagneParser::new();
         let character = parser.create_full_character(file.path().to_str().unwrap());
 
-        assert!(character.is_some(), "Should parse file with comments everywhere");
+        assert!(
+            character.is_some(),
+            "Should parse file with comments everywhere"
+        );
         let character = character.unwrap();
 
-        assert_eq!(character.metadata.name, "Test", "Should parse name despite comments");
-        assert!(character.variables.contains_key("Health"), "Should parse variables despite comments");
-        assert!(character.states.contains_key("TestState"), "Should parse states despite comments");
+        assert_eq!(
+            character.metadata.name, "Test",
+            "Should parse name despite comments"
+        );
+        assert!(
+            character.variables.contains_key("Health"),
+            "Should parse variables despite comments"
+        );
+        assert!(
+            character.states.contains_key("TestState"),
+            "Should parse states despite comments"
+        );
 
         println!("✓ Comments everywhere validated");
     }
@@ -527,10 +652,16 @@ Name: Test
         let mut parser = CastagneParser::new();
         let character = parser.create_full_character(file.path().to_str().unwrap());
 
-        assert!(character.is_some(), "Should parse file with mostly comments");
+        assert!(
+            character.is_some(),
+            "Should parse file with mostly comments"
+        );
         let character = character.unwrap();
 
-        assert_eq!(character.metadata.name, "Test", "Should extract name from sparse file");
+        assert_eq!(
+            character.metadata.name, "Test",
+            "Should extract name from sparse file"
+        );
 
         println!("✓ File with mostly comments validated");
     }
@@ -557,10 +688,16 @@ Name: Test
         assert!(character.is_some(), "Should parse many specblocks");
         let character = character.unwrap();
 
-        assert!(character.specblocks.len() >= 30,
-            "Should have at least 30 specblocks, got {}", character.specblocks.len());
+        assert!(
+            character.specblocks.len() >= 30,
+            "Should have at least 30 specblocks, got {}",
+            character.specblocks.len()
+        );
 
-        println!("✓ Many specblocks validated ({} specblocks)", character.specblocks.len());
+        println!(
+            "✓ Many specblocks validated ({} specblocks)",
+            character.specblocks.len()
+        );
     }
 
     #[test]
@@ -576,14 +713,23 @@ Name: Test
         let mut parser = CastagneParser::new();
         let character = parser.create_full_character(file.path().to_str().unwrap());
 
-        assert!(character.is_some(), "Should parse specblock with many fields");
+        assert!(
+            character.is_some(),
+            "Should parse specblock with many fields"
+        );
         let character = character.unwrap();
 
         let large_block = &character.specblocks["LargeBlock"];
-        assert!(large_block.len() >= 50,
-            "Should have at least 50 fields, got {}", large_block.len());
+        assert!(
+            large_block.len() >= 50,
+            "Should have at least 50 fields, got {}",
+            large_block.len()
+        );
 
-        println!("✓ Specblock with many fields validated ({} fields)", large_block.len());
+        println!(
+            "✓ Specblock with many fields validated ({} fields)",
+            large_block.len()
+        );
     }
 
     // ============================================================================
@@ -610,7 +756,10 @@ var Var5(Int): 5
         // Parser should handle inconsistent indentation gracefully
         if let Some(character) = character {
             assert!(character.variables.len() > 0, "Should parse some variables");
-            println!("✓ Inconsistent indentation handled ({} variables parsed)", character.variables.len());
+            println!(
+                "✓ Inconsistent indentation handled ({} variables parsed)",
+                character.variables.len()
+            );
         } else {
             println!("✓ Inconsistent indentation rejected with errors");
         }
@@ -618,7 +767,8 @@ var Var5(Int): 5
 
     #[test]
     fn e2e_edge_trailing_whitespace() {
-        let casp_content = ":Character:    \nName: Test    \n:Variables:    \nvar Health(Int): 100    \n";
+        let casp_content =
+            ":Character:    \nName: Test    \n:Variables:    \nvar Health(Int): 100    \n";
 
         let file = create_temp_casp(casp_content);
         let mut parser = CastagneParser::new();
@@ -627,8 +777,14 @@ var Var5(Int): 5
         assert!(character.is_some(), "Should handle trailing whitespace");
         let character = character.unwrap();
 
-        assert_eq!(character.metadata.name, "Test", "Should parse name with trailing whitespace");
-        assert!(character.variables.contains_key("Health"), "Should parse variables");
+        assert_eq!(
+            character.metadata.name, "Test",
+            "Should parse name with trailing whitespace"
+        );
+        assert!(
+            character.variables.contains_key("Health"),
+            "Should parse variables"
+        );
 
         println!("✓ Trailing whitespace handled");
     }
@@ -695,9 +851,15 @@ ApplyComboScaling(0.5)
         let character = character.unwrap();
 
         assert!(character.states.len() >= 7, "Should have combo states");
-        assert!(character.variables.contains_key("ComboCounter"), "Should have combo variables");
+        assert!(
+            character.variables.contains_key("ComboCounter"),
+            "Should have combo variables"
+        );
 
-        println!("✓ Complex combo system validated ({} states)", character.states.len());
+        println!(
+            "✓ Complex combo system validated ({} states)",
+            character.states.len()
+        );
     }
 
     #[test]
@@ -772,11 +934,20 @@ CheckTransition_Idle()
         assert!(character.is_some(), "Should parse advanced state machine");
         let character = character.unwrap();
 
-        assert!(character.states.len() >= 13,
-            "Should have at least 13 states, got {}", character.states.len());
-        assert!(character.variables.contains_key("CurrentState"), "Should have state tracking");
+        assert!(
+            character.states.len() >= 13,
+            "Should have at least 13 states, got {}",
+            character.states.len()
+        );
+        assert!(
+            character.variables.contains_key("CurrentState"),
+            "Should have state tracking"
+        );
 
-        println!("✓ Advanced state machine validated ({} states)", character.states.len());
+        println!(
+            "✓ Advanced state machine validated ({} states)",
+            character.states.len()
+        );
     }
 
     // ============================================================================
@@ -815,18 +986,42 @@ var ZeroVec3(Vec3): 0.0, 0.0, 0.0
         assert!(character.is_some(), "Should parse all types together");
         let character = character.unwrap();
 
-        assert!(character.variables.len() >= 17,
-            "Should have at least 17 variables, got {}", character.variables.len());
+        assert!(
+            character.variables.len() >= 17,
+            "Should have at least 17 variables, got {}",
+            character.variables.len()
+        );
 
         // Check specific types
-        assert!(character.variables.contains_key("IntVar"), "Should have IntVar");
-        assert!(character.variables.contains_key("FloatVar"), "Should have FloatVar");
-        assert!(character.variables.contains_key("BoolVar"), "Should have BoolVar");
-        assert!(character.variables.contains_key("StrVar"), "Should have StrVar");
-        assert!(character.variables.contains_key("Vec2Var"), "Should have Vec2Var");
-        assert!(character.variables.contains_key("Vec3Var"), "Should have Vec3Var");
+        assert!(
+            character.variables.contains_key("IntVar"),
+            "Should have IntVar"
+        );
+        assert!(
+            character.variables.contains_key("FloatVar"),
+            "Should have FloatVar"
+        );
+        assert!(
+            character.variables.contains_key("BoolVar"),
+            "Should have BoolVar"
+        );
+        assert!(
+            character.variables.contains_key("StrVar"),
+            "Should have StrVar"
+        );
+        assert!(
+            character.variables.contains_key("Vec2Var"),
+            "Should have Vec2Var"
+        );
+        assert!(
+            character.variables.contains_key("Vec3Var"),
+            "Should have Vec3Var"
+        );
 
-        println!("✓ All types together validated ({} variables)", character.variables.len());
+        println!(
+            "✓ All types together validated ({} variables)",
+            character.variables.len()
+        );
     }
 
     // ============================================================================

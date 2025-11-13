@@ -8,9 +8,9 @@
 //! and validate the results. These tests use the Godot runtime to test
 //! the parser in a real-world environment.
 
+use serde_json::Value;
 use std::fs;
 use std::path::Path;
-use serde_json::Value;
 
 // We need to test with the actual parser module
 // For now, these tests will validate the structure of golden masters
@@ -42,10 +42,14 @@ mod tests {
     #[test]
     fn e2e_integration_test_character_casp_exists() {
         // Verify test files exist
-        assert!(file_exists("test_character.casp"),
-            "test_character.casp should exist");
-        assert!(file_exists("test_character_complete.casp"),
-            "test_character_complete.casp should exist");
+        assert!(
+            file_exists("test_character.casp"),
+            "test_character.casp should exist"
+        );
+        assert!(
+            file_exists("test_character_complete.casp"),
+            "test_character_complete.casp should exist"
+        );
 
         println!("✓ Test .casp files exist");
     }
@@ -59,16 +63,19 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string(test_file)
-            .expect("Should be able to read test_character.casp");
+        let content =
+            fs::read_to_string(test_file).expect("Should be able to read test_character.casp");
 
         // Basic validation - file should have expected sections
-        assert!(content.contains(":Character:"),
-            "Should have Character section");
-        assert!(content.contains(":Variables:"),
-            "Should have Variables section");
-        assert!(content.contains(":Idle:"),
-            "Should have at least one state");
+        assert!(
+            content.contains(":Character:"),
+            "Should have Character section"
+        );
+        assert!(
+            content.contains(":Variables:"),
+            "Should have Variables section"
+        );
+        assert!(content.contains(":Idle:"), "Should have at least one state");
 
         println!("✓ Test character file is parseable");
     }
@@ -86,10 +93,22 @@ mod tests {
             .expect("Should be able to read test_character_complete.casp");
 
         // Validate comprehensive features
-        assert!(content.contains(":Character:"), "Should have Character section");
-        assert!(content.contains(":AttackData:"), "Should have AttackData specblock");
-        assert!(content.contains(":PhysicsConfig:"), "Should have PhysicsConfig specblock");
-        assert!(content.contains(":Variables:"), "Should have Variables section");
+        assert!(
+            content.contains(":Character:"),
+            "Should have Character section"
+        );
+        assert!(
+            content.contains(":AttackData:"),
+            "Should have AttackData specblock"
+        );
+        assert!(
+            content.contains(":PhysicsConfig:"),
+            "Should have PhysicsConfig specblock"
+        );
+        assert!(
+            content.contains(":Variables:"),
+            "Should have Variables section"
+        );
 
         // Check for various variable types
         assert!(content.contains("(Int)"), "Should have Int variables");
@@ -101,12 +120,18 @@ mod tests {
         assert!(content.contains(":Idle:"), "Should have Idle state");
         assert!(content.contains(":Walk:"), "Should have Walk state");
         assert!(content.contains(":Jump:"), "Should have Jump state");
-        assert!(content.contains(":LightPunch:"), "Should have LightPunch state");
+        assert!(
+            content.contains(":LightPunch:"),
+            "Should have LightPunch state"
+        );
 
         // Check for phases
         assert!(content.contains("---Init:"), "Should have Init phases");
         assert!(content.contains("---Action:"), "Should have Action phases");
-        assert!(content.contains("---Reaction:"), "Should have Reaction phases");
+        assert!(
+            content.contains("---Reaction:"),
+            "Should have Reaction phases"
+        );
 
         println!("✓ Complete character file has expected structure");
     }
@@ -124,22 +149,31 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string(test_file)
-            .expect("Should read file");
+        let content = fs::read_to_string(test_file).expect("Should read file");
 
         // Verify specblocks are present and well-formed
         let specblock_pattern = vec![
-            (":AttackData:", vec!["LightPunchDamage", "HeavyPunchDamage", "KickDamage"]),
+            (
+                ":AttackData:",
+                vec!["LightPunchDamage", "HeavyPunchDamage", "KickDamage"],
+            ),
             (":PhysicsConfig:", vec!["Gravity", "JumpForce", "MaxSpeed"]),
         ];
 
         for (block_name, expected_keys) in specblock_pattern {
-            assert!(content.contains(block_name),
-                "Should have {} specblock", block_name);
+            assert!(
+                content.contains(block_name),
+                "Should have {} specblock",
+                block_name
+            );
 
             for key in expected_keys {
-                assert!(content.contains(key),
-                    "Specblock {} should contain {}", block_name, key);
+                assert!(
+                    content.contains(key),
+                    "Specblock {} should contain {}",
+                    block_name,
+                    key
+                );
             }
         }
 
@@ -155,8 +189,7 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string(test_file)
-            .expect("Should read file");
+        let content = fs::read_to_string(test_file).expect("Should read file");
 
         // Extract and validate numeric values from specblocks
         let lines: Vec<&str> = content.lines().collect();
@@ -186,7 +219,10 @@ mod tests {
         }
 
         assert!(valid_values > 0, "Should have found specblock values");
-        println!("✓ Specblock values are well-formed ({} values)", valid_values);
+        println!(
+            "✓ Specblock values are well-formed ({} values)",
+            valid_values
+        );
     }
 
     // ============================================================================
@@ -195,10 +231,14 @@ mod tests {
 
     #[test]
     fn e2e_integration_parent_child_files_exist() {
-        assert!(file_exists("test_parent.casp"),
-            "Parent test file should exist");
-        assert!(file_exists("test_child.casp"),
-            "Child test file should exist");
+        assert!(
+            file_exists("test_parent.casp"),
+            "Parent test file should exist"
+        );
+        assert!(
+            file_exists("test_child.casp"),
+            "Child test file should exist"
+        );
 
         println!("✓ Parent and child test files exist");
     }
@@ -210,14 +250,17 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string("test_child.casp")
-            .expect("Should read child file");
+        let content = fs::read_to_string("test_child.casp").expect("Should read child file");
 
         // Child should reference parent via Skeleton field
-        assert!(content.contains("Skeleton:"),
-            "Child should have Skeleton field");
-        assert!(content.contains("test_parent.casp"),
-            "Child should reference parent file");
+        assert!(
+            content.contains("Skeleton:"),
+            "Child should have Skeleton field"
+        );
+        assert!(
+            content.contains("test_parent.casp"),
+            "Child should reference parent file"
+        );
 
         println!("✓ Child correctly references parent");
     }
@@ -229,22 +272,28 @@ mod tests {
             return;
         }
 
-        let parent_content = fs::read_to_string("test_parent.casp")
-            .expect("Should read parent");
-        let child_content = fs::read_to_string("test_child.casp")
-            .expect("Should read child");
+        let parent_content = fs::read_to_string("test_parent.casp").expect("Should read parent");
+        let child_content = fs::read_to_string("test_child.casp").expect("Should read child");
 
         // Parent has BaseSpeed: 5, child should override it
-        assert!(parent_content.contains("BaseSpeed: 5"),
-            "Parent should have BaseSpeed: 5");
-        assert!(child_content.contains("BaseSpeed: 10"),
-            "Child should override BaseSpeed to 10");
+        assert!(
+            parent_content.contains("BaseSpeed: 5"),
+            "Parent should have BaseSpeed: 5"
+        );
+        assert!(
+            child_content.contains("BaseSpeed: 10"),
+            "Child should override BaseSpeed to 10"
+        );
 
         // Check variable overrides
-        assert!(parent_content.contains("var Health(Int): 100"),
-            "Parent should have Health: 100");
-        assert!(child_content.contains("var Health(Int): 150"),
-            "Child should override Health to 150");
+        assert!(
+            parent_content.contains("var Health(Int): 100"),
+            "Parent should have Health: 100"
+        );
+        assert!(
+            child_content.contains("var Health(Int): 150"),
+            "Child should override Health to 150"
+        );
 
         println!("✓ Child successfully overrides parent values");
     }
@@ -256,14 +305,17 @@ mod tests {
             return;
         }
 
-        let parent_content = fs::read_to_string("test_parent.casp")
-            .expect("Should read parent");
+        let parent_content = fs::read_to_string("test_parent.casp").expect("Should read parent");
 
         // Parent should have data that child can inherit
-        assert!(parent_content.contains("ParentOnly"),
-            "Parent should have unique variables");
-        assert!(parent_content.contains(":BaseAttack:"),
-            "Parent should have base states");
+        assert!(
+            parent_content.contains("ParentOnly"),
+            "Parent should have unique variables"
+        );
+        assert!(
+            parent_content.contains(":BaseAttack:"),
+            "Parent should have base states"
+        );
 
         println!("✓ Parent has inheritable data");
     }
@@ -281,17 +333,17 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string(test_file)
-            .expect("Should read file");
+        let content = fs::read_to_string(test_file).expect("Should read file");
 
         // Find actions with various argument patterns
-        let actions_with_args = vec![
-            "Set(", "Add(", "Mul(", "If(", "CheckHit(", "ChangeState(",
-        ];
+        let actions_with_args = vec!["Set(", "Add(", "Mul(", "If(", "CheckHit(", "ChangeState("];
 
         for action in actions_with_args {
-            assert!(content.contains(action),
-                "Should have {} action with arguments", action);
+            assert!(
+                content.contains(action),
+                "Should have {} action with arguments",
+                action
+            );
         }
 
         println!("✓ Actions with arguments are present");
@@ -306,16 +358,21 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string(test_file)
-            .expect("Should read file");
+        let content = fs::read_to_string(test_file).expect("Should read file");
 
         // Actions with multiple arguments
-        assert!(content.contains("Set(Velocity, 0, 0)"),
-            "Should have multi-arg Set action");
-        assert!(content.contains("Add(Velocity, 0, Gravity)"),
-            "Should have multi-arg Add action");
-        assert!(content.contains("CheckHit(LightPunchRange, Damage)"),
-            "Should have multi-arg CheckHit action");
+        assert!(
+            content.contains("Set(Velocity, 0, 0)"),
+            "Should have multi-arg Set action"
+        );
+        assert!(
+            content.contains("Add(Velocity, 0, Gravity)"),
+            "Should have multi-arg Add action"
+        );
+        assert!(
+            content.contains("CheckHit(LightPunchRange, Damage)"),
+            "Should have multi-arg CheckHit action"
+        );
 
         println!("✓ Multi-argument actions are present");
     }
@@ -329,13 +386,14 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string(test_file)
-            .expect("Should read file");
+        let content = fs::read_to_string(test_file).expect("Should read file");
 
         // Actions with string arguments
-        assert!(content.contains("Set(AnimationState, \"idle\")") ||
-                content.contains("Set(AnimationState, \"walk\")"),
-            "Should have actions with string arguments");
+        assert!(
+            content.contains("Set(AnimationState, \"idle\")")
+                || content.contains("Set(AnimationState, \"walk\")"),
+            "Should have actions with string arguments"
+        );
 
         println!("✓ Actions with string arguments are present");
     }
@@ -349,14 +407,15 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string(test_file)
-            .expect("Should read file");
+        let content = fs::read_to_string(test_file).expect("Should read file");
 
         // Actions with expression arguments
-        assert!(content.contains("If(!IsGrounded)") ||
-                content.contains("If(Position.y >= 0)") ||
-                content.contains("If(ComboTimer < MAX_COMBO)"),
-            "Should have actions with expression arguments");
+        assert!(
+            content.contains("If(!IsGrounded)")
+                || content.contains("If(Position.y >= 0)")
+                || content.contains("If(ComboTimer < MAX_COMBO)"),
+            "Should have actions with expression arguments"
+        );
 
         println!("✓ Actions with expressions are present");
     }
@@ -374,8 +433,7 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string(test_file)
-            .expect("Should read file");
+        let content = fs::read_to_string(test_file).expect("Should read file");
 
         // Count all conditional statements (If, IfInput, IfNotInput) and EndIf - should be balanced
         let if_count = content.matches("If(").count();
@@ -389,8 +447,10 @@ mod tests {
             "Conditionals and EndIf should be balanced: {} conditionals ({} If, {} IfInput, {} IfNotInput) vs {} EndIf",
             total_conditionals, if_count, ifinput_count, ifnotinput_count, endif_count);
 
-        println!("✓ If/EndIf blocks are balanced ({} conditionals, {} EndIf)",
-                 total_conditionals, endif_count);
+        println!(
+            "✓ If/EndIf blocks are balanced ({} conditionals, {} EndIf)",
+            total_conditionals, endif_count
+        );
     }
 
     #[test]
@@ -402,8 +462,7 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string(test_file)
-            .expect("Should read file");
+        let content = fs::read_to_string(test_file).expect("Should read file");
 
         // Check for nested If statements
         let lines: Vec<&str> = content.lines().collect();
@@ -433,14 +492,16 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string(test_file)
-            .expect("Should read file");
+        let content = fs::read_to_string(test_file).expect("Should read file");
 
         // Count state transitions
         let transition_count = content.matches("ChangeState(").count();
 
         assert!(transition_count > 0, "Should have state transitions");
-        println!("✓ State transitions present ({} transitions)", transition_count);
+        println!(
+            "✓ State transitions present ({} transitions)",
+            transition_count
+        );
     }
 
     // ============================================================================
@@ -465,12 +526,21 @@ mod tests {
             let json = load_golden_master(file_path);
 
             // Validate top-level structure
-            assert!(json["metadata"].is_object(),
-                "{} should have metadata", file_path);
-            assert!(json["variables"].is_object(),
-                "{} should have variables", file_path);
-            assert!(json["states"].is_object(),
-                "{} should have states", file_path);
+            assert!(
+                json["metadata"].is_object(),
+                "{} should have metadata",
+                file_path
+            );
+            assert!(
+                json["variables"].is_object(),
+                "{} should have variables",
+                file_path
+            );
+            assert!(
+                json["states"].is_object(),
+                "{} should have states",
+                file_path
+            );
 
             println!("  ✓ {} is valid JSON", file_path);
         }
@@ -493,8 +563,7 @@ mod tests {
             return;
         }
 
-        let casp_content = fs::read_to_string(casp_file)
-            .expect("Should read .casp file");
+        let casp_content = fs::read_to_string(casp_file).expect("Should read .casp file");
         let golden = load_golden_master(golden_file);
 
         // Validate that .casp file matches golden master expectations
@@ -503,8 +572,10 @@ mod tests {
 
         // Check metadata matches
         if let Some(name) = metadata["name"].as_str() {
-            assert!(casp_content.contains(&format!("Name: {}", name)),
-                "Character name should match");
+            assert!(
+                casp_content.contains(&format!("Name: {}", name)),
+                "Character name should match"
+            );
         }
 
         // Check states match
@@ -538,19 +609,21 @@ mod tests {
                 continue;
             }
 
-            let content = fs::read_to_string(module_file)
-                .expect(&format!("Should read {}", module_file));
+            let content =
+                fs::read_to_string(module_file).expect(&format!("Should read {}", module_file));
 
             // Basic validation - should be a valid .casp file
-            assert!(!content.is_empty(),
-                "{} should not be empty", module_file);
+            assert!(!content.is_empty(), "{} should not be empty", module_file);
 
             found_modules += 1;
             println!("  ✓ {} is parseable", module_file);
         }
 
         if found_modules > 0 {
-            println!("✓ Base module files are parseable ({}/4 found)", found_modules);
+            println!(
+                "✓ Base module files are parseable ({}/4 found)",
+                found_modules
+            );
         } else {
             println!("⚠ No base module files found (this is OK for minimal setup)");
         }
@@ -569,17 +642,21 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string(test_file)
-            .expect("Should read file");
+        let content = fs::read_to_string(test_file).expect("Should read file");
 
         let line_count = content.lines().count();
         let char_count = content.len();
 
         assert!(line_count > 10, "Test file should have multiple lines");
-        assert!(char_count > 100, "Test file should have substantial content");
+        assert!(
+            char_count > 100,
+            "Test file should have substantial content"
+        );
 
-        println!("✓ Large file handling validated ({} lines, {} bytes)",
-                 line_count, char_count);
+        println!(
+            "✓ Large file handling validated ({} lines, {} bytes)",
+            line_count, char_count
+        );
     }
 
     #[test]
@@ -591,16 +668,18 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string(test_file)
-            .expect("Should read file");
+        let content = fs::read_to_string(test_file).expect("Should read file");
 
         // Count phase declarations
-        let phase_count = content.matches("---Init:").count() +
-                         content.matches("---Action:").count() +
-                         content.matches("---Reaction:").count();
+        let phase_count = content.matches("---Init:").count()
+            + content.matches("---Action:").count()
+            + content.matches("---Reaction:").count();
 
         assert!(phase_count >= 3, "Should have multiple phases");
-        println!("✓ Multiple phases per state handled ({} total phases)", phase_count);
+        println!(
+            "✓ Multiple phases per state handled ({} total phases)",
+            phase_count
+        );
     }
 
     #[test]
@@ -612,16 +691,19 @@ mod tests {
             return;
         }
 
-        let content = fs::read_to_string(test_file)
-            .expect("Should read file");
+        let content = fs::read_to_string(test_file).expect("Should read file");
 
         // Count comment lines
-        let comment_count = content.lines()
+        let comment_count = content
+            .lines()
             .filter(|line| line.trim().starts_with("#"))
             .count();
 
         assert!(comment_count > 0, "Test file should have comments");
-        println!("✓ Comments handled correctly ({} comment lines)", comment_count);
+        println!(
+            "✓ Comments handled correctly ({} comment lines)",
+            comment_count
+        );
     }
 
     // ============================================================================

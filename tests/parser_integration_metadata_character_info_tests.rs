@@ -15,8 +15,8 @@
 //! - Metadata inheritance
 //! - Cross-file metadata consistency
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 
 #[cfg(test)]
 mod tests {
@@ -50,12 +50,21 @@ mod tests {
             let metadata = &golden["metadata"];
 
             // Required fields must be present and be strings
-            assert!(metadata["name"].is_string(),
-                   "{}: name must be string", file_path);
-            assert!(metadata["editorname"].is_string(),
-                   "{}: editorname must be string", file_path);
-            assert!(metadata["filepath"].is_string(),
-                   "{}: filepath must be string", file_path);
+            assert!(
+                metadata["name"].is_string(),
+                "{}: name must be string",
+                file_path
+            );
+            assert!(
+                metadata["editorname"].is_string(),
+                "{}: editorname must be string",
+                file_path
+            );
+            assert!(
+                metadata["filepath"].is_string(),
+                "{}: filepath must be string",
+                file_path
+            );
 
             println!("✓ {} has all required metadata fields", file_path);
         }
@@ -80,11 +89,21 @@ mod tests {
             let filepath = metadata["filepath"].as_str().unwrap();
 
             assert!(!name.is_empty(), "{}: name must not be empty", file_path);
-            assert!(!editorname.is_empty(), "{}: editorname must not be empty", file_path);
-            assert!(!filepath.is_empty(), "{}: filepath must not be empty", file_path);
+            assert!(
+                !editorname.is_empty(),
+                "{}: editorname must not be empty",
+                file_path
+            );
+            assert!(
+                !filepath.is_empty(),
+                "{}: filepath must not be empty",
+                file_path
+            );
 
-            println!("✓ {}: name='{}', editorname='{}', filepath='{}'",
-                    file_path, name, editorname, filepath);
+            println!(
+                "✓ {}: name='{}', editorname='{}', filepath='{}'",
+                file_path, name, editorname, filepath
+            );
         }
 
         println!("✓ All required metadata fields are non-empty");
@@ -113,8 +132,10 @@ mod tests {
             let has_underscores = name.contains('_');
 
             println!("  {}:", file_path);
-            println!("    name: '{}' (spaces={}, dashes={}, underscores={})",
-                    name, has_spaces, has_dashes, has_underscores);
+            println!(
+                "    name: '{}' (spaces={}, dashes={}, underscores={})",
+                name, has_spaces, has_dashes, has_underscores
+            );
             println!("    editorname: '{}'", editorname);
         }
     }
@@ -143,8 +164,11 @@ mod tests {
                     println!("  {}: has skeleton '{}'", file_path, skeleton_path);
 
                     // Validate skeleton path format
-                    assert!(skeleton_path.ends_with(".casp"),
-                           "{}: skeleton must reference .casp file", file_path);
+                    assert!(
+                        skeleton_path.ends_with(".casp"),
+                        "{}: skeleton must reference .casp file",
+                        file_path
+                    );
                 } else if skeleton.is_null() {
                     println!("  {}: skeleton is null", file_path);
                 } else {
@@ -248,7 +272,10 @@ mod tests {
             println!("  {}:", file_path);
             println!("    name: '{}'", name);
             println!("    editorname: '{}'", editorname);
-            println!("    equal: {}, similar (case-insensitive): {}", are_equal, similar);
+            println!(
+                "    equal: {}, similar (case-insensitive): {}",
+                are_equal, similar
+            );
         }
     }
 
@@ -276,7 +303,10 @@ mod tests {
             println!("  {}:", file_path);
             println!("    name: '{}'", name);
             println!("    filepath: '{}'", filepath);
-            println!("    name in path: {}, case-insensitive: {}", name_in_path, name_lower_in_path);
+            println!(
+                "    name in path: {}, case-insensitive: {}",
+                name_in_path, name_lower_in_path
+            );
         }
     }
 
@@ -307,7 +337,10 @@ mod tests {
 
             println!("  {}:", file_path);
             println!("    path: '{}'", filepath);
-            println!("    absolute: {}, relative: {}, has .casp: {}", is_absolute, is_relative, has_extension);
+            println!(
+                "    absolute: {}, relative: {}, has .casp: {}",
+                is_absolute, is_relative, has_extension
+            );
 
             // Filepath should end with .casp
             assert!(has_extension, "{}: filepath must end with .casp", file_path);
@@ -361,8 +394,10 @@ mod tests {
                 println!("  Baston-2D.json skeleton: '{}'", skeleton_path);
 
                 // Should reference the Model file
-                assert!(skeleton_path.contains("Model"),
-                       "2D file should reference Model as skeleton");
+                assert!(
+                    skeleton_path.contains("Model"),
+                    "2D file should reference Model as skeleton"
+                );
             }
         }
 
@@ -425,7 +460,8 @@ mod tests {
             "golden_masters/TutorialBaston.json",
         ];
 
-        let mut all_field_names: std::collections::HashSet<String> = std::collections::HashSet::new();
+        let mut all_field_names: std::collections::HashSet<String> =
+            std::collections::HashSet::new();
 
         for file_path in &files {
             let golden = load_golden_master(file_path);
@@ -507,12 +543,21 @@ mod tests {
             let metadata = &golden["metadata"];
 
             // Required fields must not be null
-            assert!(!metadata["name"].is_null(),
-                   "{}: name must not be null", file_path);
-            assert!(!metadata["editorname"].is_null(),
-                   "{}: editorname must not be null", file_path);
-            assert!(!metadata["filepath"].is_null(),
-                   "{}: filepath must not be null", file_path);
+            assert!(
+                !metadata["name"].is_null(),
+                "{}: name must not be null",
+                file_path
+            );
+            assert!(
+                !metadata["editorname"].is_null(),
+                "{}: editorname must not be null",
+                file_path
+            );
+            assert!(
+                !metadata["filepath"].is_null(),
+                "{}: filepath must not be null",
+                file_path
+            );
         }
 
         println!("✓ No required fields are null");
@@ -569,8 +614,10 @@ mod tests {
         println!("  Derived name: '{}'", derived_name);
 
         // Names should match for inherited files
-        assert_eq!(model_name, derived_name,
-                  "Parent and child should have same name");
+        assert_eq!(
+            model_name, derived_name,
+            "Parent and child should have same name"
+        );
 
         // Editor names
         let model_editorname = model_metadata["editorname"].as_str().unwrap();

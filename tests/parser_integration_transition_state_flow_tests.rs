@@ -14,8 +14,8 @@
 //! - Cyclic dependency detection
 //! - Common state transition patterns
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 
 #[cfg(test)]
 mod tests {
@@ -72,7 +72,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let mut all_flags: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut all_flags: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             if let Some(flags) = state_data["TransitionFlags"].as_array() {
@@ -84,7 +85,10 @@ mod tests {
             }
         }
 
-        println!("✓ Transition flags catalog ({} unique flags):", all_flags.len());
+        println!(
+            "✓ Transition flags catalog ({} unique flags):",
+            all_flags.len()
+        );
 
         let mut sorted: Vec<_> = all_flags.iter().collect();
         sorted.sort_by_key(|&(_, count)| std::cmp::Reverse(*count));
@@ -170,7 +174,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let mut type_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        let mut type_counts: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
 
         for (_, state_data) in states {
             let state_type = if state_data["Type"].is_null() {
@@ -222,7 +227,10 @@ mod tests {
         println!("✓ State type vs transition flags:");
         for (state_type, (total, with_flags)) in type_flag_correlation.iter() {
             let percentage = (*with_flags as f64 / *total as f64) * 100.0;
-            println!("  {}: {}/{} have flags ({:.1}%)", state_type, with_flags, total, percentage);
+            println!(
+                "  {}: {}/{} have flags ({:.1}%)",
+                state_type, with_flags, total, percentage
+            );
         }
     }
 
@@ -291,7 +299,9 @@ mod tests {
                     break;
                 }
 
-                if depth > 50 { break; } // Safety
+                if depth > 50 {
+                    break;
+                } // Safety
             }
 
             *depth_distribution.entry(depth).or_insert(0) += 1;
@@ -340,7 +350,8 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let states = golden["states"].as_object().unwrap();
 
-        let mut referenced_states: std::collections::HashSet<String> = std::collections::HashSet::new();
+        let mut referenced_states: std::collections::HashSet<String> =
+            std::collections::HashSet::new();
 
         // Collect states referenced as parents
         for (_, state_data) in states {
@@ -360,11 +371,17 @@ mod tests {
         }
 
         println!("✓ State references:");
-        println!("  States referenced as parents: {}", referenced_states.len());
+        println!(
+            "  States referenced as parents: {}",
+            referenced_states.len()
+        );
         println!("  States never referenced: {}", unreferenced_states.len());
 
         if unreferenced_states.len() <= 20 {
-            println!("  Unreferenced: {:?}", unreferenced_states.iter().take(10).collect::<Vec<_>>());
+            println!(
+                "  Unreferenced: {:?}",
+                unreferenced_states.iter().take(10).collect::<Vec<_>>()
+            );
         }
     }
 
@@ -386,7 +403,10 @@ mod tests {
         if orphaned_references.is_empty() {
             println!("✓ No orphaned parent references (all parents exist)");
         } else {
-            println!("⚠ Orphaned parent references: {}", orphaned_references.len());
+            println!(
+                "⚠ Orphaned parent references: {}",
+                orphaned_references.len()
+            );
             for (state, parent) in orphaned_references.iter().take(5) {
                 println!("  State '{}' references missing parent '{}'", state, parent);
             }
@@ -529,7 +549,8 @@ mod tests {
             let golden = load_golden_master(file_path);
             let states = golden["states"].as_object().unwrap();
 
-            let mut unique_flags: std::collections::HashSet<String> = std::collections::HashSet::new();
+            let mut unique_flags: std::collections::HashSet<String> =
+                std::collections::HashSet::new();
 
             for (_, state_data) in states {
                 if let Some(flags) = state_data["TransitionFlags"].as_array() {

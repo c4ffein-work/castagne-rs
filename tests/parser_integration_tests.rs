@@ -8,8 +8,8 @@
 //! and validate the output against expectations.
 
 use castagne_rs::parser::CastagneParser;
-use std::path::Path;
 use std::fs;
+use std::path::Path;
 
 #[cfg(test)]
 mod tests {
@@ -46,12 +46,15 @@ mod tests {
         let character = result.unwrap();
 
         // Basic validations
-        assert!(!character.metadata.name.is_empty(),
-            "Character should have a name");
-        assert!(character.variables.len() > 0,
-            "Character should have variables");
-        assert!(character.states.len() > 0,
-            "Character should have states");
+        assert!(
+            !character.metadata.name.is_empty(),
+            "Character should have a name"
+        );
+        assert!(
+            character.variables.len() > 0,
+            "Character should have variables"
+        );
+        assert!(character.states.len() > 0, "Character should have states");
 
         println!("✓ Parser successfully parsed basic character");
         println!("  Name: {}", character.metadata.name);
@@ -82,12 +85,18 @@ mod tests {
         let character = result.unwrap();
 
         // More detailed validations
-        assert_eq!(character.metadata.name, "Complete Test Fighter",
-            "Character name should match");
-        assert!(character.variables.len() >= 10,
-            "Complete character should have many variables");
-        assert!(character.states.len() >= 5,
-            "Complete character should have multiple states");
+        assert_eq!(
+            character.metadata.name, "Complete Test Fighter",
+            "Character name should match"
+        );
+        assert!(
+            character.variables.len() >= 10,
+            "Complete character should have many variables"
+        );
+        assert!(
+            character.states.len() >= 5,
+            "Complete character should have multiple states"
+        );
 
         println!("✓ Parser successfully parsed complete character");
         println!("  Name: {}", character.metadata.name);
@@ -106,7 +115,8 @@ mod tests {
         }
 
         let mut parser = CastagneParser::new();
-        let character = parser.create_full_character(test_file)
+        let character = parser
+            .create_full_character(test_file)
             .expect("Parser should succeed");
 
         // Validate metadata fields
@@ -129,7 +139,8 @@ mod tests {
         }
 
         let mut parser = CastagneParser::new();
-        let character = parser.create_full_character(test_file)
+        let character = parser
+            .create_full_character(test_file)
             .expect("Parser should succeed");
 
         // Check for different variable types
@@ -166,7 +177,8 @@ mod tests {
         }
 
         let mut parser = CastagneParser::new();
-        let character = parser.create_full_character(test_file)
+        let character = parser
+            .create_full_character(test_file)
             .expect("Parser should succeed");
 
         // Check for expected states
@@ -179,16 +191,21 @@ mod tests {
 
                 // Each state should have phases with actions
                 let state = &character.states[state_name];
-                let total_actions: usize = state.actions.values()
-                    .map(|actions| actions.len())
-                    .sum();
-                assert!(total_actions > 0,
-                    "State {} should have at least one phase with actions", state_name);
+                let total_actions: usize =
+                    state.actions.values().map(|actions| actions.len()).sum();
+                assert!(
+                    total_actions > 0,
+                    "State {} should have at least one phase with actions",
+                    state_name
+                );
             }
         }
 
         assert!(found_states >= 4, "Should find most expected states");
-        println!("✓ Parser handles states and phases ({}/5 expected states found)", found_states);
+        println!(
+            "✓ Parser handles states and phases ({}/5 expected states found)",
+            found_states
+        );
     }
 
     // ============================================================================
@@ -207,27 +224,39 @@ mod tests {
 
         // Parse parent
         let mut parser = CastagneParser::new();
-        let parent = parser.create_full_character(parent_file)
+        let parent = parser
+            .create_full_character(parent_file)
             .expect("Should parse parent");
 
         // Parse child (which should inherit from parent)
         let mut parser = CastagneParser::new();
-        let child = parser.create_full_character(child_file)
+        let child = parser
+            .create_full_character(child_file)
             .expect("Should parse child");
 
         // Child should have at least as many variables as parent
-        assert!(child.variables.len() >= parent.variables.len(),
-            "Child should inherit parent variables");
+        assert!(
+            child.variables.len() >= parent.variables.len(),
+            "Child should inherit parent variables"
+        );
 
         // Child should have at least as many states as parent
-        assert!(child.states.len() >= parent.states.len(),
-            "Child should inherit parent states");
+        assert!(
+            child.states.len() >= parent.states.len(),
+            "Child should inherit parent states"
+        );
 
         println!("✓ Parser handles inheritance");
-        println!("  Parent variables: {}, Child variables: {}",
-                 parent.variables.len(), child.variables.len());
-        println!("  Parent states: {}, Child states: {}",
-                 parent.states.len(), child.states.len());
+        println!(
+            "  Parent variables: {}, Child variables: {}",
+            parent.variables.len(),
+            child.variables.len()
+        );
+        println!(
+            "  Parent states: {}, Child states: {}",
+            parent.states.len(),
+            child.states.len()
+        );
     }
 
     #[test]
@@ -241,23 +270,29 @@ mod tests {
         }
 
         let mut parser = CastagneParser::new();
-        let parent = parser.create_full_character(parent_file)
+        let parent = parser
+            .create_full_character(parent_file)
             .expect("Should parse parent");
 
         let mut parser = CastagneParser::new();
-        let child = parser.create_full_character(child_file)
+        let child = parser
+            .create_full_character(child_file)
             .expect("Should parse child");
 
         // Check that Health variable is overridden
         if let Some(parent_health) = parent.variables.get("Health") {
             if let Some(child_health) = child.variables.get("Health") {
                 // Child should override the value
-                assert_ne!(parent_health.value, child_health.value,
-                    "Child should override parent Health value");
+                assert_ne!(
+                    parent_health.value, child_health.value,
+                    "Child should override parent Health value"
+                );
 
                 println!("✓ Parser handles variable overrides");
-                println!("  Parent Health: {}, Child Health: {}",
-                         parent_health.value, child_health.value);
+                println!(
+                    "  Parent Health: {}, Child Health: {}",
+                    parent_health.value, child_health.value
+                );
             }
         }
     }
@@ -313,26 +348,27 @@ mod tests {
         }
 
         let mut parser = CastagneParser::new();
-        let character = parser.create_full_character(test_file)
+        let character = parser
+            .create_full_character(test_file)
             .expect("Should parse character");
 
         // Convert to JSON
-        let json = character.to_json_value()
-            .expect("Should convert to JSON");
+        let json = character.to_json_value().expect("Should convert to JSON");
 
         // Load golden master
-        let golden_content = fs::read_to_string(golden_file)
-            .expect("Should read golden master");
-        let golden: serde_json::Value = serde_json::from_str(&golden_content)
-            .expect("Should parse golden master");
+        let golden_content = fs::read_to_string(golden_file).expect("Should read golden master");
+        let golden: serde_json::Value =
+            serde_json::from_str(&golden_content).expect("Should parse golden master");
 
         // Compare top-level structure
         assert!(json["metadata"].is_object(), "Should have metadata");
         assert!(json["variables"].is_object(), "Should have variables");
         assert!(json["states"].is_object(), "Should have states");
 
-        assert_eq!(json["metadata"]["name"], golden["metadata"]["name"],
-            "Character name should match golden master");
+        assert_eq!(
+            json["metadata"]["name"], golden["metadata"]["name"],
+            "Character name should match golden master"
+        );
 
         println!("✓ Parser output matches golden master structure");
     }
@@ -351,17 +387,22 @@ mod tests {
         }
 
         let mut parser = CastagneParser::new();
-        let character = parser.create_full_character(test_file)
+        let character = parser
+            .create_full_character(test_file)
             .expect("Should parse character");
 
         // Specblocks are stored in specblocks field
         let specblocks = &character.specblocks;
 
         // Should have AttackData and PhysicsConfig specblocks
-        assert!(specblocks.contains_key("AttackData"),
-            "Should have AttackData specblock");
-        assert!(specblocks.contains_key("PhysicsConfig"),
-            "Should have PhysicsConfig specblock");
+        assert!(
+            specblocks.contains_key("AttackData"),
+            "Should have AttackData specblock"
+        );
+        assert!(
+            specblocks.contains_key("PhysicsConfig"),
+            "Should have PhysicsConfig specblock"
+        );
 
         println!("✓ Parser handles specblocks ({} blocks)", specblocks.len());
         for (block_name, block_data) in specblocks {
@@ -418,8 +459,12 @@ mod tests {
             if result.is_some() {
                 parsed_count += 1;
                 let character = result.unwrap();
-                println!("  ✓ Parsed {}: {} states, {} variables",
-                         module_file, character.states.len(), character.variables.len());
+                println!(
+                    "  ✓ Parsed {}: {} states, {} variables",
+                    module_file,
+                    character.states.len(),
+                    character.variables.len()
+                );
             } else {
                 eprintln!("  ⚠ Failed to parse {}", module_file);
                 eprintln!("    Errors: {:?}", parser.errors);
@@ -427,7 +472,10 @@ mod tests {
         }
 
         if parsed_count > 0 {
-            println!("✓ Parser can parse base modules ({}/4 parsed)", parsed_count);
+            println!(
+                "✓ Parser can parse base modules ({}/4 parsed)",
+                parsed_count
+            );
         } else {
             println!("⚠ No base modules found (this is OK for minimal setup)");
         }

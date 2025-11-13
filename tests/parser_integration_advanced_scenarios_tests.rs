@@ -14,11 +14,11 @@
 //! - Data migration patterns
 
 use castagne_rs::parser::CastagneParser;
-use std::fs;
-use std::path::Path;
-use std::io::Write as IoWrite;
-use tempfile::NamedTempFile;
 use serde_json::Value;
+use std::fs;
+use std::io::Write as IoWrite;
+use std::path::Path;
+use tempfile::NamedTempFile;
 
 #[cfg(test)]
 mod tests {
@@ -41,7 +41,8 @@ mod tests {
 
     fn create_temp_casp(content: &str) -> NamedTempFile {
         let mut file = NamedTempFile::new().expect("Failed to create temp file");
-        file.write_all(content.as_bytes()).expect("Failed to write to temp file");
+        file.write_all(content.as_bytes())
+            .expect("Failed to write to temp file");
         file
     }
 
@@ -54,16 +55,17 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
 
         // Serialize back to string
-        let json_str = serde_json::to_string(&golden)
-            .expect("Should serialize to JSON string");
+        let json_str = serde_json::to_string(&golden).expect("Should serialize to JSON string");
 
         // Deserialize back
-        let parsed: Value = serde_json::from_str(&json_str)
-            .expect("Should deserialize from JSON string");
+        let parsed: Value =
+            serde_json::from_str(&json_str).expect("Should deserialize from JSON string");
 
         // Verify structure preserved
-        assert_eq!(golden["metadata"]["name"], parsed["metadata"]["name"],
-            "Round trip should preserve name");
+        assert_eq!(
+            golden["metadata"]["name"], parsed["metadata"]["name"],
+            "Round trip should preserve name"
+        );
 
         println!("✓ JSON round-trip validated");
     }
@@ -73,12 +75,14 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
 
         // Pretty print
-        let pretty = serde_json::to_string_pretty(&golden)
-            .expect("Should pretty print JSON");
+        let pretty = serde_json::to_string_pretty(&golden).expect("Should pretty print JSON");
 
         assert!(pretty.len() > 0, "Pretty printed JSON should have content");
         assert!(pretty.contains('\n'), "Pretty print should have newlines");
-        assert!(pretty.contains("  "), "Pretty print should have indentation");
+        assert!(
+            pretty.contains("  "),
+            "Pretty print should have indentation"
+        );
 
         println!("✓ JSON pretty printing validated ({} chars)", pretty.len());
     }
@@ -92,11 +96,16 @@ mod tests {
         assert!(golden["variables"].is_object(), "Variables access");
         assert!(golden["states"].is_object(), "States access");
         assert!(golden["subentities"].is_object(), "Subentities access");
-        assert!(golden["transformed_data"].is_object(), "Transformed data access");
+        assert!(
+            golden["transformed_data"].is_object(),
+            "Transformed data access"
+        );
 
         // Nested access
-        assert!(golden["transformed_data"]["Graphics"].is_object(),
-            "Nested module access");
+        assert!(
+            golden["transformed_data"]["Graphics"].is_object(),
+            "Nested module access"
+        );
 
         println!("✓ JSON field access validated");
     }
@@ -120,7 +129,10 @@ mod tests {
 
         assert!(!root_states.is_empty(), "Should have root states");
         println!("✓ State reachability: {} root states", root_states.len());
-        println!("  Root states: {:?}", root_states.iter().take(5).collect::<Vec<_>>());
+        println!(
+            "  Root states: {:?}",
+            root_states.iter().take(5).collect::<Vec<_>>()
+        );
     }
 
     #[test]
@@ -134,7 +146,8 @@ mod tests {
 
         for (state_name, state_data) in states {
             if let Some(parent) = state_data["Parent"].as_str() {
-                children_map.entry(parent.to_string())
+                children_map
+                    .entry(parent.to_string())
                     .or_insert_with(Vec::new)
                     .push(state_name.clone());
             }
@@ -152,7 +165,10 @@ mod tests {
         }
 
         println!("✓ State dependency graph:");
-        println!("  Most derived state: {} ({} children)", most_derived_state, max_children);
+        println!(
+            "  Most derived state: {} ({} children)",
+            most_derived_state, max_children
+        );
     }
 
     #[test]
@@ -181,7 +197,9 @@ mod tests {
                     break;
                 }
 
-                if path_length > 50 { break; } // Safety
+                if path_length > 50 {
+                    break;
+                } // Safety
             }
 
             if path_length > longest_path {
@@ -191,7 +209,10 @@ mod tests {
         }
 
         println!("✓ State path finding:");
-        println!("  Longest path: {} (state: {})", longest_path, state_with_longest_path);
+        println!(
+            "  Longest path: {} (state: {})",
+            longest_path, state_with_longest_path
+        );
     }
 
     // ============================================================================
@@ -242,7 +263,10 @@ mod tests {
         }
 
         assert!(parsed_count > 0, "Should parse at least one file");
-        println!("✓ Parser handles sequential parsing ({} files)", parsed_count);
+        println!(
+            "✓ Parser handles sequential parsing ({} files)",
+            parsed_count
+        );
     }
 
     #[test]
@@ -263,7 +287,10 @@ InvalidLine3
         let _result = parser.create_full_character(file.path().to_str().unwrap());
 
         // Parser may accumulate errors
-        println!("✓ Parser error accumulation: {} errors", parser.errors.len());
+        println!(
+            "✓ Parser error accumulation: {} errors",
+            parser.errors.len()
+        );
     }
 
     // ============================================================================
@@ -277,21 +304,28 @@ InvalidLine3
 
         for (module_name, module_data) in transformed {
             // Verify module structure
-            assert!(module_data.is_object(),
-                "Module {} should be object", module_name);
+            assert!(
+                module_data.is_object(),
+                "Module {} should be object",
+                module_name
+            );
 
             if let Some(defines) = module_data["Defines"].as_object() {
                 // Verify defines are accessible
                 for (define_name, define_value) in defines {
-                    assert!(!define_name.is_empty(),
-                        "Define name should not be empty");
-                    assert!(!define_value.is_null() || define_value.is_null(),
-                        "Define value should be valid JSON");
+                    assert!(!define_name.is_empty(), "Define name should not be empty");
+                    assert!(
+                        !define_value.is_null() || define_value.is_null(),
+                        "Define value should be valid JSON"
+                    );
                 }
             }
         }
 
-        println!("✓ Module data structure validated ({} modules)", transformed.len());
+        println!(
+            "✓ Module data structure validated ({} modules)",
+            transformed.len()
+        );
     }
 
     #[test]
@@ -330,14 +364,16 @@ InvalidLine3
 
         for file in &files {
             if file_exists(file) {
-                let content = fs::read_to_string(file)
-                    .expect(&format!("Should read {}", file));
+                let content = fs::read_to_string(file).expect(&format!("Should read {}", file));
 
                 let has_character = content.contains(":Character:");
                 let has_variables = content.contains(":Variables:");
-                let has_states = content.lines().any(|line|
-                    line.starts_with(':') && line.ends_with(':') &&
-                    !line.contains("Character") && !line.contains("Variables"));
+                let has_states = content.lines().any(|line| {
+                    line.starts_with(':')
+                        && line.ends_with(':')
+                        && !line.contains("Character")
+                        && !line.contains("Variables")
+                });
 
                 if has_character && (has_variables || has_states) {
                     complete_files += 1;
@@ -345,8 +381,11 @@ InvalidLine3
             }
         }
 
-        println!("✓ Character file completeness: {}/{} files complete",
-                 complete_files, files.len());
+        println!(
+            "✓ Character file completeness: {}/{} files complete",
+            complete_files,
+            files.len()
+        );
     }
 
     // ============================================================================
@@ -360,20 +399,24 @@ InvalidLine3
             return;
         }
 
-        let parent_content = fs::read_to_string("test_parent.casp")
-            .expect("Should read parent");
-        let child_content = fs::read_to_string("test_child.casp")
-            .expect("Should read child");
+        let parent_content = fs::read_to_string("test_parent.casp").expect("Should read parent");
+        let child_content = fs::read_to_string("test_child.casp").expect("Should read child");
 
         // Child should reference parent
-        assert!(child_content.contains("Skeleton:"),
-            "Child should have Skeleton field");
-        assert!(child_content.contains("test_parent"),
-            "Child should reference parent");
+        assert!(
+            child_content.contains("Skeleton:"),
+            "Child should have Skeleton field"
+        );
+        assert!(
+            child_content.contains("test_parent"),
+            "Child should reference parent"
+        );
 
         // Parent should have inheritable content
-        assert!(parent_content.contains(":Character:"),
-            "Parent should have Character section");
+        assert!(
+            parent_content.contains(":Character:"),
+            "Parent should have Character section"
+        );
 
         println!("✓ Inheritance chain validated");
     }
@@ -385,8 +428,7 @@ InvalidLine3
             return;
         }
 
-        let child_content = fs::read_to_string("test_child.casp")
-            .expect("Should read child");
+        let child_content = fs::read_to_string("test_child.casp").expect("Should read child");
 
         // Count override patterns
         let var_overrides = child_content.matches("var ").count();
@@ -519,7 +561,8 @@ InvalidLine3
         let states = golden["states"].as_object().unwrap();
 
         // Detect potential combo chains (attacks that can transition to other attacks)
-        let mut attack_states: Vec<&String> = states.keys()
+        let mut attack_states: Vec<&String> = states
+            .keys()
             .filter(|name| {
                 let lower = name.to_lowercase();
                 lower.contains("attack") || lower.contains("punch") || lower.contains("kick")
@@ -531,7 +574,10 @@ InvalidLine3
         println!("✓ Combo system detection:");
         println!("  Attack states: {}", attack_states.len());
         if attack_states.len() > 0 {
-            println!("  Examples: {:?}", attack_states.iter().take(5).collect::<Vec<_>>());
+            println!(
+                "  Examples: {:?}",
+                attack_states.iter().take(5).collect::<Vec<_>>()
+            );
         }
     }
 
@@ -542,10 +588,10 @@ InvalidLine3
         // Check for hitbox-related data in various locations
         let json_str = serde_json::to_string(&golden).unwrap();
 
-        let hitbox_mentions = json_str.matches("hitbox").count() +
-                             json_str.matches("Hitbox").count() +
-                             json_str.matches("hurtbox").count() +
-                             json_str.matches("Hurtbox").count();
+        let hitbox_mentions = json_str.matches("hitbox").count()
+            + json_str.matches("Hitbox").count()
+            + json_str.matches("hurtbox").count()
+            + json_str.matches("Hurtbox").count();
 
         println!("✓ Hitbox data structure: {} mentions", hitbox_mentions);
     }
@@ -579,8 +625,7 @@ InvalidLine3
         let golden = load_golden_master("golden_masters/Baston-Model.json");
 
         // Measure JSON size
-        let json_str = serde_json::to_string(&golden)
-            .expect("Should serialize");
+        let json_str = serde_json::to_string(&golden).expect("Should serialize");
 
         let size_kb = json_str.len() / 1024;
 

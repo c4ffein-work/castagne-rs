@@ -25,7 +25,8 @@ mod tests {
 
     fn create_temp_casp_file(content: &str) -> NamedTempFile {
         let mut file = NamedTempFile::new().expect("Failed to create temp file");
-        file.write_all(content.as_bytes()).expect("Failed to write to temp file");
+        file.write_all(content.as_bytes())
+            .expect("Failed to write to temp file");
         file
     }
 
@@ -268,7 +269,9 @@ State StateC(StateB):
         let file = create_temp_casp_file(invalid_casp);
 
         let content = fs::read_to_string(file.path()).expect("Should read file");
-        assert!(content.contains("StateA") && content.contains("StateB") && content.contains("StateC"));
+        assert!(
+            content.contains("StateA") && content.contains("StateB") && content.contains("StateC")
+        );
 
         println!("✓ Circular parent reference (complex) detectable");
     }

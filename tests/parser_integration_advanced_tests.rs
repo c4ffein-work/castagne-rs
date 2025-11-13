@@ -11,8 +11,8 @@
 //! - Performance/stress scenarios
 //! - Real-world use cases
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 
 #[cfg(test)]
 mod tests {
@@ -41,23 +41,35 @@ mod tests {
         assert!(subentities.is_object(), "Subentities should be an object");
 
         let subentities_obj = subentities.as_object().unwrap();
-        assert!(subentities_obj.len() > 0, "Should have at least one subentity");
+        assert!(
+            subentities_obj.len() > 0,
+            "Should have at least one subentity"
+        );
 
         // Check for common subentities
         for (subentity_name, subentity_data) in subentities_obj {
-            assert!(subentity_data.is_object(),
-                "Subentity {} should be an object", subentity_name);
+            assert!(
+                subentity_data.is_object(),
+                "Subentity {} should be an object",
+                subentity_name
+            );
 
             // Subentities may have skeleton references
             if let Some(skeleton) = subentity_data.get("skeleton") {
-                assert!(skeleton.is_string() || skeleton.is_null(),
-                    "Subentity {} skeleton should be string or null", subentity_name);
+                assert!(
+                    skeleton.is_string() || skeleton.is_null(),
+                    "Subentity {} skeleton should be string or null",
+                    subentity_name
+                );
             }
 
             println!("  ✓ Subentity: {}", subentity_name);
         }
 
-        println!("✓ Subentities structure validated ({} subentities)", subentities_obj.len());
+        println!(
+            "✓ Subentities structure validated ({} subentities)",
+            subentities_obj.len()
+        );
     }
 
     #[test]
@@ -90,11 +102,17 @@ mod tests {
 
         // Each subentity should have a corresponding variable entry
         for subentity_name in subentities.keys() {
-            assert!(variables.contains_key(subentity_name),
-                "Subentity {} should have a corresponding variable", subentity_name);
+            assert!(
+                variables.contains_key(subentity_name),
+                "Subentity {} should have a corresponding variable",
+                subentity_name
+            );
         }
 
-        println!("✓ Subentity consistency validated ({} subentities)", subentities.len());
+        println!(
+            "✓ Subentity consistency validated ({} subentities)",
+            subentities.len()
+        );
     }
 
     // ============================================================================
@@ -107,31 +125,40 @@ mod tests {
         let transformed = golden["transformed_data"].as_object().unwrap();
 
         // Verify core modules exist
-        let core_modules = vec![
-            "Graphics",
-            "Anims",
-            "PhysicsMovement",
-            "AttacksMechanics",
-        ];
+        let core_modules = vec!["Graphics", "Anims", "PhysicsMovement", "AttacksMechanics"];
 
         for module_name in &core_modules {
-            assert!(transformed.contains_key(*module_name),
-                "Missing core module: {}", module_name);
+            assert!(
+                transformed.contains_key(*module_name),
+                "Missing core module: {}",
+                module_name
+            );
         }
 
         // Each module should have a Defines section
         for (module_name, module_data) in transformed {
-            assert!(module_data.is_object(),
-                "Module {} should be an object", module_name);
-            assert!(module_data["Defines"].is_object(),
-                "Module {} should have Defines section", module_name);
+            assert!(
+                module_data.is_object(),
+                "Module {} should be an object",
+                module_name
+            );
+            assert!(
+                module_data["Defines"].is_object(),
+                "Module {} should have Defines section",
+                module_name
+            );
 
-            println!("  ✓ Module: {} (Defines: {} entries)",
-                     module_name,
-                     module_data["Defines"].as_object().unwrap().len());
+            println!(
+                "  ✓ Module: {} (Defines: {} entries)",
+                module_name,
+                module_data["Defines"].as_object().unwrap().len()
+            );
         }
 
-        println!("✓ Module structure validated ({} modules)", transformed.len());
+        println!(
+            "✓ Module structure validated ({} modules)",
+            transformed.len()
+        );
     }
 
     #[test]
@@ -140,31 +167,53 @@ mod tests {
         let graphics = &golden["transformed_data"]["Graphics"];
 
         // Graphics module should have specific sections
-        assert!(graphics["Defines"].is_object(), "Graphics should have Defines");
+        assert!(
+            graphics["Defines"].is_object(),
+            "Graphics should have Defines"
+        );
 
         // Check for spritesheets
         if graphics["Spritesheets"].is_object() {
             let spritesheets = graphics["Spritesheets"].as_object().unwrap();
             for (sheet_name, sheet_data) in spritesheets {
                 // Each spritesheet should have dimensions
-                assert!(sheet_data["SpritesX"].is_number(),
-                    "Spritesheet {} missing SpritesX", sheet_name);
-                assert!(sheet_data["SpritesY"].is_number(),
-                    "Spritesheet {} missing SpritesY", sheet_name);
-                assert!(sheet_data["OriginX"].is_number(),
-                    "Spritesheet {} missing OriginX", sheet_name);
-                assert!(sheet_data["OriginY"].is_number(),
-                    "Spritesheet {} missing OriginY", sheet_name);
-                assert!(sheet_data["PixelSize"].is_number(),
-                    "Spritesheet {} missing PixelSize", sheet_name);
+                assert!(
+                    sheet_data["SpritesX"].is_number(),
+                    "Spritesheet {} missing SpritesX",
+                    sheet_name
+                );
+                assert!(
+                    sheet_data["SpritesY"].is_number(),
+                    "Spritesheet {} missing SpritesY",
+                    sheet_name
+                );
+                assert!(
+                    sheet_data["OriginX"].is_number(),
+                    "Spritesheet {} missing OriginX",
+                    sheet_name
+                );
+                assert!(
+                    sheet_data["OriginY"].is_number(),
+                    "Spritesheet {} missing OriginY",
+                    sheet_name
+                );
+                assert!(
+                    sheet_data["PixelSize"].is_number(),
+                    "Spritesheet {} missing PixelSize",
+                    sheet_name
+                );
 
                 // Validate numeric values are reasonable
                 let sprites_x = sheet_data["SpritesX"].as_i64().unwrap();
                 let sprites_y = sheet_data["SpritesY"].as_i64().unwrap();
-                assert!(sprites_x > 0 && sprites_x < 100,
-                    "SpritesX should be reasonable (1-99)");
-                assert!(sprites_y > 0 && sprites_y < 100,
-                    "SpritesY should be reasonable (1-99)");
+                assert!(
+                    sprites_x > 0 && sprites_x < 100,
+                    "SpritesX should be reasonable (1-99)"
+                );
+                assert!(
+                    sprites_y > 0 && sprites_y < 100,
+                    "SpritesY should be reasonable (1-99)"
+                );
             }
         }
 
@@ -176,8 +225,10 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let physics = &golden["transformed_data"]["PhysicsMovement"];
 
-        assert!(physics["Defines"].is_object(),
-            "PhysicsMovement should have Defines");
+        assert!(
+            physics["Defines"].is_object(),
+            "PhysicsMovement should have Defines"
+        );
 
         let defines = physics["Defines"].as_object().unwrap();
 
@@ -192,8 +243,10 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let attacks = &golden["transformed_data"]["AttacksMechanics"];
 
-        assert!(attacks["Defines"].is_object(),
-            "AttacksMechanics should have Defines");
+        assert!(
+            attacks["Defines"].is_object(),
+            "AttacksMechanics should have Defines"
+        );
 
         let defines = attacks["Defines"].as_object().unwrap();
         println!("  Attacks module defines: {} entries", defines.len());
@@ -216,12 +269,19 @@ mod tests {
             if let Some(flags) = state_data["TransitionFlags"].as_array() {
                 if !flags.is_empty() {
                     states_with_flags += 1;
-                    println!("  State {} has {} transition flags", state_name, flags.len());
+                    println!(
+                        "  State {} has {} transition flags",
+                        state_name,
+                        flags.len()
+                    );
                 }
             }
         }
 
-        println!("✓ State transition flags validated ({} states with flags)", states_with_flags);
+        println!(
+            "✓ State transition flags validated ({} states with flags)",
+            states_with_flags
+        );
     }
 
     #[test]
@@ -258,7 +318,10 @@ mod tests {
         }
 
         println!("✓ State parent chains validated");
-        println!("  Max chain length: {} (state: {})", max_chain_length, longest_chain_state);
+        println!(
+            "  Max chain length: {} (state: {})",
+            max_chain_length, longest_chain_state
+        );
     }
 
     #[test]
@@ -289,13 +352,18 @@ mod tests {
         let states = golden["states"].as_object().unwrap();
 
         // This character has 323 states - verify we can handle large state machines
-        assert!(states.len() > 300,
-            "Should handle large state machines (300+ states)");
+        assert!(
+            states.len() > 300,
+            "Should handle large state machines (300+ states)"
+        );
 
         // Verify all states are accessible
         for (state_name, state_data) in states {
-            assert!(state_data.is_object(),
-                "State {} should be valid object", state_name);
+            assert!(
+                state_data.is_object(),
+                "State {} should be valid object",
+                state_name
+            );
         }
 
         println!("✓ Large state machine validated ({} states)", states.len());
@@ -327,10 +395,12 @@ mod tests {
 
         for file in files {
             let golden = load_golden_master(file);
-            assert!(golden["metadata"].is_object(),
-                "{} should have metadata", file);
-            assert!(golden["states"].is_object(),
-                "{} should have states", file);
+            assert!(
+                golden["metadata"].is_object(),
+                "{} should have metadata",
+                file
+            );
+            assert!(golden["states"].is_object(), "{} should have states", file);
         }
 
         println!("✓ Concurrent file access validated (3 files)");
@@ -349,17 +419,24 @@ mod tests {
         let mut attack_states = Vec::new();
 
         for state_name in states.keys() {
-            if state_name.contains("Attack") ||
-               state_name.contains("Punch") ||
-               state_name.contains("Kick") ||
-               state_name.contains("Tech") {
+            if state_name.contains("Attack")
+                || state_name.contains("Punch")
+                || state_name.contains("Kick")
+                || state_name.contains("Tech")
+            {
                 attack_states.push(state_name.clone());
             }
         }
 
-        println!("✓ Combo system patterns validated ({} attack states)", attack_states.len());
+        println!(
+            "✓ Combo system patterns validated ({} attack states)",
+            attack_states.len()
+        );
         if attack_states.len() > 0 {
-            println!("  Example attacks: {:?}", attack_states.iter().take(5).collect::<Vec<_>>());
+            println!(
+                "  Example attacks: {:?}",
+                attack_states.iter().take(5).collect::<Vec<_>>()
+            );
         }
     }
 
@@ -392,8 +469,14 @@ mod tests {
         }
 
         if ai_states.len() > 0 {
-            println!("✓ AI state patterns validated ({} AI states)", ai_states.len());
-            println!("  Example AI states: {:?}", ai_states.iter().take(5).collect::<Vec<_>>());
+            println!(
+                "✓ AI state patterns validated ({} AI states)",
+                ai_states.len()
+            );
+            println!(
+                "  Example AI states: {:?}",
+                ai_states.iter().take(5).collect::<Vec<_>>()
+            );
         } else {
             println!("✓ AI state patterns validated (no AI states found - valid)");
         }
@@ -410,10 +493,14 @@ mod tests {
         let physics = &golden["transformed_data"]["PhysicsMovement"];
 
         // Both modules should coexist properly
-        assert!(graphics["Defines"].is_object(),
-            "Graphics module should be present");
-        assert!(physics["Defines"].is_object(),
-            "Physics module should be present");
+        assert!(
+            graphics["Defines"].is_object(),
+            "Graphics module should be present"
+        );
+        assert!(
+            physics["Defines"].is_object(),
+            "Physics module should be present"
+        );
 
         println!("✓ Graphics-Physics integration validated");
     }
@@ -429,11 +516,17 @@ mod tests {
 
         // Verify no module conflicts
         for (module_name, module_data) in transformed {
-            assert!(module_data["Defines"].is_object(),
-                "Module {} should have valid Defines", module_name);
+            assert!(
+                module_data["Defines"].is_object(),
+                "Module {} should have valid Defines",
+                module_name
+            );
         }
 
-        println!("✓ All modules integration validated ({} modules)", module_count);
+        println!(
+            "✓ All modules integration validated ({} modules)",
+            module_count
+        );
     }
 
     // ============================================================================
@@ -453,12 +546,18 @@ mod tests {
                 empty_states += 1;
 
                 // Empty states should still have valid structure
-                assert!(state_data["Parent"].is_string() || state_data["Parent"].is_null(),
-                    "Empty state {} should have valid parent field", state_name);
+                assert!(
+                    state_data["Parent"].is_string() || state_data["Parent"].is_null(),
+                    "Empty state {} should have valid parent field",
+                    state_name
+                );
             }
         }
 
-        println!("✓ Empty state handling validated ({} empty states)", empty_states);
+        println!(
+            "✓ Empty state handling validated ({} empty states)",
+            empty_states
+        );
     }
 
     #[test]
@@ -499,7 +598,10 @@ mod tests {
             }
         }
 
-        println!("✓ Variable name patterns validated ({} special names)", special_names);
+        println!(
+            "✓ Variable name patterns validated ({} special names)",
+            special_names
+        );
     }
 
     // ============================================================================
@@ -515,7 +617,10 @@ mod tests {
         assert!(golden["variables"].is_object(), "Should have variables");
         assert!(golden["states"].is_object(), "Should have states");
         assert!(golden["subentities"].is_object(), "Should have subentities");
-        assert!(golden["transformed_data"].is_object(), "Should have transformed_data");
+        assert!(
+            golden["transformed_data"].is_object(),
+            "Should have transformed_data"
+        );
 
         let states_count = golden["states"].as_object().unwrap().len();
         let variables_count = golden["variables"].as_object().unwrap().len();
@@ -542,12 +647,21 @@ mod tests {
             let metadata = &golden["metadata"];
 
             // Required fields
-            assert!(metadata["name"].is_string(),
-                "{} should have name", file_path);
-            assert!(metadata["editorname"].is_string(),
-                "{} should have editorname", file_path);
-            assert!(metadata["filepath"].is_string(),
-                "{} should have filepath", file_path);
+            assert!(
+                metadata["name"].is_string(),
+                "{} should have name",
+                file_path
+            );
+            assert!(
+                metadata["editorname"].is_string(),
+                "{} should have editorname",
+                file_path
+            );
+            assert!(
+                metadata["filepath"].is_string(),
+                "{} should have filepath",
+                file_path
+            );
 
             println!("  ✓ {} metadata complete", file_path);
         }

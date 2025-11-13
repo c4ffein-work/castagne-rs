@@ -13,8 +13,8 @@
 //! - Performance edge cases
 //! - Complex conditional logic patterns
 
-use std::fs;
 use serde_json::Value;
+use std::fs;
 use std::io::Write as IoWrite;
 use tempfile::NamedTempFile;
 
@@ -35,7 +35,8 @@ mod tests {
 
     fn create_temp_casp(content: &str) -> NamedTempFile {
         let mut file = NamedTempFile::new().expect("Failed to create temp file");
-        file.write_all(content.as_bytes()).expect("Failed to write to temp file");
+        file.write_all(content.as_bytes())
+            .expect("Failed to write to temp file");
         file
     }
 
@@ -59,8 +60,14 @@ mod tests {
 
                     // Validate flag structure
                     for (flag_name, flag_value) in flags {
-                        assert!(flag_value.is_string() || flag_value.is_boolean() || flag_value.is_number(),
-                            "State {} flag {} has invalid type", state_name, flag_name);
+                        assert!(
+                            flag_value.is_string()
+                                || flag_value.is_boolean()
+                                || flag_value.is_number(),
+                            "State {} flag {} has invalid type",
+                            state_name,
+                            flag_name
+                        );
                     }
                 }
             }
@@ -152,7 +159,10 @@ mod tests {
         println!("✓ Module completeness checked");
         println!("  Found modules: {:?}", found_modules);
         if !missing_modules.is_empty() {
-            println!("  Note: Missing expected modules: {:?} (may be valid)", missing_modules);
+            println!(
+                "  Note: Missing expected modules: {:?} (may be valid)",
+                missing_modules
+            );
         }
     }
 
@@ -169,9 +179,16 @@ mod tests {
 
                 // Each define should have proper structure
                 for (define_name, define_value) in defines {
-                    assert!(define_value.is_string() || define_value.is_number() ||
-                           define_value.is_boolean() || define_value.is_object() || define_value.is_array(),
-                        "Module {} define {} has unexpected type", module_name, define_name);
+                    assert!(
+                        define_value.is_string()
+                            || define_value.is_number()
+                            || define_value.is_boolean()
+                            || define_value.is_object()
+                            || define_value.is_array(),
+                        "Module {} define {} has unexpected type",
+                        module_name,
+                        define_name
+                    );
                 }
             }
         }
@@ -257,7 +274,10 @@ mod tests {
         }
 
         println!("✓ Float special values analyzed ({} total)", float_count);
-        println!("  Zero: {}, Negative: {}, Positive: {}", zero_count, negative_count, positive_count);
+        println!(
+            "  Zero: {}, Negative: {}, Positive: {}",
+            zero_count, negative_count, positive_count
+        );
     }
 
     #[test]
@@ -321,7 +341,10 @@ mod tests {
         }
 
         println!("✓ Vector zero values analyzed");
-        println!("  Zero Vec2: {}, Zero Vec3: {}", zero_vec2_count, zero_vec3_count);
+        println!(
+            "  Zero Vec2: {}, Zero Vec3: {}",
+            zero_vec2_count, zero_vec3_count
+        );
     }
 
     // ============================================================================
@@ -481,7 +504,10 @@ mod tests {
             }
         }
 
-        println!("✓ Action argument patterns analyzed ({} actions)", total_actions);
+        println!(
+            "✓ Action argument patterns analyzed ({} actions)",
+            total_actions
+        );
         if total_actions > 0 {
             println!("  No args: {}", no_args);
             println!("  One arg: {}", one_arg);
@@ -507,16 +533,32 @@ mod tests {
 
             // Check that all variables have required fields
             for (var_name, var_data) in variables {
-                assert!(var_data.is_object(),
-                    "{}: Variable {} is not an object", file_path, var_name);
+                assert!(
+                    var_data.is_object(),
+                    "{}: Variable {} is not an object",
+                    file_path,
+                    var_name
+                );
 
                 // Required fields
-                assert!(var_data.get("Type").is_some(),
-                    "{}: Variable {} missing Type", file_path, var_name);
-                assert!(var_data.get("Value").is_some(),
-                    "{}: Variable {} missing Value", file_path, var_name);
-                assert!(var_data.get("Mutability").is_some(),
-                    "{}: Variable {} missing Mutability", file_path, var_name);
+                assert!(
+                    var_data.get("Type").is_some(),
+                    "{}: Variable {} missing Type",
+                    file_path,
+                    var_name
+                );
+                assert!(
+                    var_data.get("Value").is_some(),
+                    "{}: Variable {} missing Value",
+                    file_path,
+                    var_name
+                );
+                assert!(
+                    var_data.get("Mutability").is_some(),
+                    "{}: Variable {} missing Mutability",
+                    file_path,
+                    var_name
+                );
             }
         }
 
@@ -537,16 +579,32 @@ mod tests {
 
             // Check that all states have required fields
             for (state_name, state_data) in states {
-                assert!(state_data.is_object(),
-                    "{}: State {} is not an object", file_path, state_name);
+                assert!(
+                    state_data.is_object(),
+                    "{}: State {} is not an object",
+                    file_path,
+                    state_name
+                );
 
                 // Required fields (may be null)
-                assert!(state_data.get("Parent").is_some(),
-                    "{}: State {} missing Parent", file_path, state_name);
-                assert!(state_data.get("Type").is_some(),
-                    "{}: State {} missing Type", file_path, state_name);
-                assert!(state_data.get("Phases").is_some(),
-                    "{}: State {} missing Phases", file_path, state_name);
+                assert!(
+                    state_data.get("Parent").is_some(),
+                    "{}: State {} missing Parent",
+                    file_path,
+                    state_name
+                );
+                assert!(
+                    state_data.get("Type").is_some(),
+                    "{}: State {} missing Type",
+                    file_path,
+                    state_name
+                );
+                assert!(
+                    state_data.get("Phases").is_some(),
+                    "{}: State {} missing Phases",
+                    file_path,
+                    state_name
+                );
             }
         }
 
@@ -569,7 +627,10 @@ mod tests {
             let modules = golden["transformed_data"].as_object().unwrap().len();
 
             println!("  {}", file_path);
-            println!("    States: {}, Variables: {}, Modules: {}", states, variables, modules);
+            println!(
+                "    States: {}, Variables: {}, Modules: {}",
+                states, variables, modules
+            );
         }
     }
 
@@ -582,12 +643,18 @@ mod tests {
         let golden = load_golden_master("golden_masters/Baston-Model.json");
         let subentities = golden["subentities"].as_object().unwrap();
 
-        println!("✓ Subentity structure validated ({} subentities)", subentities.len());
+        println!(
+            "✓ Subentity structure validated ({} subentities)",
+            subentities.len()
+        );
 
         for (subentity_name, subentity_data) in subentities {
             // Each subentity should be an object
-            assert!(subentity_data.is_object(),
-                "Subentity {} is not an object", subentity_name);
+            assert!(
+                subentity_data.is_object(),
+                "Subentity {} is not an object",
+                subentity_name
+            );
         }
     }
 
@@ -609,7 +676,10 @@ mod tests {
 
         println!("✓ Subentity variable analysis");
         println!("  Subentities: {}", subentities.len());
-        println!("  Potential subentity refs in variables: {}", subentity_refs);
+        println!(
+            "  Potential subentity refs in variables: {}",
+            subentity_refs
+        );
     }
 
     // ============================================================================
@@ -637,8 +707,14 @@ mod tests {
             let has_description = !metadata["description"].is_null();
 
             println!("✓ {} metadata:", file_path);
-            println!("  name: {}, editorname: {}, filepath: {}", has_name, has_editorname, has_filepath);
-            println!("  skeleton: {}, author: {}, description: {}", has_skeleton, has_author, has_description);
+            println!(
+                "  name: {}, editorname: {}, filepath: {}",
+                has_name, has_editorname, has_filepath
+            );
+            println!(
+                "  skeleton: {}, author: {}, description: {}",
+                has_skeleton, has_author, has_description
+            );
         }
     }
 
@@ -683,8 +759,10 @@ mod tests {
                 }
             }
 
-            println!("  States: {}, Variables: {}, Subentities: {}, Modules: {}",
-                     states, variables, subentities, modules);
+            println!(
+                "  States: {}, Variables: {}, Subentities: {}, Modules: {}",
+                states, variables, subentities, modules
+            );
             println!("  Total phases: {}", total_phases);
             println!("  Variable types: {:?}", type_counts);
             println!();

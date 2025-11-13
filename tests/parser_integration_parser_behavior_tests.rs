@@ -13,8 +13,8 @@
 //! - Edge case handling in actual parsing
 
 use castagne_rs::parser::CastagneParser;
-use std::path::Path;
 use std::io::Write as IoWrite;
+use std::path::Path;
 use tempfile::NamedTempFile;
 
 #[cfg(test)]
@@ -31,7 +31,8 @@ mod tests {
 
     fn create_temp_casp(content: &str) -> NamedTempFile {
         let mut file = NamedTempFile::new().expect("Failed to create temp file");
-        file.write_all(content.as_bytes()).expect("Failed to write to temp file");
+        file.write_all(content.as_bytes())
+            .expect("Failed to write to temp file");
         file
     }
 
@@ -62,12 +63,18 @@ def MinHealth: 0
         let character = character.unwrap();
 
         // Validate Int variables were parsed
-        assert!(character.variables.contains_key("Health"),
-            "Should parse Health variable");
-        assert!(character.variables.contains_key("MaxHealth"),
-            "Should parse MaxHealth variable");
-        assert!(character.variables.contains_key("MinHealth"),
-            "Should parse MinHealth constant");
+        assert!(
+            character.variables.contains_key("Health"),
+            "Should parse Health variable"
+        );
+        assert!(
+            character.variables.contains_key("MaxHealth"),
+            "Should parse MaxHealth variable"
+        );
+        assert!(
+            character.variables.contains_key("MinHealth"),
+            "Should parse MinHealth constant"
+        );
 
         let health = &character.variables["Health"];
         assert_eq!(health.value, "100", "Health value should be 100");
@@ -96,10 +103,14 @@ var AnimState(Str): "idle"
 
         let character = character.unwrap();
 
-        assert!(character.variables.contains_key("PlayerName"),
-            "Should parse PlayerName variable");
-        assert!(character.variables.contains_key("AnimState"),
-            "Should parse AnimState variable");
+        assert!(
+            character.variables.contains_key("PlayerName"),
+            "Should parse PlayerName variable"
+        );
+        assert!(
+            character.variables.contains_key("AnimState"),
+            "Should parse AnimState variable"
+        );
 
         println!("✓ String variable parsing validated");
     }
@@ -125,10 +136,14 @@ var Velocity(Vec2): 10.5, -5.2
 
         let character = character.unwrap();
 
-        assert!(character.variables.contains_key("Position"),
-            "Should parse Position variable");
-        assert!(character.variables.contains_key("Velocity"),
-            "Should parse Velocity variable");
+        assert!(
+            character.variables.contains_key("Position"),
+            "Should parse Position variable"
+        );
+        assert!(
+            character.variables.contains_key("Velocity"),
+            "Should parse Velocity variable"
+        );
 
         println!("✓ Vec2 variable parsing validated");
     }
@@ -154,10 +169,14 @@ var IsAttacking(Bool): false
 
         let character = character.unwrap();
 
-        assert!(character.variables.contains_key("IsGrounded"),
-            "Should parse IsGrounded variable");
-        assert!(character.variables.contains_key("IsAttacking"),
-            "Should parse IsAttacking variable");
+        assert!(
+            character.variables.contains_key("IsGrounded"),
+            "Should parse IsGrounded variable"
+        );
+        assert!(
+            character.variables.contains_key("IsAttacking"),
+            "Should parse IsAttacking variable"
+        );
 
         println!("✓ Bool variable parsing validated");
     }
@@ -189,14 +208,20 @@ CheckInput()
 
         let character = character.unwrap();
 
-        assert!(character.states.contains_key("Idle"),
-            "Should parse Idle state");
+        assert!(
+            character.states.contains_key("Idle"),
+            "Should parse Idle state"
+        );
 
         let idle_state = &character.states["Idle"];
-        assert!(idle_state.actions.contains_key("Init"),
-            "Idle state should have Init phase");
-        assert!(idle_state.actions.contains_key("Action"),
-            "Idle state should have Action phase");
+        assert!(
+            idle_state.actions.contains_key("Init"),
+            "Idle state should have Init phase"
+        );
+        assert!(
+            idle_state.actions.contains_key("Action"),
+            "Idle state should have Action phase"
+        );
 
         println!("✓ Basic state parsing validated");
     }
@@ -225,10 +250,14 @@ InitDerived()
 
         let character = character.unwrap();
 
-        assert!(character.states.contains_key("Base"),
-            "Should parse Base state");
-        assert!(character.states.contains_key("Derived"),
-            "Should parse Derived state");
+        assert!(
+            character.states.contains_key("Base"),
+            "Should parse Base state"
+        );
+        assert!(
+            character.states.contains_key("Derived"),
+            "Should parse Derived state"
+        );
 
         println!("✓ State with parent parsing validated");
     }
@@ -296,10 +325,12 @@ Action3()
         let test_state = &character.states["Test"];
         let init_actions = &test_state.actions["Init"];
 
-        assert!(init_actions.len() >= 3,
-            "Should parse at least 3 actions");
+        assert!(init_actions.len() >= 3, "Should parse at least 3 actions");
 
-        println!("✓ Simple actions parsing validated ({} actions)", init_actions.len());
+        println!(
+            "✓ Simple actions parsing validated ({} actions)",
+            init_actions.len()
+        );
     }
 
     #[test]
@@ -327,8 +358,10 @@ Multiply(Velocity, 2.0)
         let test_state = &character.states["Test"];
         let init_actions = &test_state.actions["Init"];
 
-        assert!(init_actions.len() >= 3,
-            "Should parse actions with arguments");
+        assert!(
+            init_actions.len() >= 3,
+            "Should parse actions with arguments"
+        );
 
         println!("✓ Actions with arguments parsing validated");
     }
@@ -357,8 +390,10 @@ EndIf
         let character = character.unwrap();
         let test_state = &character.states["Test"];
 
-        assert!(test_state.actions.contains_key("Init"),
-            "Should have Init phase with conditional");
+        assert!(
+            test_state.actions.contains_key("Init"),
+            "Should have Init phase with conditional"
+        );
 
         println!("✓ Conditional actions parsing validated");
     }
@@ -391,12 +426,16 @@ var Health(Int): 100
 
         let character = character.unwrap();
 
-        assert!(character.specblocks.contains_key("TestBlock"),
-            "Should parse TestBlock specblock");
+        assert!(
+            character.specblocks.contains_key("TestBlock"),
+            "Should parse TestBlock specblock"
+        );
 
         let testblock = &character.specblocks["TestBlock"];
-        assert!(testblock.contains_key("Value1"),
-            "TestBlock should have Value1");
+        assert!(
+            testblock.contains_key("Value1"),
+            "TestBlock should have Value1"
+        );
 
         println!("✓ Specblock parsing validated");
     }
@@ -428,10 +467,14 @@ var Health(Int): 100  # Health variable
 
         let character = character.unwrap();
 
-        assert_eq!(character.metadata.name, "Test",
-            "Comments should not affect parsing");
-        assert!(character.variables.contains_key("Health"),
-            "Should parse variables despite comments");
+        assert_eq!(
+            character.metadata.name, "Test",
+            "Comments should not affect parsing"
+        );
+        assert!(
+            character.variables.contains_key("Health"),
+            "Should parse variables despite comments"
+        );
 
         println!("✓ Comment handling validated");
     }
@@ -458,11 +501,16 @@ var Health(Int): 100
         if character.is_some() {
             let character = character.unwrap();
             // Should at least parse the valid parts
-            assert!(character.variables.contains_key("Health"),
-                "Should parse valid variables even with errors");
+            assert!(
+                character.variables.contains_key("Health"),
+                "Should parse valid variables even with errors"
+            );
         }
 
-        println!("✓ Error recovery validated (errors: {})", parser.errors.len());
+        println!(
+            "✓ Error recovery validated (errors: {})",
+            parser.errors.len()
+        );
     }
 
     // ============================================================================
@@ -490,10 +538,14 @@ var  Mana(Int)  :  50
 
         let character = character.unwrap();
 
-        assert!(character.variables.contains_key("Health"),
-            "Should parse variable with extra whitespace");
-        assert!(character.variables.contains_key("Mana"),
-            "Should parse variable with scattered whitespace");
+        assert!(
+            character.variables.contains_key("Health"),
+            "Should parse variable with extra whitespace"
+        );
+        assert!(
+            character.variables.contains_key("Mana"),
+            "Should parse variable with scattered whitespace"
+        );
 
         println!("✓ Whitespace tolerance validated");
     }
@@ -525,8 +577,10 @@ Name: Test
 
         // Empty sections should be handled gracefully
         assert_eq!(character.metadata.name, "Test");
-        assert!(character.states.contains_key("Idle"),
-            "Should create Idle state even with empty Init");
+        assert!(
+            character.states.contains_key("Idle"),
+            "Should create Idle state even with empty Init"
+        );
 
         println!("✓ Empty sections handling validated");
     }
@@ -561,12 +615,18 @@ ReactionPhase()
         let character = character.unwrap();
         let test_state = &character.states["Test"];
 
-        assert!(test_state.actions.contains_key("Init"),
-            "Should have Init phase");
-        assert!(test_state.actions.contains_key("Action"),
-            "Should have Action phase");
-        assert!(test_state.actions.contains_key("Reaction"),
-            "Should have Reaction phase");
+        assert!(
+            test_state.actions.contains_key("Init"),
+            "Should have Init phase"
+        );
+        assert!(
+            test_state.actions.contains_key("Action"),
+            "Should have Action phase"
+        );
+        assert!(
+            test_state.actions.contains_key("Reaction"),
+            "Should have Reaction phase"
+        );
 
         println!("✓ Phase ordering validated");
     }
@@ -596,12 +656,18 @@ Version: 1.0
 
         let character = character.unwrap();
 
-        assert_eq!(character.metadata.name, "TestFighter",
-            "Should extract name");
-        assert_eq!(character.metadata.author, "TestAuthor",
-            "Should extract author");
-        assert!(character.metadata.description.contains("test character"),
-            "Should extract description");
+        assert_eq!(
+            character.metadata.name, "TestFighter",
+            "Should extract name"
+        );
+        assert_eq!(
+            character.metadata.author, "TestAuthor",
+            "Should extract author"
+        );
+        assert!(
+            character.metadata.description.contains("test character"),
+            "Should extract description"
+        );
 
         println!("✓ Metadata extraction validated");
     }
@@ -668,10 +734,14 @@ var EmojiTest(Str): "Test with émojis ✅"
 
         let character = character.unwrap();
 
-        assert!(character.variables.contains_key("Message"),
-            "Should parse Unicode string variables");
-        assert!(character.variables.contains_key("EmojiTest"),
-            "Should parse emoji string variables");
+        assert!(
+            character.variables.contains_key("Message"),
+            "Should parse Unicode string variables"
+        );
+        assert!(
+            character.variables.contains_key("EmojiTest"),
+            "Should parse emoji string variables"
+        );
 
         println!("✓ Unicode handling validated");
     }

@@ -63,8 +63,8 @@ mod tests {
         let golden = fs::read_to_string("golden_masters/Baston-Model.json")
             .expect("Failed to load Baston-Model golden master");
 
-        let json: serde_json::Value = serde_json::from_str(&golden)
-            .expect("Failed to parse golden master");
+        let json: serde_json::Value =
+            serde_json::from_str(&golden).expect("Failed to parse golden master");
 
         println!("=== Baston-Model Golden Master Analysis ===");
 

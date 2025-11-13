@@ -7,8 +7,8 @@
 //! This test runner validates the Rust parser against golden master JSON files.
 //! The engine logic is now in GDScript, so we only test the parser here.
 
-use godot::prelude::*;
 use crate::parser::CastagneParser;
+use godot::prelude::*;
 
 /// Test runner for parser validation
 #[derive(GodotClass)]
@@ -35,11 +35,18 @@ impl CastagneTestRunner {
 
         // Test parser operations against golden masters
         results.set("parser_basic_character", self.test_parser_basic_character());
-        results.set("parser_complete_character", self.test_parser_complete_character());
-        results.set("parser_advanced_character", self.test_parser_advanced_character());
+        results.set(
+            "parser_complete_character",
+            self.test_parser_complete_character(),
+        );
+        results.set(
+            "parser_advanced_character",
+            self.test_parser_advanced_character(),
+        );
 
         // Print summary
-        let passed = results.iter_shared()
+        let passed = results
+            .iter_shared()
             .filter(|(_, v)| v.try_to::<bool>().unwrap_or(false))
             .count();
         let total = results.len();
@@ -61,10 +68,7 @@ impl CastagneTestRunner {
         }
 
         godot_print!("Testing parser comparison (Baston-Model)...");
-        self.test_parser_with_golden_master(
-            casp_file,
-            "golden_masters/Baston-Model.json"
-        )
+        self.test_parser_with_golden_master(casp_file, "golden_masters/Baston-Model.json")
     }
 
     /// Test parser comparison - complete character file
@@ -79,10 +83,7 @@ impl CastagneTestRunner {
         }
 
         godot_print!("Testing parser comparison (Baston-2D)...");
-        self.test_parser_with_golden_master(
-            casp_file,
-            "golden_masters/Baston-2D.json"
-        )
+        self.test_parser_with_golden_master(casp_file, "golden_masters/Baston-2D.json")
     }
 
     /// Test parser comparison - advanced character file
@@ -97,10 +98,7 @@ impl CastagneTestRunner {
         }
 
         godot_print!("Testing parser comparison (TutorialBaston)...");
-        self.test_parser_with_golden_master(
-            casp_file,
-            "golden_masters/TutorialBaston.json"
-        )
+        self.test_parser_with_golden_master(casp_file, "golden_masters/TutorialBaston.json")
     }
 
     /// Test parser with simple test file (good for initial testing)
@@ -109,7 +107,7 @@ impl CastagneTestRunner {
         godot_print!("Testing parser comparison (test_character_complete)...");
         self.test_parser_with_golden_master(
             "test_character_complete.casp",
-            "golden_masters/test_character_complete.json"
+            "golden_masters/test_character_complete.json",
         )
     }
 
@@ -123,7 +121,11 @@ impl CastagneTestRunner {
         let golden_json_str = match fs::read_to_string(golden_master_file) {
             Ok(content) => content,
             Err(e) => {
-                godot_error!("❌ Failed to load golden master {}: {}", golden_master_file, e);
+                godot_error!(
+                    "❌ Failed to load golden master {}: {}",
+                    golden_master_file,
+                    e
+                );
                 return false;
             }
         };
@@ -175,7 +177,12 @@ impl CastagneTestRunner {
     }
 
     /// Compare two JSON values recursively
-    fn compare_json_values(&self, golden: &serde_json::Value, rust: &serde_json::Value, path: &str) -> bool {
+    fn compare_json_values(
+        &self,
+        golden: &serde_json::Value,
+        rust: &serde_json::Value,
+        path: &str,
+    ) -> bool {
         use serde_json::Value;
 
         match (golden, rust) {
@@ -201,7 +208,12 @@ impl CastagneTestRunner {
             }
             (Value::Array(g_arr), Value::Array(r_arr)) => {
                 if g_arr.len() != r_arr.len() {
-                    godot_error!("  Array length mismatch at {}: {} vs {}", path, g_arr.len(), r_arr.len());
+                    godot_error!(
+                        "  Array length mismatch at {}: {} vs {}",
+                        path,
+                        g_arr.len(),
+                        r_arr.len()
+                    );
                     return false;
                 }
                 for (i, (g_val, r_val)) in g_arr.iter().zip(r_arr.iter()).enumerate() {
