@@ -276,10 +276,12 @@ func _ParseFullFile(stopAfterSpecblocks = false):
 
 	_subentityBaseDefines = {}
 
-	for vName in _variables[null]:
-		var v = _variables[null][vName]
-		if(v["Mutability"] == Castagne.VARIABLE_MUTABILITY.Define):
-			_subentityBaseDefines[vName] = v.duplicate()
+	# Only process base entity variables if they exist
+	if _variables.has(null):
+		for vName in _variables[null]:
+			var v = _variables[null][vName]
+			if(v["Mutability"] == Castagne.VARIABLE_MUTABILITY.Define):
+				_subentityBaseDefines[vName] = v.duplicate()
 
 
 	# 3. Parse the states
