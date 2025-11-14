@@ -331,7 +331,7 @@ func UnsetFlag(flagname, pid, state):
 
 func GetInt(value, pid, state):
 	value = str(value)
-	if(value.is_valid_integer()):
+	if(value.is_valid_int()):
 		return int(value)
 	else:
 		if(value in state[pid]):

@@ -505,7 +505,7 @@ func GetStructInstancesAndVariablesStored(structType):
 			var vOrigin = _extraValues[prefix+instanceName]
 			
 			if(orderedStart != null):
-				if(!instanceName.is_valid_integer()):
+				if(!instanceName.is_valid_int()):
 					Castagne.Error("Specblock GetStructInstancesAndVariablesStored: Variable "+str(n)+" is in an ordered struct but its name is not a number! Potential bugs to follow.")
 			if(!instanceName in structInstances):
 				structInstances[instanceName] = {

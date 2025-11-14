@@ -17,7 +17,7 @@ func _GetStructValue(valueName, defaultValue, isIntValue = true):
 	if(_specblock._extraValues.has(_variablePrefix+valueName)):
 		var varValue = _specblock._extraValues[_variablePrefix+valueName]["Value"]
 		if(isIntValue):
-			if(str(varValue).is_valid_integer()):
+			if(str(varValue).is_valid_int()):
 				return int(varValue)
 			else:
 				return defaultValue

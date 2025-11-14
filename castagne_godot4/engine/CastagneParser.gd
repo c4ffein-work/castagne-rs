@@ -743,7 +743,7 @@ func _OptimizeActionList_Defines_BranchArgs(branchFuncref, letterArgs, variables
 	else:
 		letterArgs = _OptimizeActionList_Defines_ReplaceSymbol(letterArgs, variablesList, entityVariablesList)
 
-	if(letterArgs.is_valid_integer()):
+	if(letterArgs.is_valid_int()):
 		letterArgs = int(letterArgs)
 	return letterArgs
 
@@ -755,7 +755,7 @@ func _OptimizeActionList_StaticBranches(actionListToParse):
 	for a in actionListToParse:
 		if(a[0] == vbranch):
 			var parsedCondition = _Instruction_ParseCondition(a[1][2])
-			if(parsedCondition[0].is_valid_integer() and parsedCondition[2].is_valid_integer()):
+			if(parsedCondition[0].is_valid_int() and parsedCondition[2].is_valid_int()):
 				var result = _Instruction_ComputeCondition_Internal(int(parsedCondition[0]), parsedCondition[1], int(parsedCondition[2]))
 				var chosenBranch = (a[1][0] if result else a[1][1])
 				newActionList.append_array(_OptimizeActionList_StaticBranches(chosenBranch))
@@ -913,7 +913,7 @@ func _ParseMetadata(fileID):
 		var skeletonName = str(md["Skeleton"]).strip_edges()
 		if(skeletonName == "none" or skeletonName == "None"):
 			md.erase("Skeleton")
-		elif(skeletonName.is_valid_integer()):
+		elif(skeletonName.is_valid_int()):
 			var skelID = skeletonName.to_int()
 			if(skeletonsList.size() <= skelID):
 				_FatalError("Skeleton "+skeletonName + " not found")
@@ -1480,7 +1480,7 @@ func _ParseBlockData(fileID):
 		var left = line.left(splitIndex)
 		var right = line.right(splitIndex+1)
 		right = right.strip_edges()
-		if(right.is_valid_integer()):
+		if(right.is_valid_int()):
 			right = int(right)
 		variables[left] = right
 		line = _GetNextLine(fileID)
@@ -1583,7 +1583,7 @@ func _ParseBlockState(fileID):
 						isKnownVariable = isKnownVariable or entity != null
 						var t = types[i]
 						if(t == "int"):
-							if(!a.is_valid_integer() and !isKnownVariable):
+							if(!a.is_valid_int() and !isKnownVariable):
 								_Error("Function " + f[0] + " argument " + str(i) + " ("+a+") is not an integer.")
 								typeCheck = false
 						elif(t == "var"):
@@ -1812,7 +1812,7 @@ func _ParseBlockState(fileID):
 					continue
 
 				letterArgs = line.left(line.length()).right(1)
-				if(!letterArgs.is_valid_integer()):
+				if(!letterArgs.is_valid_int()):
 					_Error("R followup with a non-static weight: "+letterArgs)
 					line = _GetNextLine(fileID)
 					continue
@@ -1853,7 +1853,7 @@ func _ParseBlockState(fileID):
 					currentSubblock["S_Sum"] = -1
 					currentSubblock["S_Blocks_End"] += ["+"]
 				else:
-					if(!letterArgs.is_valid_integer()):
+					if(!letterArgs.is_valid_int()):
 						_Error("S followup with a non-static duration: "+letterArgs)
 						line = _GetNextLine(fileID)
 						continue
@@ -1892,7 +1892,7 @@ func _ParseBlockState(fileID):
 						_Error("E Branches can't exist from within another branch.")
 
 				if(letter == "R"):
-					if(!letterArgs.is_valid_integer()):
+					if(!letterArgs.is_valid_int()):
 						_Error("R branch with a non-static weight: "+letterArgs)
 						line = _GetNextLine(fileID)
 						continue
@@ -1934,7 +1934,7 @@ func _ParseBlockState(fileID):
 						letterArgs = letterArgs.left(moduloSepID)
 						if(modulo.is_empty()):
 							currentSubblock["S_Modulo"] = -1
-						elif(modulo.is_valid_integer()):
+						elif(modulo.is_valid_int()):
 							currentSubblock["S_Modulo"] = int(modulo)
 						else:
 							_Error("S Branch modulo is not a static number: " + modulo)
@@ -1944,7 +1944,7 @@ func _ParseBlockState(fileID):
 					if(letterArgs == "+"):
 						currentSubblock["S_Blocks_End"] += ["+"]
 						currentSubblock["S_Sum"] = -1
-					elif(letterArgs.is_valid_integer()):
+					elif(letterArgs.is_valid_int()):
 						var la = int(letterArgs)
 						currentSubblock["S_Blocks_End"] += [la]
 						currentSubblock["S_Sum"] = la
@@ -2086,7 +2086,7 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 
 	# Default behaviors
 	if(variableType == null):
-		if(variableValue != null and !variableValue.is_valid_integer()):
+		if(variableValue != null and !variableValue.is_valid_int()):
 			variableType = Castagne.VARIABLE_TYPE.Str
 		else:
 			variableType = Castagne.VARIABLE_TYPE.Int
@@ -2098,14 +2098,14 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 			variableValue = ""
 
 	if(variableType == Castagne.VARIABLE_TYPE.Int):
-		if(variableValue.is_valid_integer()):
+		if(variableValue.is_valid_int()):
 			variableValue = variableValue.to_int()
 		else:
 			variableValue = 0
 			_Error("Int variable but the value isn't a valid integer.")
 
 	if(variableType == Castagne.VARIABLE_TYPE.Bool):
-		if(variableValue.is_valid_integer()):
+		if(variableValue.is_valid_int()):
 			variableValue = (1 if variableValue.to_int() > 0 else 0)
 		else:
 			variableValue = 0
