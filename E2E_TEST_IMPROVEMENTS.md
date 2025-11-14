@@ -99,7 +99,8 @@ Real Game State → Assert
 
 ### test_state_transitions.gd
 - [x] Load actual character with state definitions
-- [x] Verify states exist from `.casp` file parsing
+- [x] Verify states exist from `.casp` file parsing (parser only!)
+- [ ] Verify transitions based on `.casp` file conditions (needs ENGINE!)
 - [ ] Use `CastagneEngine.ProcessFrame()` for transitions
 - [ ] Test state timer/duration from parsed data
 - [ ] Test conditional transitions (on hit, on block, etc.)
@@ -343,11 +344,12 @@ A test is a TRUE E2E test when it:
 ## Measurement
 
 Track progress using:
+- **Tests using real ENGINE:** 0 / 8 tests ⚠️ (only parser so far, not full engine!)
 - **Tests using real parser:** 2 / 8 tests (test_character_loading, test_state_transitions)
 - **Tests loading `.casp` files:** 2 / 8 tests
 - **New critical tests added:** 0 / 8 tests
 - **Test data files created:** 1 / 8 files (test_basic_fighter.casp)
-- **Overall rating:** 5.5 / 10
+- **Overall rating:** 4.5 / 10 (no change - parser ≠ engine!)
 
 ---
 
@@ -384,12 +386,19 @@ Track progress using:
   - Uses Base-Core.casp skeleton
   - test_characters/test_basic_fighter.casp
 
-**Current Rating: 5.5/10** (↑1.0 from 4.5/10)
+**Current Rating: 4.5/10** (NO CHANGE - parser only, not full engine!)
 
 **Improvements Made:**
-- 2 out of 8 tests now use real parser (was 0/8)
+- 2 out of 8 tests now use real parser (was 0/8) ⚠️ BUT NOT FULL ENGINE YET
 - 1 test character created (was 0/8)
-- Tests now fail if parser fails (proper E2E behavior)
+- Tests now fail if parser fails (good, but still not testing engine)
+
+**What's Still Missing:**
+- ❌ No CastagneEngine integration - tests stop at parser
+- ❌ No state machine execution - no actual transitions happening
+- ❌ No game loop - no frame-by-frame processing
+- ❌ No CastagneMemory usage
+- ❌ No CastagneInput testing
 
 **Known Issues:**
 - Godot 4 compatibility issues in castagne_godot4 prevent full parsing:
