@@ -1065,7 +1065,7 @@ func _ExtractParentFromPureStateName(stateName):
 	var parentLevel = 0
 	while(stateName.begins_with("Parent:")):
 		parentLevel += 1
-		stateName = stateName.right(7)
+		stateName = stateName.substr(7)
 	return [stateName, parentLevel]
 
 func _ParseStates_OverwriteStates_MoveToParentIfExists(stateName):
@@ -1091,7 +1091,7 @@ func _ParseForEdition():
 		_parseForEditionPostProcessed += [[]]
 		var md = _ParseMetadata(fileID)
 		result["NbFiles"] = _files.size()
-		var cName = _filePaths[fileID].right(_filePaths[fileID].rfind("/"))
+		var cName = _filePaths[fileID].substr(_filePaths[fileID].rfind("/"))
 
 		var defaultStateData = {
 			"Text":"",
@@ -1161,7 +1161,7 @@ func _ParseForEdition():
 				line = line.strip_edges()
 
 				if(line.begins_with("##")):
-					var doccontents = line.right(2).strip_edges()
+					var doccontents = line.substr(2).strip_edges()
 					fscs["StateFullDoc"] += doccontents + "\n"
 					if(doccontents.find("TODO") >= 0):
 						var todoFlags = ["DESIGN", "MOMENTUM", "FRAMEDATA", "ANIM", "VFX", "SOUND", "BUG"]
@@ -1319,7 +1319,7 @@ func ParseForEditionPostProcess(fileID, stateName, result):
 		var attackType = null
 		for sf in state["StateFlags"]:
 			if(sf.begins_with("AttackType-")):
-				attackType = sf.right(11)
+				attackType = sf.substr(11)
 				break
 		if(attackType != null):
 			state["Categories"] = ["Attacks/"+attackType]
@@ -1941,11 +1941,11 @@ func _ParseBlockState(fileID):
 						currentSubblock["S_0*"][p] = []
 						currentSubblock["S_0**"][p] = []
 					if(letterArgs.begins_with("ATK")):
-						letterArgs = letterArgs.right(3)
+						letterArgs = letterArgs.substr(3)
 						currentSubblock["S_AttackAutoDuration"] = true
 					var moduloSepID = letterArgs.find("%")
 					if(moduloSepID > 0):
-						var modulo = letterArgs.right(moduloSepID+1)
+						var modulo = letterArgs.substr(moduloSepID+1)
 						letterArgs = letterArgs.left(moduloSepID)
 						if(modulo.is_empty()):
 							currentSubblock["S_Modulo"] = -1
@@ -2004,7 +2004,7 @@ func _GetEntityNameFromStateName(stateName):
 	var sep = stateName.find("---")
 	if(sep >= 0):
 		#if(stateName.begins_with("Variables") or stateName.begins_with("Init")):
-		#	stateName = stateName.right(sep+2)
+		#	stateName = stateName.substr(sep+2)
 		#	sep = stateName.find("-")
 		#	if(sep >= 0):
 		#		stateName = stateName.left(sep)
@@ -2017,7 +2017,7 @@ func _GetPureStateNameFromStateName(stateName):
 	var entity = _GetEntityNameFromStateName(stateName)
 	if(entity == null):
 		return stateName
-	return stateName.right(entity.length()+3)
+	return stateName.substr(entity.length()+3)
 
 @onready var KnownVariableTypes = {"int":Castagne.VARIABLE_TYPE.Int, "str":Castagne.VARIABLE_TYPE.Str, "bool":Castagne.VARIABLE_TYPE.Bool}
 func _ExtractVariable(line): #, returnIncompleteType = false):
@@ -2097,7 +2097,7 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 		if(sep == -1 or !lineType.ends_with(")")):
 			_Error("Missing parenthesis on variable type.")
 			return null
-		variableSubtype = lineType.left(lineType.length()-1).right(sep+1)
+		variableSubtype = lineType.left(lineType.length()-1).substr(sep+1)
 		lineType = lineType.left(sep)
 		# TODO parse / use the subtype
 
@@ -2208,12 +2208,12 @@ func _Instruction_GetRange(letterArgs):
 	var moduloSepID = letterArgs.find("%")
 	var modulo
 	if(moduloSepID > 0): # %C
-		modulo = letterArgs.right(moduloSepID+1)
+		modulo = letterArgs.substr(moduloSepID+1)
 		letterArgs = letterArgs.left(moduloSepID)
 
 	var r
 	if(rangeSepID > 0): # A-B
-		r = [letterArgs.left(rangeSepID), letterArgs.right(rangeSepID+1)]
+		r = [letterArgs.left(rangeSepID), letterArgs.substr(rangeSepID+1)]
 	elif(plusSepID > 0): # A+
 		r = [letterArgs.left(plusSepID), "+"]
 	else: # A
@@ -2283,7 +2283,7 @@ func _Instruction_ParseCondition(s):
 		condition = null
 	elif(splitPos >= 0):
 		firstPart = s.left(splitPos)
-		secondPart = s.right(splitPos+1)
+		secondPart = s.substr(splitPos+1)
 		condition = 0
 		condition += (2 if superiorPos>=0 else 0)
 		condition -= (2 if inferiorPos>=0 else 0)
