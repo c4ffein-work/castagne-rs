@@ -745,7 +745,7 @@ func _OptimizeActionList_Defines_BranchArgs(branchFuncref, letterArgs, variables
 	else:
 		letterArgs = _OptimizeActionList_Defines_ReplaceSymbol(letterArgs, variablesList, entityVariablesList)
 
-	if(letterArgs.is_valid_int()):
+	if typeof(letterArgs) == TYPE_STRING and letterArgs.is_valid_int():
 		letterArgs = int(letterArgs)
 	return letterArgs
 
@@ -757,7 +757,7 @@ func _OptimizeActionList_StaticBranches(actionListToParse):
 	for a in actionListToParse:
 		if(a[0] == vbranch):
 			var parsedCondition = _Instruction_ParseCondition(a[1][2])
-			if(parsedCondition[0].is_valid_int() and parsedCondition[2].is_valid_int()):
+			if((typeof(parsedCondition[0]) == TYPE_STRING and parsedCondition[0].is_valid_int()) or typeof(parsedCondition[0]) == TYPE_INT) and ((typeof(parsedCondition[2]) == TYPE_STRING and parsedCondition[2].is_valid_int()) or typeof(parsedCondition[2]) == TYPE_INT):
 				var result = _Instruction_ComputeCondition_Internal(int(parsedCondition[0]), parsedCondition[1], int(parsedCondition[2]))
 				var chosenBranch = (a[1][0] if result else a[1][1])
 				newActionList.append_array(_OptimizeActionList_StaticBranches(chosenBranch))
@@ -1586,7 +1586,7 @@ func _ParseBlockState(fileID):
 						isKnownVariable = isKnownVariable or entity != null
 						var t = types[i]
 						if(t == "int"):
-							if(!a.is_valid_int() and !isKnownVariable):
+							if(typeof(a) != TYPE_INT and (typeof(a) != TYPE_STRING or !a.is_valid_int()) and !isKnownVariable):
 								_Error("Function " + f[0] + " argument " + str(i) + " ("+a+") is not an integer.")
 								typeCheck = false
 						elif(t == "var"):
@@ -2110,7 +2110,7 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 
 	# Default behaviors
 	if(variableType == null):
-		if(variableValue != null and !variableValue.is_valid_int()):
+		if(variableValue != null and typeof(variableValue) == TYPE_STRING and !variableValue.is_valid_int()):
 			variableType = Castagne.VARIABLE_TYPE.Str
 		else:
 			variableType = Castagne.VARIABLE_TYPE.Int
@@ -2122,14 +2122,19 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 			variableValue = ""
 
 	if(variableType == Castagne.VARIABLE_TYPE.Int):
-		if(variableValue.is_valid_int()):
+		if typeof(variableValue) == TYPE_INT:
+			# Already an int, keep as is
+			pass
+		elif typeof(variableValue) == TYPE_STRING and variableValue.is_valid_int():
 			variableValue = variableValue.to_int()
 		else:
 			variableValue = 0
 			_Error("Int variable but the value isn't a valid integer.")
 
 	if(variableType == Castagne.VARIABLE_TYPE.Bool):
-		if(variableValue.is_valid_int()):
+		if typeof(variableValue) == TYPE_INT:
+			variableValue = (1 if variableValue > 0 else 0)
+		elif typeof(variableValue) == TYPE_STRING and variableValue.is_valid_int():
 			variableValue = (1 if variableValue.to_int() > 0 else 0)
 		else:
 			variableValue = 0
