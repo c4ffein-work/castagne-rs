@@ -130,17 +130,18 @@ func _process(_delta):
 
 	# Verify variables exist
 	if "Variables" in result:
-		var variables = result["Variables"]
+		var variables_by_entity = result["Variables"]
 		print("\n--- Verifying variables ---")
-		print("Total variables: ", variables.size())
+
+		# Variables are organized by entity (null = main character)
+		var main_vars = variables_by_entity.get(null, {})
+		print("Total variables: ", main_vars.size())
 
 		# Check for Health variable
 		var health_found = false
-		for var_name in variables:
-			if var_name != null and (("Health" in var_name) or ("health" in var_name.to_lower())):
-				health_found = true
-				print("✓ Found health variable: ", var_name)
-				break
+		if "Health" in main_vars:
+			health_found = true
+			print("✓ Found health variable with value: ", main_vars["Health"])
 
 		if not health_found:
 			print("WARNING: No health variable found")

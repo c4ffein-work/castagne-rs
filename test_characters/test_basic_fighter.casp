@@ -13,19 +13,37 @@ var StateTimer int() = 0
 def MAX_HEALTH int() = 1000
 
 :Init:
-# Initialization state
+---Action:
+Set(Health, MAX_HEALTH)
+Transition(Idle)
 
 :Idle:
+---Action:
 # Idle state - default state
+# Can transition to other states via player input
 
 :LightPunch:
-# Light punch attack
+---Init:
+Set(StateTimer, 20)
+---Action:
+Add(StateTimer, -1)
+IfLt(StateTimer, 1):
+	Transition(Idle)
+endif
 
 :Jump:
-# Jump state
+---Init:
+Set(StateTimer, 30)
+---Action:
+Add(StateTimer, -1)
+IfLt(StateTimer, 1):
+	Transition(Idle)
+endif
 
 :Crouch:
+---Action:
 # Crouch state
 
 :Walk:
+---Action:
 # Walk state

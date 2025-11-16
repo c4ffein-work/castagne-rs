@@ -1569,6 +1569,7 @@ func _ParseBlockState(fileID):
 	var reserveSubblocksList = []
 	var currentSubblock = null
 	var currentSubblockList = ""
+	var currentPhases = null  # null means use function's default phases, otherwise it's a list of specific phases
 	while(line != null and !_IsLineBlock(line)):
 		if(_IsLineFunction(line)):
 			var f = _ExtractFunction(line)
@@ -1604,8 +1605,9 @@ func _ParseBlockState(fileID):
 
 						if(action != null):
 							var d = [action["Func"], action["Args"]]
-							for p in PHASES_WITH_EVENTS:
-								if(p in action["Flags"] or (p.begins_with("Event_") and "Events" in action["Flags"])):
+							var phasesToUse = currentPhases if currentPhases != null else PHASES_WITH_EVENTS
+							for p in phasesToUse:
+								if(currentPhases != null or p in action["Flags"] or (p.begins_with("Event_") and "Events" in action["Flags"])):
 									if(currentSubblock == null):
 										stateActions[p] += [d]
 									else:
@@ -1628,9 +1630,20 @@ func _ParseBlockState(fileID):
 						_currentState["Variables"][v["Name"]] = v
 				else:
 					_Error("Trying to declare a variable inside a state! You can either use a constant (with def), or declare your variable in a 'Variables' block.")
+		elif(line.begins_with("---") and line.ends_with(":")):
+			# Phase marker: ---Init:, ---Action:, etc.
+			var phaseName = line.substr(3, line.length() - 4)  # Remove "---" and ":"
+			if(phaseName in PHASES_BASE):
+				currentPhases = [phaseName]
+				line = _GetNextLine(fileID)
+				continue
+			else:
+				_Error("Unknown phase name: " + phaseName)
+				line = _GetNextLine(fileID)
+				continue
 		else:
 			var letter = line.left(1)
-			var letterArgs = line.left(line.length()-1).right(1)
+			var letterArgs = line.left(line.length()-1).substr(1)
 
 			if(line == "endif"):
 				var branch = currentSubblock
@@ -1813,7 +1826,7 @@ func _ParseBlockState(fileID):
 					line = _GetNextLine(fileID)
 					continue
 
-				letterArgs = line.left(line.length()).right(1)
+				letterArgs = line.substr(1)
 				if(!letterArgs.is_valid_int()):
 					_Error("R followup with a non-static weight: "+letterArgs)
 					line = _GetNextLine(fileID)
@@ -1836,7 +1849,7 @@ func _ParseBlockState(fileID):
 					line = _GetNextLine(fileID)
 					continue
 
-				letterArgs = line.left(line.length()).right(1)
+				letterArgs = line.substr(1)
 				currentSubblockList = "S_"+str(len(currentSubblock["S_Blocks_Start"]))
 				currentSubblock[currentSubblockList] = {}
 				currentSubblock[currentSubblockList+"*"] = {}
@@ -2261,7 +2274,7 @@ func _Instruction_ParseCondition(s):
 		condition -= (2 if inferiorPos>=0 else 0)
 
 		if(secondPart.begins_with("=")):
-			secondPart = secondPart.right(1)
+			secondPart = secondPart.substr(1)
 			condition -= sign(condition)
 
 	return [firstPart, condition, secondPart]
