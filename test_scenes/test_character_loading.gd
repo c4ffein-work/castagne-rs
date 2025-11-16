@@ -8,31 +8,35 @@ func _init():
 	print("\n=== E2E Test: Character Loading (REAL PARSER) ===\n")
 
 func _process(_delta):
-	# Load the Castagne parser script
-	var parser_script = load("res://castagne_godot4/engine/CastagneParser.gd")
-	if not parser_script:
-		print("ERROR: Could not load CastagneParser.gd")
+	# E2E: Get Castagne from autoload (the way it actually works in production!)
+	var castagne = root.get_node_or_null("/root/Castagne")
+	if not castagne:
+		print("ERROR: Castagne autoload not found")
 		print("TEST_FAIL")
 		quit()
 		return
 
-	print("✓ CastagneParser script loaded")
+	print("✓ Castagne autoload found")
 
-	# Load the config script (parser needs this for modules)
-	var config_script = load("res://castagne_godot4/engine/CastagneConfig.gd")
-	if not config_script:
-		print("ERROR: Could not load CastagneConfig.gd")
+	# E2E: Get parser from autoload
+	var parser = castagne.Parser
+	if not parser:
+		print("ERROR: Castagne Parser not available from autoload")
 		print("TEST_FAIL")
 		quit()
 		return
 
-	print("✓ CastagneConfig script loaded")
+	print("✓ CastagneParser loaded from autoload")
 
-	# Create parser and config instances
-	var parser = parser_script.new()
-	var config_data = config_script.new()
+	# Get config from Castagne
+	var config_data = castagne.baseConfigData
+	if not config_data:
+		print("ERROR: Castagne config not available")
+		print("TEST_FAIL")
+		quit()
+		return
 
-	print("✓ Parser and Config instances created")
+	print("✓ CastagneConfig loaded from autoload")
 
 	# Test with the simple test character
 	var test_character_path = "res://test_character.casp"
@@ -42,7 +46,7 @@ func _process(_delta):
 		quit()
 		return
 
-	print("\n--- Parsing character file with REAL parser ---")
+	print("\n--- Parsing character file with REAL parser (via autoload) ---")
 	print("File: ", test_character_path)
 
 	# ACTUALLY PARSE THE CHARACTER (not just read the file!)
