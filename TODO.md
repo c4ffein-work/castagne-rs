@@ -395,12 +395,14 @@ You cannot yet:
 
 ### Todo
 
-#### 1. Fix shader warning (IN PROGRESS 🔧)
-Fix the shader parameter deprecation warning in CMGraphics-SpritesheetVisualizer:
-- Update `shader_param` to new Godot 4 naming convention
-- Re-save the .tscn file with correct parameter names
+#### ✅ 1. Fix shader warning (COMPLETED)
+Fixed the shader parameter deprecation warning in CMGraphics-SpritesheetVisualizer:
+- ✅ Updated `shader_param` to `shader_parameter` (Godot 4 naming)
+- ✅ Converted .tscn file to format=3 (Godot 4 format)
+- ✅ Updated Vector2 to Vector2i for shader uniforms
+- ✅ No more deprecation warnings!
 
-#### 2. Port missing module functions
+#### 2. Port missing module functions (NEXT)
 Port the following optional module functions:
 - `AIInputTransition` - AI input handling function
 - `ModelSwitchFacing` - Graphics model facing logic
