@@ -48,7 +48,7 @@ func StructEditorShow(structType = null, structInstance = null):
 		var visu = visuPacked.instantiate()
 		var sD = _structureDefinitions[structType]
 		var prefix = sD["Prefix"] + structInstance["InstanceName"] + _struct_namevar_separator
-		connect("UpdateVisualizer", visu, "UpdateDisplay")
+		connect("UpdateVisualizer", Callable(visu, "UpdateDisplay"))
 		visu.InitDisplay(self, prefix)
 		
 		root.add_child(visu)

@@ -39,25 +39,25 @@ func _draw():
 	if(paramsRoot.get_node("ShowHitstun").is_pressed()):
 		var starterProration = sb._specblockDefines["ATTACK_"+starterType+"_ProrationHitstunStarter"]["Value"]
 		var nextHitProration = sb._specblockDefines["ATTACK_"+nextType+"_ProrationHitstun"]["Value"]
-		DrawProration(drawArea, Color.aqua, starterProration, nextHitProration, Vector2(12, -6))
+		DrawProration(drawArea, Color.AQUA, starterProration, nextHitProration, Vector2(12, -6))
 	if(paramsRoot.get_node("ShowDamage").is_pressed()):
 		var starterProration = sb._specblockDefines["ATTACK_"+starterType+"_ProrationDamageStarter"]["Value"]
 		var nextHitProration = sb._specblockDefines["ATTACK_"+nextType+"_ProrationDamage"]["Value"]
-		DrawProration(drawArea, Color.crimson, starterProration, nextHitProration, Vector2(6, -12))
+		DrawProration(drawArea, Color.CRIMSON, starterProration, nextHitProration, Vector2(6, -12))
 
 func DrawGrid(drawArea):
-	draw_rect(drawArea, Color.silver, false, 2, true)
+	draw_rect(drawArea, Color.SILVER, false, 2, true)
 	var ySegmentation = 6
 	for i in range(1, ySegmentation):
 		var y = drawArea.position.y + drawArea.size.y * i/float(ySegmentation)
 		var w = (2 if i == 3 else 1)
 		
-		draw_line(Vector2(drawArea.position.x, y), Vector2(drawArea.end.x, y), Color.silver, w, true)
+		draw_line(Vector2(drawArea.position.x, y), Vector2(drawArea.end.x, y), Color.SILVER, w, true)
 		
 	for i in range(1, nbHitsToShow-1):
 		var x = drawArea.position.x + drawArea.size.x * i/float(nbHitsToShow-1)
 		var w = (2 if i%5 == 0 else 1)
-		draw_line(Vector2(x, drawArea.position.y), Vector2(x, drawArea.end.y), Color.silver, w, true)
+		draw_line(Vector2(x, drawArea.position.y), Vector2(x, drawArea.end.y), Color.SILVER, w, true)
 
 func DrawProration(drawArea, color, starterProration, nextProration, markOffset = Vector2(16, -16)):
 	#draw_line(drawArea.position, drawArea.end, color, 3, true)
