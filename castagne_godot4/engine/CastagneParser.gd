@@ -953,7 +953,7 @@ func _ParseSpecblocks(fileID):
 	var line = _GetNextBlock(fileID)
 
 	while(line != null):
-		line = line.left(line.length()-1).right(1)
+		line = line.left(line.length()-1).substr(1)
 		line = _GetPureStateNameFromStateName(line)
 
 		if(!line.begins_with("Specs-")):
@@ -988,7 +988,7 @@ func _ParseVariables(fileID):
 	var variablesFound = {}
 
 	while(line != null):
-		line = line.left(line.length()-1).right(1)
+		line = line.left(line.length()-1).substr(1)
 		var stateNamePure = _GetPureStateNameFromStateName(line)
 		if(!stateNamePure.begins_with("Variables")):
 			break
@@ -1147,7 +1147,7 @@ func _ParseForEdition():
 					if(fscs["ParseFlags"].has("AttackFunctionUsed")):
 						if(!fscs["StateFlags"].has("Attack") and fscs["StateType"] != Castagne.STATE_TYPE.Helper):
 							fscs["Warnings"] += ["Attack function used, but the state is not a registered attack or a helper!"]
-				curState = lineStripped.left(lineStripped.length()-1).right(1)
+				curState = lineStripped.left(lineStripped.length()-1).substr(1)
 				var sd = defaultStateData.duplicate(true)
 				sd["LineStart"] = lineID
 				sd["Name"] = curState
@@ -1480,7 +1480,7 @@ func _ParseBlockData(fileID):
 	while(line != null and !_IsLineBlock(line)):
 		var splitIndex = line.find(":")
 		var left = line.left(splitIndex)
-		var right = line.right(splitIndex+1)
+		var right = line.substr(splitIndex+1)
 		right = right.strip_edges()
 		if(right.is_valid_int()):
 			right = int(right)
@@ -1492,7 +1492,7 @@ var _currentState = {}
 var _currentEntity = null
 func _ParseBlockState(fileID):
 	var stateName = _GetCurrentLine(fileID)
-	stateName = stateName.left(stateName.length()-1).right(1)
+	stateName = stateName.left(stateName.length()-1).substr(1)
 
 	if(stateName.begins_with("Variables")):
 		_Error("Found a variables block after variables are handled.")
@@ -1544,7 +1544,7 @@ func _ParseBlockState(fileID):
 		stateName = _GetCurrentLine(fileID)
 		if(stateName == null):
 			return null
-		stateName = stateName.left(stateName.length()-1).right(1)
+		stateName = stateName.left(stateName.length()-1).substr(1)
 		entity = _GetEntityNameFromStateName(stateName)
 		stateNamePure = _GetPureStateNameFromStateName(stateName)
 
@@ -1569,6 +1569,7 @@ func _ParseBlockState(fileID):
 	var reserveSubblocksList = []
 	var currentSubblock = null
 	var currentSubblockList = ""
+	var currentPhases = null  # null means use function's default phases, otherwise it's a list of specific phases
 	while(line != null and !_IsLineBlock(line)):
 		if(_IsLineFunction(line)):
 			var f = _ExtractFunction(line)
@@ -1604,8 +1605,9 @@ func _ParseBlockState(fileID):
 
 						if(action != null):
 							var d = [action["Func"], action["Args"]]
-							for p in PHASES_WITH_EVENTS:
-								if(p in action["Flags"] or (p.begins_with("Event_") and "Events" in action["Flags"])):
+							var phasesToUse = currentPhases if currentPhases != null else PHASES_WITH_EVENTS
+							for p in phasesToUse:
+								if(currentPhases != null or p in action["Flags"] or (p.begins_with("Event_") and "Events" in action["Flags"])):
 									if(currentSubblock == null):
 										stateActions[p] += [d]
 									else:
@@ -1628,9 +1630,20 @@ func _ParseBlockState(fileID):
 						_currentState["Variables"][v["Name"]] = v
 				else:
 					_Error("Trying to declare a variable inside a state! You can either use a constant (with def), or declare your variable in a 'Variables' block.")
+		elif(line.begins_with("---") and line.ends_with(":")):
+			# Phase marker: ---Init:, ---Action:, etc.
+			var phaseName = line.substr(3, line.length() - 4)  # Remove "---" and ":"
+			if(phaseName in PHASES_BASE):
+				currentPhases = [phaseName]
+				line = _GetNextLine(fileID)
+				continue
+			else:
+				_Error("Unknown phase name: " + phaseName)
+				line = _GetNextLine(fileID)
+				continue
 		else:
 			var letter = line.left(1)
-			var letterArgs = line.left(line.length()-1).right(1)
+			var letterArgs = line.left(line.length()-1).substr(1)
 
 			if(line == "endif"):
 				var branch = currentSubblock
@@ -1813,7 +1826,7 @@ func _ParseBlockState(fileID):
 					line = _GetNextLine(fileID)
 					continue
 
-				letterArgs = line.left(line.length()).right(1)
+				letterArgs = line.substr(1)
 				if(!letterArgs.is_valid_int()):
 					_Error("R followup with a non-static weight: "+letterArgs)
 					line = _GetNextLine(fileID)
@@ -1836,7 +1849,7 @@ func _ParseBlockState(fileID):
 					line = _GetNextLine(fileID)
 					continue
 
-				letterArgs = line.left(line.length()).right(1)
+				letterArgs = line.substr(1)
 				currentSubblockList = "S_"+str(len(currentSubblock["S_Blocks_Start"]))
 				currentSubblock[currentSubblockList] = {}
 				currentSubblock[currentSubblockList+"*"] = {}
@@ -1975,7 +1988,7 @@ func _ParseBlockState(fileID):
 func _ExtractFunction(line):
 	var splitID = line.find("(")
 	var functionName = line.left(splitID)
-	var splitVars = line.left(line.length()-1).right(splitID+1).split(",")
+	var splitVars = line.left(line.length()-1).substr(splitID+1).split(",")
 
 	var args = []
 	for v in splitVars:
@@ -2016,13 +2029,13 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 	var variableSubtype = null
 
 	if(line.begins_with("var ")):
-		line = line.right(4)
+		line = line.substr(4)
 		variableMutability = Castagne.VARIABLE_MUTABILITY.Variable
 	elif(line.begins_with("def ")):
-		line = line.right(4)
+		line = line.substr(4)
 		variableMutability = Castagne.VARIABLE_MUTABILITY.Define
 	elif(line.begins_with("internal ")):
-		line = line.right(9)
+		line = line.substr(9)
 		variableMutability = Castagne.VARIABLE_MUTABILITY.Internal
 	else:
 		_Error("Couldn't find variable mutability.")
@@ -2035,7 +2048,7 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 			_Error("Can't assign an internal variable.")
 			return null
 	elif(sep >= 0):
-		variableValue = line.right(sep+1).strip_edges()
+		variableValue = line.substr(sep+1).strip_edges()
 		line = line.left(sep).strip_edges()
 		if(variableValue.is_empty()):
 			variableValue = null
@@ -2056,12 +2069,11 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 		_Error("Variable " + str(variableName) + " has the same name as an internal variable. If this is intentional and you know what you're doing, use 'internal'.")
 		return null
 	if(!hasInternalName and variableMutability == Castagne.VARIABLE_MUTABILITY.Internal):
-		if(hasInternalName):
-			variableType = _moduleVariables[variableName]["Type"]
-			variableValue = _moduleVariables[variableName]["Value"]
-		else:
-			_Error("Variable " + str(variableName) + " is marked as internal but no internal variable of the name exists.")
-			return null
+		_Error("Variable " + str(variableName) + " is marked as internal but no internal variable of the name exists.")
+		return null
+	if(hasInternalName and variableMutability == Castagne.VARIABLE_MUTABILITY.Internal):
+		variableType = _moduleVariables[variableName]["Type"]
+		variableValue = _moduleVariables[variableName]["Value"]
 
 
 	# Type check
@@ -2262,7 +2274,7 @@ func _Instruction_ParseCondition(s):
 		condition -= (2 if inferiorPos>=0 else 0)
 
 		if(secondPart.begins_with("=")):
-			secondPart = secondPart.right(1)
+			secondPart = secondPart.substr(1)
 			condition -= sign(condition)
 
 	return [firstPart, condition, secondPart]

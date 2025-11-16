@@ -8,14 +8,14 @@ Description: Minimal fighter for testing state transitions
 Skeleton: res://castagne_godot4/modules/core/Base-Core.casp
 
 :Variables:
-var Health(Int): 1000
-var StateTimer(Int): 0
-def MAX_HEALTH: 1000
+var Health int() = 1000
+var StateTimer int() = 0
+def MAX_HEALTH int() = 1000
 
 :Init:
 ---Action:
 Set(Health, MAX_HEALTH)
-ChangeState(Idle)
+Transition(Idle)
 
 :Idle:
 ---Action:
@@ -28,7 +28,8 @@ Set(StateTimer, 20)
 ---Action:
 Add(StateTimer, -1)
 IfLt(StateTimer, 1):
-	ChangeState(Idle)
+	Transition(Idle)
+endif
 
 :Jump:
 ---Init:
@@ -36,7 +37,8 @@ Set(StateTimer, 30)
 ---Action:
 Add(StateTimer, -1)
 IfLt(StateTimer, 1):
-	ChangeState(Idle)
+	Transition(Idle)
+endif
 
 :Crouch:
 ---Action:
