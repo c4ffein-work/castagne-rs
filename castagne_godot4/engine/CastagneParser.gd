@@ -549,7 +549,7 @@ func _OptimizeActionList_Sublist(actionList, baseParentLevel, p, state):
 					if(!(calledState in _optimizeActionList_parentWarnings)):
 						_Error("CastagneParser: CallParent function is calling non-existing parent state "+ str(calledState) +" (Parent level "+str(parentLevel)+"). Removing Call.")
 						_optimizeActionList_parentWarnings.push_back(calledState)
-					actionList.remove(i)
+					actionList.remove_at(i)
 					loopAgain = true
 					break
 			elif(a[0] in attackRegisterFuncrefs):
@@ -564,7 +564,7 @@ func _OptimizeActionList_Sublist(actionList, baseParentLevel, p, state):
 						if(!a[1][0][j].is_empty()):
 							allEmpty = false
 					if(allEmpty):
-						actionList.remove(i)
+						actionList.remove_at(i)
 						loopAgain = true
 						break
 				else:
@@ -572,7 +572,7 @@ func _OptimizeActionList_Sublist(actionList, baseParentLevel, p, state):
 					a[1][1] = _OptimizeActionList_Sublist(a[1][1], parentLevel, p, state)
 
 					if(a[1][0].is_empty() and a[1][1].is_empty()):
-						actionList.remove(i)
+						actionList.remove_at(i)
 						loopAgain = true
 						break
 
@@ -641,7 +641,7 @@ func _OptimizeActionList_Sublist_After(actionList, p, state):
 						continue
 
 					var calledActionList = _states[calledState][p]
-					actionList.remove(i)
+					actionList.remove_at(i)
 					for j in range(calledActionList.size()):
 						actionList.push_back(calledActionList[j].duplicate(true))
 					loopAgain = true
@@ -745,7 +745,7 @@ func _OptimizeActionList_Defines_BranchArgs(branchFuncref, letterArgs, variables
 	else:
 		letterArgs = _OptimizeActionList_Defines_ReplaceSymbol(letterArgs, variablesList, entityVariablesList)
 
-	if(letterArgs.is_valid_int()):
+	if typeof(letterArgs) == TYPE_STRING and letterArgs.is_valid_int():
 		letterArgs = int(letterArgs)
 	return letterArgs
 
@@ -757,7 +757,7 @@ func _OptimizeActionList_StaticBranches(actionListToParse):
 	for a in actionListToParse:
 		if(a[0] == vbranch):
 			var parsedCondition = _Instruction_ParseCondition(a[1][2])
-			if(parsedCondition[0].is_valid_int() and parsedCondition[2].is_valid_int()):
+			if((typeof(parsedCondition[0]) == TYPE_STRING and parsedCondition[0].is_valid_int()) or typeof(parsedCondition[0]) == TYPE_INT) and ((typeof(parsedCondition[2]) == TYPE_STRING and parsedCondition[2].is_valid_int()) or typeof(parsedCondition[2]) == TYPE_INT):
 				var result = _Instruction_ComputeCondition_Internal(int(parsedCondition[0]), parsedCondition[1], int(parsedCondition[2]))
 				var chosenBranch = (a[1][0] if result else a[1][1])
 				newActionList.append_array(_OptimizeActionList_StaticBranches(chosenBranch))
@@ -1586,7 +1586,7 @@ func _ParseBlockState(fileID):
 						isKnownVariable = isKnownVariable or entity != null
 						var t = types[i]
 						if(t == "int"):
-							if(!a.is_valid_int() and !isKnownVariable):
+							if(typeof(a) != TYPE_INT and (typeof(a) != TYPE_STRING or !a.is_valid_int()) and !isKnownVariable):
 								_Error("Function " + f[0] + " argument " + str(i) + " ("+a+") is not an integer.")
 								typeCheck = false
 						elif(t == "var"):
@@ -1601,7 +1601,7 @@ func _ParseBlockState(fileID):
 						if(fData["ParseFunc"] == null):
 							action = StandardParseFunction(f[0], f[1])
 						else:
-							action = fData["ParseFunc"].call_func(self, f[1], parseData)
+							action = fData["ParseFunc"].call(self, f[1], parseData)
 
 						if(action != null):
 							var d = [action["Func"], action["Args"]]
@@ -2072,8 +2072,18 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 		_Error("Variable " + str(variableName) + " is marked as internal but no internal variable of the name exists.")
 		return null
 	if(hasInternalName and variableMutability == Castagne.VARIABLE_MUTABILITY.Internal):
-		variableType = _moduleVariables[variableName]["Type"]
-		variableValue = _moduleVariables[variableName]["Value"]
+		# _moduleVariables stores the default value directly, not a dictionary
+		# Determine type from the stored value
+		var storedValue = _moduleVariables[variableName]
+		if typeof(storedValue) == TYPE_INT:
+			variableType = Castagne.VARIABLE_TYPE.Int
+			variableValue = storedValue
+		elif typeof(storedValue) == TYPE_STRING:
+			variableType = Castagne.VARIABLE_TYPE.Str
+			variableValue = storedValue
+		else:
+			variableType = Castagne.VARIABLE_TYPE.Int
+			variableValue = storedValue
 
 
 	# Type check
@@ -2100,7 +2110,7 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 
 	# Default behaviors
 	if(variableType == null):
-		if(variableValue != null and !variableValue.is_valid_int()):
+		if(variableValue != null and typeof(variableValue) == TYPE_STRING and !variableValue.is_valid_int()):
 			variableType = Castagne.VARIABLE_TYPE.Str
 		else:
 			variableType = Castagne.VARIABLE_TYPE.Int
@@ -2112,14 +2122,19 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 			variableValue = ""
 
 	if(variableType == Castagne.VARIABLE_TYPE.Int):
-		if(variableValue.is_valid_int()):
+		if typeof(variableValue) == TYPE_INT:
+			# Already an int, keep as is
+			pass
+		elif typeof(variableValue) == TYPE_STRING and variableValue.is_valid_int():
 			variableValue = variableValue.to_int()
 		else:
 			variableValue = 0
 			_Error("Int variable but the value isn't a valid integer.")
 
 	if(variableType == Castagne.VARIABLE_TYPE.Bool):
-		if(variableValue.is_valid_int()):
+		if typeof(variableValue) == TYPE_INT:
+			variableValue = (1 if variableValue > 0 else 0)
+		elif typeof(variableValue) == TYPE_STRING and variableValue.is_valid_int():
 			variableValue = (1 if variableValue.to_int() > 0 else 0)
 		else:
 			variableValue = 0
