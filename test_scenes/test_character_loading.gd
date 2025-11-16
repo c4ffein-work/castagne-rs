@@ -38,14 +38,15 @@ func _process(_delta):
 
 	print("✓ CastagneConfig loaded from autoload")
 
-	# Test with the simple test character
-	var test_character_path = "res://test_character.casp"
+	# Test with the minimal test character (no skeleton)
+	var test_character_path = "res://test_character_minimal.casp"
 	if not FileAccess.file_exists(test_character_path):
 		print("ERROR: Test character not found at: ", test_character_path)
 		print("TEST_FAIL")
 		quit()
 		return
 
+	print("✓ Test character file found")
 	print("\n--- Parsing character file with REAL parser (via autoload) ---")
 	print("File: ", test_character_path)
 

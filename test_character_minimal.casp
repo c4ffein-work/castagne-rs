@@ -1,0 +1,20 @@
+# Minimal Test Character - No Skeleton
+# This is the absolute minimum character to test parser functionality
+
+:Character:
+Name: Minimal Test Character
+Author: E2E Test
+Description: Absolute minimum character for testing parser
+Skeleton: none
+
+:Variables:
+var Health int() = 100
+var MoveSpeed int() = 5
+def MAX_HEALTH int() = 100
+
+:Init:
+Set(Health, MAX_HEALTH)
+Transition(Idle)
+
+:Idle:
+# Idle state - do nothing

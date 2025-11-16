@@ -953,7 +953,7 @@ func _ParseSpecblocks(fileID):
 	var line = _GetNextBlock(fileID)
 
 	while(line != null):
-		line = line.left(line.length()-1).right(1)
+		line = line.substr(1, line.length() - 2)  # Godot 4: Remove first and last char (the colons)
 		line = _GetPureStateNameFromStateName(line)
 
 		if(!line.begins_with("Specs-")):
@@ -988,7 +988,7 @@ func _ParseVariables(fileID):
 	var variablesFound = {}
 
 	while(line != null):
-		line = line.left(line.length()-1).right(1)
+		line = line.substr(1, line.length() - 2)  # Godot 4: Remove first and last char (the colons)
 		var stateNamePure = _GetPureStateNameFromStateName(line)
 		if(!stateNamePure.begins_with("Variables")):
 			break
@@ -1479,8 +1479,8 @@ func _ParseBlockData(fileID):
 	var variables = {}
 	while(line != null and !_IsLineBlock(line)):
 		var splitIndex = line.find(":")
-		var left = line.left(splitIndex)
-		var right = line.right(splitIndex+1)
+		var left = line.substr(0, splitIndex)  # Godot 4: Use substr instead of left
+		var right = line.substr(splitIndex + 1)  # Godot 4: Use substr instead of right
 		right = right.strip_edges()
 		if(right.is_valid_int()):
 			right = int(right)
@@ -1492,7 +1492,7 @@ var _currentState = {}
 var _currentEntity = null
 func _ParseBlockState(fileID):
 	var stateName = _GetCurrentLine(fileID)
-	stateName = stateName.left(stateName.length()-1).right(1)
+	stateName = stateName.substr(1, stateName.length() - 2)  # Godot 4: Remove first and last char (the colons)
 
 	if(stateName.begins_with("Variables")):
 		_Error("Found a variables block after variables are handled.")
@@ -1974,8 +1974,8 @@ func _ParseBlockState(fileID):
 
 func _ExtractFunction(line):
 	var splitID = line.find("(")
-	var functionName = line.left(splitID)
-	var splitVars = line.left(line.length()-1).right(splitID+1).split(",")
+	var functionName = line.substr(0, splitID)  # Godot 4: Use substr instead of left
+	var splitVars = line.substr(splitID + 1, line.length() - splitID - 2).split(",")  # Godot 4: Extract content between ( and )
 
 	var args = []
 	for v in splitVars:
@@ -1997,7 +1997,7 @@ func _GetEntityNameFromStateName(stateName):
 		#		stateName = stateName.left(sep)
 		#	entity = stateName
 		#else:
-		entity = stateName.left(sep)
+		entity = stateName.substr(0, sep)  # Godot 4: Use substr instead of left
 	return entity
 
 func _GetPureStateNameFromStateName(stateName):
@@ -2016,13 +2016,13 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 	var variableSubtype = null
 
 	if(line.begins_with("var ")):
-		line = line.right(4)
+		line = line.substr(4)  # Godot 4: Use substr instead of right
 		variableMutability = Castagne.VARIABLE_MUTABILITY.Variable
 	elif(line.begins_with("def ")):
-		line = line.right(4)
+		line = line.substr(4)  # Godot 4: Use substr instead of right
 		variableMutability = Castagne.VARIABLE_MUTABILITY.Define
 	elif(line.begins_with("internal ")):
-		line = line.right(9)
+		line = line.substr(9)  # Godot 4: Use substr instead of right
 		variableMutability = Castagne.VARIABLE_MUTABILITY.Internal
 	else:
 		_Error("Couldn't find variable mutability.")
@@ -2035,8 +2035,8 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 			_Error("Can't assign an internal variable.")
 			return null
 	elif(sep >= 0):
-		variableValue = line.right(sep+1).strip_edges()
-		line = line.left(sep).strip_edges()
+		variableValue = line.substr(sep + 1).strip_edges()  # Godot 4: Use substr instead of right
+		line = line.substr(0, sep).strip_edges()  # Godot 4: Use substr instead of left
 		if(variableValue.is_empty()):
 			variableValue = null
 		#	_Error("Variable declaration has an '=' sign but no assignation.")
@@ -2075,8 +2075,8 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 		if(sep == -1 or !lineType.ends_with(")")):
 			_Error("Missing parenthesis on variable type.")
 			return null
-		variableSubtype = lineType.left(lineType.length()-1).right(sep+1)
-		lineType = lineType.left(sep)
+		variableSubtype = lineType.substr(sep + 1, lineType.length() - sep - 2)  # Godot 4: Extract content between ( and )
+		lineType = lineType.substr(0, sep)  # Godot 4: Use substr instead of left
 		# TODO parse / use the subtype
 
 
