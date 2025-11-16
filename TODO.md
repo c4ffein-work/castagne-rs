@@ -382,6 +382,43 @@ You cannot yet:
 
 ---
 
+## 🎮 Godot 4 GDScript Port (castagne_godot4/)
+
+### Completed ✅
+- All Godot 3→4 API compatibility fixes
+- All 14 E2E tests passing
+- Core engine fully functional
+- Parser working correctly
+- Character loading working
+- State transitions working
+- All combat scenarios working
+
+### Todo
+
+#### 1. Fix shader warning (IN PROGRESS 🔧)
+Fix the shader parameter deprecation warning in CMGraphics-SpritesheetVisualizer:
+- Update `shader_param` to new Godot 4 naming convention
+- Re-save the .tscn file with correct parameter names
+
+#### 2. Port missing module functions
+Port the following optional module functions:
+- `AIInputTransition` - AI input handling function
+- `ModelSwitchFacing` - Graphics model facing logic
+- These are module-level features, not critical for core engine
+
+#### 3. Start porting the full Castagne Editor UI
+The editor is currently stubbed (minimal implementation):
+- Create full editor UI for Godot 4
+- Port all editor panels and controls
+- This is a larger separate effort
+
+#### 4. Look for other potential improvements
+- Code cleanup
+- Performance optimizations
+- Additional Godot 4 best practices
+
+---
+
 **Last Updated**: $(date)
 **Primary Author**: Claude (AI Assistant)
 **Original Castagne Engine**: https://github.com/panthavma/castagne
