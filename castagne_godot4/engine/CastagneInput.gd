@@ -317,7 +317,7 @@ func CreateGodotInputActionsFromDevice(deviceName, inputMap):
 			for ki in keyboardInputs:
 				if(ki != null):
 					var ie = InputEventKey.new()
-					ie.set_scancode(ki)
+					ie.keycode = ki
 					InputMap.action_add_event(actionName, ie)
 		elif(deviceType == Castagne.INPUTDEVICE_TYPES.CONTROLLER):
 			var controllerInputs = im["BindingsController"]

@@ -84,9 +84,9 @@ Real Game State → Assert
 **Impact:** Would increase rating from 4.5/10 to 7.5/10
 
 ### test_character_loading.gd
-- [ ] Actually call `Parser.ParseCharacter()` on a `.casp` file
-- [ ] Verify the returned character structure (not just file contents)
-- [ ] Check that states, variables, and metadata are correctly parsed
+- [x] Actually call `Parser.ParseCharacter()` on a `.casp` file
+- [x] Verify the returned character structure (not just file contents)
+- [x] Check that states, variables, and metadata are correctly parsed
 - [ ] Test with both GDScript parser and Rust parser (via GDExtension)
 
 ### test_input_simulation.gd
@@ -98,9 +98,10 @@ Real Game State → Assert
 - [ ] Test charge move detection using engine's charge tracking
 
 ### test_state_transitions.gd
-- [ ] Load actual character with state definitions
+- [x] Load actual character with state definitions
+- [x] Verify states exist from `.casp` file parsing (parser only!)
+- [ ] Verify transitions based on `.casp` file conditions (needs ENGINE!)
 - [ ] Use `CastagneEngine.ProcessFrame()` for transitions
-- [ ] Verify transitions based on `.casp` file conditions
 - [ ] Test state timer/duration from parsed data
 - [ ] Test conditional transitions (on hit, on block, etc.)
 
@@ -228,7 +229,10 @@ Real Game State → Assert
 **Impact:** Would increase rating from 9/10 to 10/10
 
 ### Dedicated Test Characters
-- [ ] Create `test_characters/basic_fighter.casp` - minimal character for basic tests
+- [x] Create `test_characters/basic_fighter.casp` - minimal character for basic tests
+  - ✓ Has Idle, Init, LightPunch, Jump, Crouch, Walk states
+  - ✓ Includes state timers and transitions
+  - ✓ Uses Base-Core.casp skeleton
 - [ ] Create `test_characters/special_moves_fighter.casp` - character with Hadouken, Shoryuken, etc.
 - [ ] Create `test_characters/combo_character.casp` - character with defined combo routes
 - [ ] Create `test_characters/charge_character.casp` - character with charge moves
@@ -340,11 +344,12 @@ A test is a TRUE E2E test when it:
 ## Measurement
 
 Track progress using:
-- **Tests using real engine:** X / 8 tests
-- **Tests loading `.casp` files:** X / 8 tests
-- **New critical tests added:** X / 8 tests
-- **Test data files created:** X / 8 files
-- **Overall rating:** X / 10
+- **Tests using real ENGINE:** 0 / 8 tests ⚠️ (only parser so far, not full engine!)
+- **Tests using real parser:** 2 / 8 tests (test_character_loading, test_state_transitions)
+- **Tests loading `.casp` files:** 2 / 8 tests
+- **New critical tests added:** 0 / 8 tests
+- **Test data files created:** 1 / 8 files (test_basic_fighter.casp)
+- **Overall rating:** 4.5 / 10 (no change - parser ≠ engine!)
 
 ---
 
@@ -357,4 +362,52 @@ Track progress using:
 - Remember: "Does our Castagne port actually work?" not "Can we simulate fighting?"
 
 **Last Updated:** 2025-11-13
-**Status:** Initial assessment complete, ready for implementation
+**Status:** In progress - Priority 1 improvements underway
+
+---
+
+## Progress Log
+
+### 2025-11-13 - Initial Improvements
+
+**Completed:**
+- ✅ Converted `test_character_loading.gd` from mock (file reading) to REAL parser usage
+  - Now calls `CastagneParser.CreateFullCharacter()` instead of just reading file contents
+  - Verifies parsed structure (Character, Variables, States, TransformedData)
+  - test_character_loading.gd:51
+- ✅ Converted `test_state_transitions.gd` from mock dictionary to REAL parser
+  - Removed mock `create_test_character()` function
+  - Now loads and parses actual `.casp` file using parser
+  - Verifies states exist in parsed output
+  - test_state_transitions.gd:45
+- ✅ Created `test_characters/test_basic_fighter.casp` - dedicated test character
+  - Includes Idle, Init, LightPunch, Jump, Crouch, Walk states
+  - Has proper state structure with Init/Action phases
+  - Uses Base-Core.casp skeleton
+  - test_characters/test_basic_fighter.casp
+
+**Current Rating: 4.5/10** (NO CHANGE - parser only, not full engine!)
+
+**Improvements Made:**
+- 2 out of 8 tests now use real parser (was 0/8) ⚠️ BUT NOT FULL ENGINE YET
+- 1 test character created (was 0/8)
+- Tests now fail if parser fails (good, but still not testing engine)
+
+**What's Still Missing:**
+- ❌ No CastagneEngine integration - tests stop at parser
+- ❌ No state machine execution - no actual transitions happening
+- ❌ No game loop - no frame-by-frame processing
+- ❌ No CastagneMemory usage
+- ❌ No CastagneInput testing
+
+**Known Issues:**
+- Godot 4 compatibility issues in castagne_godot4 prevent full parsing:
+  - `is_valid_integer()` removed in Godot 4 (use `is_valid_int()`)
+  - `set_scancode()` changed to `keycode` property
+  - These are documented in PR #34
+
+**Next Steps:**
+- Fix Godot 4 compatibility issues to enable full parser testing
+- Convert remaining tests (test_input_simulation, test_two_character_fight, etc.)
+- Create more test character files with different features
+- Add full engine integration (not just parser)

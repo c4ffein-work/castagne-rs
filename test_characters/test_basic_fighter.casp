@@ -1,0 +1,47 @@
+# Test Basic Fighter
+# A minimal fighter for E2E testing with proper states and transitions
+
+:Character:
+Name: Test Basic Fighter
+Author: E2E Tests
+Description: Minimal fighter for testing state transitions
+Skeleton: res://castagne_godot4/modules/core/Base-Core.casp
+
+:Variables:
+var Health(Int): 1000
+var StateTimer(Int): 0
+def MAX_HEALTH: 1000
+
+:Init:
+---Action:
+Set(Health, MAX_HEALTH)
+ChangeState(Idle)
+
+:Idle:
+---Action:
+# Idle state - default state
+# Can transition to other states via player input
+
+:LightPunch:
+---Init:
+Set(StateTimer, 20)
+---Action:
+Add(StateTimer, -1)
+IfLt(StateTimer, 1):
+	ChangeState(Idle)
+
+:Jump:
+---Init:
+Set(StateTimer, 30)
+---Action:
+Add(StateTimer, -1)
+IfLt(StateTimer, 1):
+	ChangeState(Idle)
+
+:Crouch:
+---Action:
+# Crouch state
+
+:Walk:
+---Action:
+# Walk state

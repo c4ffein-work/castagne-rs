@@ -423,7 +423,7 @@ func ArgInt(args, stateHandle, argID, default = null):
 			return 1
 		return default
 	var value = str(args[argID])
-	if(value.is_valid_integer()):
+	if(value.is_valid_int()):
 		return int(value)
 	if(stateHandle == null):
 		return default
@@ -446,7 +446,7 @@ func ArgBool(args, stateHandle, argID, default = null):
 			Castagne.Error("ArgBool ("+str(argID)+"): This argument needs a default but doesn't have one")
 		return default
 	var value = str(args[argID])
-	if(value.is_valid_integer()):
+	if(value.is_valid_int()):
 		return int(value) > 0
 	if(stateHandle.EntityHas(value)):
 		return int(stateHandle.EntityGet(value)) > 0
