@@ -587,7 +587,7 @@ func _OptimizeActionList_Sublist(actionList, baseParentLevel, p, state):
 
 				_OptimizeActionListPhase1(calledState, [p])
 				var calledActionList = _states[calledState][p]
-				actionList.remove(i) # we keep attack register for registering attack properly
+				actionList.remove_at(i) # we keep attack register for registering attack properly
 
 				if(a[0] in attackRegisterFuncrefs):
 					var newA = a.duplicate(true)
