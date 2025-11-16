@@ -549,7 +549,7 @@ func _OptimizeActionList_Sublist(actionList, baseParentLevel, p, state):
 					if(!(calledState in _optimizeActionList_parentWarnings)):
 						_Error("CastagneParser: CallParent function is calling non-existing parent state "+ str(calledState) +" (Parent level "+str(parentLevel)+"). Removing Call.")
 						_optimizeActionList_parentWarnings.push_back(calledState)
-					actionList.remove(i)
+					actionList.remove_at(i)
 					loopAgain = true
 					break
 			elif(a[0] in attackRegisterFuncrefs):
@@ -564,7 +564,7 @@ func _OptimizeActionList_Sublist(actionList, baseParentLevel, p, state):
 						if(!a[1][0][j].is_empty()):
 							allEmpty = false
 					if(allEmpty):
-						actionList.remove(i)
+						actionList.remove_at(i)
 						loopAgain = true
 						break
 				else:
@@ -572,7 +572,7 @@ func _OptimizeActionList_Sublist(actionList, baseParentLevel, p, state):
 					a[1][1] = _OptimizeActionList_Sublist(a[1][1], parentLevel, p, state)
 
 					if(a[1][0].is_empty() and a[1][1].is_empty()):
-						actionList.remove(i)
+						actionList.remove_at(i)
 						loopAgain = true
 						break
 
@@ -641,7 +641,7 @@ func _OptimizeActionList_Sublist_After(actionList, p, state):
 						continue
 
 					var calledActionList = _states[calledState][p]
-					actionList.remove(i)
+					actionList.remove_at(i)
 					for j in range(calledActionList.size()):
 						actionList.push_back(calledActionList[j].duplicate(true))
 					loopAgain = true
