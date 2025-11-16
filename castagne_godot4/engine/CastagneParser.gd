@@ -1601,7 +1601,7 @@ func _ParseBlockState(fileID):
 						if(fData["ParseFunc"] == null):
 							action = StandardParseFunction(f[0], f[1])
 						else:
-							action = fData["ParseFunc"].call_func(self, f[1], parseData)
+							action = fData["ParseFunc"].call(self, f[1], parseData)
 
 						if(action != null):
 							var d = [action["Func"], action["Args"]]
@@ -2072,8 +2072,18 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 		_Error("Variable " + str(variableName) + " is marked as internal but no internal variable of the name exists.")
 		return null
 	if(hasInternalName and variableMutability == Castagne.VARIABLE_MUTABILITY.Internal):
-		variableType = _moduleVariables[variableName]["Type"]
-		variableValue = _moduleVariables[variableName]["Value"]
+		# _moduleVariables stores the default value directly, not a dictionary
+		# Determine type from the stored value
+		var storedValue = _moduleVariables[variableName]
+		if typeof(storedValue) == TYPE_INT:
+			variableType = Castagne.VARIABLE_TYPE.Int
+			variableValue = storedValue
+		elif typeof(storedValue) == TYPE_STRING:
+			variableType = Castagne.VARIABLE_TYPE.Str
+			variableValue = storedValue
+		else:
+			variableType = Castagne.VARIABLE_TYPE.Int
+			variableValue = storedValue
 
 
 	# Type check
