@@ -137,7 +137,7 @@ func _process(_delta):
 		# Check for Health variable
 		var health_found = false
 		for var_name in variables:
-			if "Health" in var_name or "health" in var_name.to_lower():
+			if var_name != null and (("Health" in var_name) or ("health" in var_name.to_lower())):
 				health_found = true
 				print("✓ Found health variable: ", var_name)
 				break

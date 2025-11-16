@@ -953,7 +953,7 @@ func _ParseSpecblocks(fileID):
 	var line = _GetNextBlock(fileID)
 
 	while(line != null):
-		line = line.left(line.length()-1).right(1)
+		line = line.left(line.length()-1).substr(1)
 		line = _GetPureStateNameFromStateName(line)
 
 		if(!line.begins_with("Specs-")):
@@ -988,7 +988,7 @@ func _ParseVariables(fileID):
 	var variablesFound = {}
 
 	while(line != null):
-		line = line.left(line.length()-1).right(1)
+		line = line.left(line.length()-1).substr(1)
 		var stateNamePure = _GetPureStateNameFromStateName(line)
 		if(!stateNamePure.begins_with("Variables")):
 			break
@@ -1147,7 +1147,7 @@ func _ParseForEdition():
 					if(fscs["ParseFlags"].has("AttackFunctionUsed")):
 						if(!fscs["StateFlags"].has("Attack") and fscs["StateType"] != Castagne.STATE_TYPE.Helper):
 							fscs["Warnings"] += ["Attack function used, but the state is not a registered attack or a helper!"]
-				curState = lineStripped.left(lineStripped.length()-1).right(1)
+				curState = lineStripped.left(lineStripped.length()-1).substr(1)
 				var sd = defaultStateData.duplicate(true)
 				sd["LineStart"] = lineID
 				sd["Name"] = curState
@@ -1480,7 +1480,7 @@ func _ParseBlockData(fileID):
 	while(line != null and !_IsLineBlock(line)):
 		var splitIndex = line.find(":")
 		var left = line.left(splitIndex)
-		var right = line.right(splitIndex+1)
+		var right = line.substr(splitIndex+1)
 		right = right.strip_edges()
 		if(right.is_valid_int()):
 			right = int(right)
@@ -1492,7 +1492,7 @@ var _currentState = {}
 var _currentEntity = null
 func _ParseBlockState(fileID):
 	var stateName = _GetCurrentLine(fileID)
-	stateName = stateName.left(stateName.length()-1).right(1)
+	stateName = stateName.left(stateName.length()-1).substr(1)
 
 	if(stateName.begins_with("Variables")):
 		_Error("Found a variables block after variables are handled.")
@@ -1544,7 +1544,7 @@ func _ParseBlockState(fileID):
 		stateName = _GetCurrentLine(fileID)
 		if(stateName == null):
 			return null
-		stateName = stateName.left(stateName.length()-1).right(1)
+		stateName = stateName.left(stateName.length()-1).substr(1)
 		entity = _GetEntityNameFromStateName(stateName)
 		stateNamePure = _GetPureStateNameFromStateName(stateName)
 
@@ -1975,7 +1975,7 @@ func _ParseBlockState(fileID):
 func _ExtractFunction(line):
 	var splitID = line.find("(")
 	var functionName = line.left(splitID)
-	var splitVars = line.left(line.length()-1).right(splitID+1).split(",")
+	var splitVars = line.left(line.length()-1).substr(splitID+1).split(",")
 
 	var args = []
 	for v in splitVars:
@@ -2016,13 +2016,13 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 	var variableSubtype = null
 
 	if(line.begins_with("var ")):
-		line = line.right(4)
+		line = line.substr(4)
 		variableMutability = Castagne.VARIABLE_MUTABILITY.Variable
 	elif(line.begins_with("def ")):
-		line = line.right(4)
+		line = line.substr(4)
 		variableMutability = Castagne.VARIABLE_MUTABILITY.Define
 	elif(line.begins_with("internal ")):
-		line = line.right(9)
+		line = line.substr(9)
 		variableMutability = Castagne.VARIABLE_MUTABILITY.Internal
 	else:
 		_Error("Couldn't find variable mutability.")
@@ -2035,7 +2035,7 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 			_Error("Can't assign an internal variable.")
 			return null
 	elif(sep >= 0):
-		variableValue = line.right(sep+1).strip_edges()
+		variableValue = line.substr(sep+1).strip_edges()
 		line = line.left(sep).strip_edges()
 		if(variableValue.is_empty()):
 			variableValue = null
@@ -2056,12 +2056,11 @@ func _ExtractVariable(line): #, returnIncompleteType = false):
 		_Error("Variable " + str(variableName) + " has the same name as an internal variable. If this is intentional and you know what you're doing, use 'internal'.")
 		return null
 	if(!hasInternalName and variableMutability == Castagne.VARIABLE_MUTABILITY.Internal):
-		if(hasInternalName):
-			variableType = _moduleVariables[variableName]["Type"]
-			variableValue = _moduleVariables[variableName]["Value"]
-		else:
-			_Error("Variable " + str(variableName) + " is marked as internal but no internal variable of the name exists.")
-			return null
+		_Error("Variable " + str(variableName) + " is marked as internal but no internal variable of the name exists.")
+		return null
+	if(hasInternalName and variableMutability == Castagne.VARIABLE_MUTABILITY.Internal):
+		variableType = _moduleVariables[variableName]["Type"]
+		variableValue = _moduleVariables[variableName]["Value"]
 
 
 	# Type check
