@@ -8,9 +8,9 @@ Description: Minimal fighter for testing state transitions
 Skeleton: res://castagne_godot4/modules/core/Base-Core.casp
 
 :Variables:
-var Health(Int): 1000
-var StateTimer(Int): 0
-def MAX_HEALTH: 1000
+var Health int() = 1000
+var StateTimer int() = 0
+def MAX_HEALTH int() = 1000
 
 :Init:
 ---Action:
