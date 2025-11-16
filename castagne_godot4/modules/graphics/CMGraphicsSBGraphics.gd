@@ -55,6 +55,6 @@ func StructEditorShow(structType = null, structInstance = null):
 
 signal UpdateVisualizer;
 func _FieldChangeCallback(defineValue, defineName):
-	._FieldChangeCallback(defineValue, defineName)
+	super._FieldChangeCallback(defineValue, defineName)
 	emit_signal("UpdateVisualizer")
 #	emit_signal("DefineValueChanged")

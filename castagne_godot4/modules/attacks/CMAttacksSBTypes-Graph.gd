@@ -26,7 +26,7 @@ func _ready():
 	paramsRoot.get_node("ShowHitstun").connect("pressed", Callable(self, "Redraw"))
 
 func Redraw(_dn = null, _dv = null):
-	update()
+	queue_redraw()
 
 func _draw():
 	var size = get_size()
