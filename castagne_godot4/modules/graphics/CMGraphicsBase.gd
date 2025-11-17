@@ -737,8 +737,8 @@ func ModelMove(args, stateHandle):
 func ModelMoveAbsolute(args, stateHandle):
 	stateHandle.EntityAdd("_ModelPositionX", ArgInt(args, stateHandle, 0))
 	stateHandle.EntityAdd("_ModelPositionY", ArgInt(args, stateHandle, 1, 0))
-#func ModelSwitchFacing(_args, stateHandle):
-#	stateHandle.EntitySet("_ModelFacing") # In physics maybe ?
+func ModelSwitchFacing(_args, stateHandle):
+	stateHandle.EntitySet("_FacingHModel", stateHandle.EntityGet("_FacingHModel") * -1)
 
 func ModelZOrder(args, stateHandle):
 	var zOrderCoarse = ArgInt(args, stateHandle, 0)
