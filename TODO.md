@@ -402,13 +402,13 @@ Fixed the shader parameter deprecation warning in CMGraphics-SpritesheetVisualiz
 - ✅ Updated Vector2 to Vector2i for shader uniforms
 - ✅ No more deprecation warnings!
 
-#### 2. Port missing module functions (NEXT)
-Port the following optional module functions:
-- `AIInputTransition` - AI input handling function
-- `ModelSwitchFacing` - Graphics model facing logic
-- These are module-level features, not critical for core engine
+#### ✅ 2. Port missing module functions (COMPLETED)
+Implemented the following optional module functions:
+- ✅ `AIInputTransition` - Sets `_AIAttackCancelWhiff` for AI input transitions
+- ✅ `ModelSwitchFacing` - Flips model facing by multiplying `_FacingHModel` by -1
+- ✅ No more "Parse function or Action func couldn't be found" warnings
 
-#### 3. Start porting the full Castagne Editor UI
+#### 3. Start porting the full Castagne Editor UI (NEXT)
 The editor is currently stubbed (minimal implementation):
 - Create full editor UI for Godot 4
 - Port all editor panels and controls
