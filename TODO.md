@@ -421,10 +421,12 @@ Created a functional Godot 4 editor foundation:
 - ✅ No errors or warnings on editor load
 - Note: Character editor and other advanced features are stubs that can be expanded later
 
-#### 4. Look for other potential improvements
-- Code cleanup
-- Performance optimizations
-- Additional Godot 4 best practices
+#### ✅ 4. Look for other potential improvements (COMPLETED)
+Fixed additional Godot 4 compatibility issues:
+- ✅ Fixed string multiplication in test_full_match.gd (changed `"=" * 50` to `"=".repeat(50)`)
+- ✅ Fixed `.instance()` to `.instantiate()` in FightingUI.gd
+- ✅ All E2E tests now passing including test_full_match
+- Note: CastagneNet.gd still uses deprecated `network_peer` API, but this is marked as "not maintained until v0.8" and not currently used in tests
 
 ---
 

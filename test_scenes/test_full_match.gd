@@ -30,9 +30,9 @@ func _init():
 
 	# Simulate multiple rounds
 	while not match_state.match_complete:
-		print("=" * 50)
+		print("=".repeat(50))
 		print("ROUND %d - FIGHT!" % match_state.current_round)
-		print("=" * 50)
+		print("=".repeat(50))
 		print("")
 
 		# Reset health for new round
@@ -55,14 +55,14 @@ func _init():
 		# Check for match winner
 		if match_state.p1_rounds >= match_config.rounds_to_win:
 			match_state.match_complete = true
-			print("=" * 50)
+			print("=".repeat(50))
 			print("🎉 PLAYER 1 WINS THE MATCH! 🎉")
-			print("=" * 50)
+			print("=".repeat(50))
 		elif match_state.p2_rounds >= match_config.rounds_to_win:
 			match_state.match_complete = true
-			print("=" * 50)
+			print("=".repeat(50))
 			print("🎉 PLAYER 2 WINS THE MATCH! 🎉")
-			print("=" * 50)
+			print("=".repeat(50))
 		else:
 			match_state.current_round += 1
 
