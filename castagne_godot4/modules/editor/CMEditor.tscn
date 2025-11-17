@@ -1,12 +1,16 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://b5m8p2k9x4j7n"]
 
-[ext_resource path="res://castagne/modules/castagne/CMEditor-GizmoDisplay.gd" type="Script" id=1]
-[ext_resource path="res://castagne/modules/castagne/CMEditor.gd" type="Script" id=2]
+[ext_resource type="Script" path="res://castagne/modules/castagne/CMEditor-GizmoDisplay.gd" id="1"]
+[ext_resource type="Script" path="res://castagne/modules/castagne/CMEditor.gd" id="2"]
 
 [node name="CMEditor" type="Node"]
-script = ExtResource( 2 )
+script = ExtResource("2")
 
 [node name="GizmoDisplay" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource( 1 )
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
