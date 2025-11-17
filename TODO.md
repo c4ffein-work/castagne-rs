@@ -382,6 +382,54 @@ You cannot yet:
 
 ---
 
+## 🎮 Godot 4 GDScript Port (castagne_godot4/)
+
+### Completed ✅
+- All Godot 3→4 API compatibility fixes
+- All 14 E2E tests passing
+- Core engine fully functional
+- Parser working correctly
+- Character loading working
+- State transitions working
+- All combat scenarios working
+
+### Todo
+
+#### ✅ 1. Fix shader warning (COMPLETED)
+Fixed the shader parameter deprecation warning in CMGraphics-SpritesheetVisualizer:
+- ✅ Updated `shader_param` to `shader_parameter` (Godot 4 naming)
+- ✅ Converted .tscn file to format=3 (Godot 4 format)
+- ✅ Updated Vector2 to Vector2i for shader uniforms
+- ✅ No more deprecation warnings!
+
+#### ✅ 2. Port missing module functions (COMPLETED)
+Implemented the following optional module functions:
+- ✅ `AIInputTransition` - Sets `_AIAttackCancelWhiff` for AI input transitions
+- ✅ `ModelSwitchFacing` - Flips model facing by multiplying `_FacingHModel` by -1
+- ✅ No more "Parse function or Action func couldn't be found" warnings
+
+#### ✅ 3. Start porting the full Castagne Editor UI (COMPLETED)
+Created a functional Godot 4 editor foundation:
+- ✅ Converted main CastagneEditor.tscn to format=3 (Godot 4)
+- ✅ Updated CastagneEditor.gd with Godot 4 API compatibility
+- ✅ Created CastagneEditorConfig.gd stub with proper Godot 4 APIs
+- ✅ Created CEDocumentation.gd stub with proper Godot 4 APIs
+- ✅ Main menu structure with all buttons and navigation working
+- ✅ Config editor panel (basic stub)
+- ✅ Documentation viewer panel (basic stub)
+- ✅ All E2E tests still passing
+- ✅ No errors or warnings on editor load
+- Note: Character editor and other advanced features are stubs that can be expanded later
+
+#### ✅ 4. Look for other potential improvements (COMPLETED)
+Fixed additional Godot 4 compatibility issues:
+- ✅ Fixed string multiplication in test_full_match.gd (changed `"=" * 50` to `"=".repeat(50)`)
+- ✅ Fixed `.instance()` to `.instantiate()` in FightingUI.gd
+- ✅ All E2E tests now passing including test_full_match
+- Note: CastagneNet.gd still uses deprecated `network_peer` API, but this is marked as "not maintained until v0.8" and not currently used in tests
+
+---
+
 **Last Updated**: $(date)
 **Primary Author**: Claude (AI Assistant)
 **Original Castagne Engine**: https://github.com/panthavma/castagne

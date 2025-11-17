@@ -17,7 +17,7 @@ func ModuleSetup():
 func BattleInit(stateHandle, battleInitData):
 	if(!stateHandle.ConfigData().Get("ShowFightingUI_Temp")):
 		return
-	ui = load(stateHandle.ConfigData().Get("FightingUIPath_Temp")).instance()
+	ui = load(stateHandle.ConfigData().Get("FightingUIPath_Temp")).instantiate()
 	stateHandle.Engine().add_child(ui)
 	ui.InitTool(battleInitData)
 
