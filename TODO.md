@@ -428,6 +428,25 @@ Fixed additional Godot 4 compatibility issues:
 - ✅ All E2E tests now passing including test_full_match
 - Note: CastagneNet.gd still uses deprecated `network_peer` API, but this is marked as "not maintained until v0.8" and not currently used in tests
 
+#### ✅ 5. Convert remaining scene files to Godot 4 format (COMPLETED)
+Converted all remaining .tscn files from format=2 (Godot 3) to format=3 (Godot 4):
+- ✅ CastagneEngine.tscn - Main engine scene
+- ✅ Graphics2DRoot.tscn - Graphics root with shader material
+- ✅ CMEditor.tscn - Editor module scene
+- ✅ FightingUI.tscn - Fighting UI module scene
+- ✅ CMAttacks-TypesBigWindow.tscn - Attack types window with complex UI
+- ✅ Updated all deprecated properties: `rect_min_size` → `custom_minimum_size`, `pressed` → `button_pressed`, `align` → `horizontal_alignment`
+- ✅ Added proper Godot 4 layout modes and anchors presets
+- ✅ All E2E tests still passing after conversion
+
+#### ✅ 6. Fix Rust compiler warnings (COMPLETED)
+Fixed all compiler warnings in the Rust codebase:
+- ✅ Fixed unused variable `file_id` in `open_file()` function (prefixed with `_`)
+- ✅ Fixed unused variable `function_name` in `standard_parse_function()` (prefixed with `_`)
+- ✅ Fixed unused constant `_PHASES_BASE` (prefixed with `_`)
+- ✅ Rust code now compiles cleanly without warnings
+- ✅ All E2E tests still passing
+
 ---
 
 **Last Updated**: $(date)

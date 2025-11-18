@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://cjx9q2r3k7m5n"]
 
-[sub_resource type="Shader" id=1]
+[sub_resource type="Shader" id="Shader_1"]
 code = "shader_type canvas_item;
 
 uniform sampler2D gameViewport;
@@ -9,13 +9,13 @@ void fragment() {
 	COLOR = texture(gameViewport, SCREEN_UV);
 }"
 
-[sub_resource type="ShaderMaterial" id=2]
-shader = SubResource( 1 )
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2"]
+shader = SubResource("Shader_1")
 
 [node name="ColorRect" type="ColorRect"]
-material = SubResource( 2 )
+material = SubResource("ShaderMaterial_2")
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+grow_horizontal = 2
+grow_vertical = 2

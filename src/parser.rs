@@ -18,7 +18,7 @@ use std::io::{BufRead, BufReader};
 use godot::builtin::{Vector2, Vector3};
 
 /// Phases that can have events
-const PHASES_BASE: &[&str] = &[
+const _PHASES_BASE: &[&str] = &[
     "Init",
     "Action",
     "Reaction",
@@ -297,7 +297,7 @@ impl CastagneParser {
     pub fn open_file(&mut self, file_path: &str) {
         self.log(&format!("Opening file {}", file_path));
 
-        let file_id = self.file_paths.len();
+        let _file_id = self.file_paths.len();
         self.file_paths.push(file_path.to_string());
 
         // Read the file
@@ -957,7 +957,7 @@ impl CastagneParser {
     // Instruction execution (for runtime)
 
     /// Standard parse function (used by modules to register functions)
-    pub fn standard_parse_function(&self, function_name: &str, args: &[String]) -> Vec<String> {
+    pub fn standard_parse_function(&self, _function_name: &str, args: &[String]) -> Vec<String> {
         // TODO: Parse function arguments according to function signature
         // For now, just return the args as-is
         args.to_vec()

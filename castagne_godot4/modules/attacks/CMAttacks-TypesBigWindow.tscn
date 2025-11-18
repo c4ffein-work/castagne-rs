@@ -1,111 +1,94 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://d8k2m9x7p3n6q"]
 
-[ext_resource path="res://castagne_godot4/modules/attacks/CMAttacksSBTypes-Graph.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://castagne_godot4/modules/attacks/CMAttacksSBTypes-Graph.gd" id="1"]
 
 [node name="AttackTypesBig" type="VBoxContainer"]
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Title" type="Label" parent="."]
-margin_right = 1920.0
-margin_bottom = 64.0
-rect_min_size = Vector2( 0, 64 )
+[node name="Title" type="Label"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
 text = "Proration Helper"
-align = 1
-valign = 1
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Graph" type="HBoxContainer" parent="."]
-margin_top = 68.0
-margin_right = 1920.0
-margin_bottom = 1044.0
+[node name="Graph" type="HBoxContainer"]
+layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Spacer" type="Control" parent="Graph"]
-margin_right = 64.0
-margin_bottom = 976.0
-rect_min_size = Vector2( 64, 64 )
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
 
 [node name="GraphBack" type="ColorRect" parent="Graph"]
-margin_left = 68.0
-margin_right = 1852.0
-margin_bottom = 976.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-color = Color( 0.0470588, 0.105882, 0.0509804, 1 )
+color = Color(0.0470588, 0.105882, 0.0509804, 1)
 
 [node name="Graph" type="Control" parent="Graph/GraphBack"]
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource( 1 )
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
 
 [node name="Spacer2" type="Control" parent="Graph"]
-margin_left = 1856.0
-margin_right = 1920.0
-margin_bottom = 976.0
-rect_min_size = Vector2( 64, 64 )
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
 
-[node name="Params" type="HBoxContainer" parent="."]
-margin_top = 1048.0
-margin_right = 1920.0
-margin_bottom = 1080.0
+[node name="Params" type="HBoxContainer"]
+layout_mode = 2
 alignment = 1
 
 [node name="ShowHitstun" type="CheckBox" parent="Params"]
-margin_left = 601.0
-margin_right = 738.0
-margin_bottom = 32.0
-pressed = true
+layout_mode = 2
+button_pressed = true
 text = "Hitstun Proration"
-align = 1
+alignment = 1
 
 [node name="ShowDamage" type="CheckBox" parent="Params"]
-margin_left = 742.0
-margin_right = 884.0
-margin_bottom = 32.0
-pressed = true
+layout_mode = 2
+button_pressed = true
 text = "Damage Proration"
-align = 1
+alignment = 1
 
 [node name="Spacer3" type="Control" parent="Params"]
-margin_left = 888.0
-margin_right = 952.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 64, 16 )
+custom_minimum_size = Vector2(64, 16)
+layout_mode = 2
 
 [node name="Label" type="Label" parent="Params"]
-margin_left = 956.0
-margin_top = 9.0
-margin_right = 1006.0
-margin_bottom = 23.0
+layout_mode = 2
 text = "Starter: "
-align = 2
+horizontal_alignment = 2
 
 [node name="Starter" type="OptionButton" parent="Params"]
-margin_left = 1010.0
-margin_right = 1092.0
-margin_bottom = 32.0
+layout_mode = 2
 text = "Medium"
-items = [ "Medium", null, false, 0, null ]
+item_count = 1
 selected = 0
+popup/item_0/text = "Medium"
+popup/item_0/id = 0
 
 [node name="Spacer4" type="Control" parent="Params"]
-margin_left = 1096.0
-margin_right = 1160.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 64, 32 )
+custom_minimum_size = Vector2(64, 32)
+layout_mode = 2
 
 [node name="Label2" type="Label" parent="Params"]
-margin_left = 1164.0
-margin_top = 9.0
-margin_right = 1232.0
-margin_bottom = 23.0
+layout_mode = 2
 text = "Next Hits: "
-align = 2
+horizontal_alignment = 2
 
 [node name="NextHits" type="OptionButton" parent="Params"]
-margin_left = 1236.0
-margin_right = 1318.0
-margin_bottom = 32.0
+layout_mode = 2
 text = "Medium"
-items = [ "Medium", null, false, 0, null ]
+item_count = 1
 selected = 0
+popup/item_0/text = "Medium"
+popup/item_0/id = 0
