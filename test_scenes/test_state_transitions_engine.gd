@@ -7,21 +7,29 @@ func _init():
 	print("\n=== E2E Test: State Transitions (REAL ENGINE) ===\n")
 
 func _process(_delta):
-	# Load scripts
-	var engine_script = load("res://castagne_godot4/engine/CastagneEngine.gd")
-	var config_script = load("res://castagne_godot4/engine/CastagneConfig.gd")
-
-	if not engine_script or not config_script:
-		print("ERROR: Could not load engine scripts")
+	# Get Castagne autoload to access properly initialized config
+	var castagne = root.get_node_or_null("/root/Castagne")
+	if not castagne:
+		print("ERROR: Castagne autoload not found")
 		print("TEST_FAIL")
 		quit()
 		return
 
-	print("✓ Engine and Config scripts loaded")
+	print("✓ Castagne autoload found")
 
-	# Create engine instance
+	# Load engine script
+	var engine_script = load("res://castagne_godot4/engine/CastagneEngine.gd")
+	if not engine_script:
+		print("ERROR: Could not load engine script")
+		print("TEST_FAIL")
+		quit()
+		return
+
+	print("✓ Engine script loaded")
+
+	# Create engine instance with properly initialized config from autoload
 	var engine = engine_script.new()
-	var config_data = config_script.new()
+	var config_data = castagne.baseConfigData
 
 	# Set up engine
 	engine.configData = config_data

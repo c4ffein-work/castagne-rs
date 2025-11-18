@@ -7,13 +7,13 @@ Author: E2E Tests
 Description: Absolute minimum fighter for engine testing
 
 :Variables:
-var Health(Int): 1000
-var StateTimer(Int): 0
+var Health int() = 1000
+var StateTimer int() = 0
 
 :Init:
 ---Action:
 Set(Health, 1000)
-ChangeState(Idle)
+Transition(Idle)
 
 :Idle:
 ---Action:
@@ -26,4 +26,5 @@ Set(StateTimer, 5)
 Add(StateTimer, -1)
 # When timer hits 0, should transition to Idle
 IfLt(StateTimer, 1):
-	ChangeState(Idle)
+	Transition(Idle)
+endif
