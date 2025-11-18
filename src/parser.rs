@@ -1268,7 +1268,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore] // TODO: Enable when variable parsing is fully implemented
     fn test_full_file_parse() {
         let mut parser = CastagneParser::new();
 

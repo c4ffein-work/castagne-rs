@@ -24,7 +24,6 @@ mod tests {
     // ============================================================================
 
     #[test]
-    #[ignore] // TODO: Enable when variable parsing is fully implemented
     fn e2e_parser_can_parse_basic_character() {
         let test_file = "test_character.casp";
 
